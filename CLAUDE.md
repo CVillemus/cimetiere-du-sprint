@@ -4,7 +4,7 @@
 
 Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 10 personnes choisisse un film d'horreur, façon poker planning. Chacun vote depuis son téléphone (route `/vote`, ouverte via un QR code).
 
-- **TV (`/`)** : 13 sections plein écran (salle d'attente avec un Snake jouable aux flèches, QR code, 10 films, Sprint Review). Sur la salle d'attente, les flèches pilotent le serpent et Entrée ouvre la soirée. Chaque film a un carrousel horizontal : Résumé → Trailer → Presse.
+- **TV (`/`)** : 12 sections plein écran (QR code, 10 films, Sprint Review). Chaque film a un carrousel horizontal : Résumé → Trailer → Presse.
 - **Teaser (`/teaser`)** : un seul écran à partager avant la soirée (samedi 10 octobre, 18h), avec compte à rebours.
 - **Téléphones (`/vote`)** : pseudo, puis 5 cartes (Hors de question / Bof / Ok / Cool ! / OHHHHH OUI !).
 - **Mode Scrum Master** : la TV pilote le film en cours, les votes restent secrets jusqu'à la révélation (touche `R`).

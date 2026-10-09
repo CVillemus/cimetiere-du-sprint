@@ -8,8 +8,8 @@ import { TvNavigator } from './tv-navigator';
  * Sans composant de transition enregistré, la navigation s'applique immédiatement.
  * La séance de vote n'est pas démarrée : personne n'est inscrit, la slide Vote reste verrouillée.
  */
-/** Salle d'attente, puis intro, puis le premier film. */
-const FIRST_FILM_SECTION_INDEX: number = 2;
+/** L'intro, puis le premier film. */
+const FIRST_FILM_SECTION_INDEX: number = 1;
 
 describe('TvNavigator', () => {
   let tvNavigator: TvNavigator;

@@ -13,7 +13,6 @@ import { FILM_SLIDE_ORDER, FilmSlideKind, TvSection } from './tv-section.model';
 @Injectable({ providedIn: 'root' })
 export class TvNavigationStore {
   readonly sections: readonly TvSection[] = [
-    { kind: 'waiting-room' },
     { kind: 'intro' },
     ...FILMS.map((film: Film, filmIndex: number): TvSection => ({
       kind: 'film',
@@ -35,7 +34,7 @@ export class TvNavigationStore {
     (): TvSection => this.sections[this.currentSectionIndexState()],
   );
 
-  /** Film affiché, ou `null` sur la salle d'attente, l'intro et la Sprint Review. */
+  /** Film affiché, ou `null` sur l'intro et la Sprint Review. */
   readonly currentFilm: Signal<Film | null> = computed((): Film | null => {
     const currentSection: TvSection = this.currentSection();
     return currentSection.kind === 'film' ? currentSection.film : null;
@@ -63,7 +62,7 @@ export class TvNavigationStore {
     this.goToSection(this.currentSectionIndexState() - 1);
   }
 
-  /** Index de l'accueil au QR code (juste après la salle d'attente). */
+  /** Index de l'accueil au QR code. */
   readonly introSectionIndex: number = this.sections.findIndex(
     (section: TvSection): boolean => section.kind === 'intro',
   );

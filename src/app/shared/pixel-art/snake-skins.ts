@@ -48,7 +48,7 @@ export const SNAKE_SKINS: readonly SnakeSkin[] = [
 ];
 
 /**
- * La mascotte des jeux (salle d'attente, spinner du téléphone) : un serpent corail
+ * La mascotte du spinner du téléphone : un serpent corail
  * aux anneaux rouges, gris pierre et orange. Tête rouge sang, pour ne pas se perdre sur les fonds sombres.
  */
 export const MASCOT_SNAKE_SKIN: SnakeSkin = {

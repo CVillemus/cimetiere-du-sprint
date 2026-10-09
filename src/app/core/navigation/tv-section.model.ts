@@ -17,7 +17,6 @@ export const VOTE_SLIDE_INDEX: number = FILM_SLIDE_ORDER.indexOf('vote');
 
 /** Une section verticale de la TV : union discriminée sur `kind`. */
 export type TvSection =
-  | { readonly kind: 'waiting-room' }
   | { readonly kind: 'intro' }
   | { readonly kind: 'film'; readonly film: Film; readonly tombNumber: number }
   | { readonly kind: 'sprint-review' };
