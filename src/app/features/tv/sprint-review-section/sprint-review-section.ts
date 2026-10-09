@@ -2,11 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
   InputSignal,
   Signal,
 } from '@angular/core';
+import { TvSoundDesign } from '../../../core/sound/tv-sound-design';
 import { FilmRanking, VETO_THRESHOLD } from '../../../core/voting/film-ranking';
 import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
 import { FilmScene } from '../film-section/film-scene/film-scene';
@@ -20,6 +22,8 @@ interface RankedFilm {
 const PODIUM_SIZE: number = 3;
 /** Ordre d'affichage du podium : 2e à gauche, 1er au centre, 3e à droite. */
 const PODIUM_DISPLAY_ORDER: readonly number[] = [2, 1, 3];
+/** Avec ce délai, le glas de l'orgue tombe quand le film élu apparaît (2,5 s, voir le CSS). */
+const WINNER_SOUND_DELAY_IN_SECONDS: number = 0.3;
 
 /**
  * Section finale : le podium des films, le film de la soirée, puis le reste du classement.
@@ -34,6 +38,7 @@ const PODIUM_DISPLAY_ORDER: readonly number[] = [2, 1, 3];
 })
 export class SprintReviewSection {
   private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
+  private readonly tvSoundDesign: TvSoundDesign = inject(TvSoundDesign);
 
   readonly isCurrentSection: InputSignal<boolean> = input.required<boolean>();
 
@@ -76,6 +81,22 @@ export class SprintReviewSection {
   protected readonly remainingRankedFilms: Signal<readonly RankedFilm[]> = computed(
     (): readonly RankedFilm[] => this.rankedFilms().slice(this.podiumFilms().length),
   );
+
+  /** Le classement est recalculé à chaque vote rechargé : on ne joue l'orgue qu'une fois par visite. */
+  private hasPlayedWinnerSoundThisVisit: boolean = false;
+
+  constructor() {
+    effect(() => {
+      if (!this.isCurrentSection()) {
+        this.hasPlayedWinnerSoundThisVisit = false;
+        return;
+      }
+      if (this.winningFilm() !== null && !this.hasPlayedWinnerSoundThisVisit) {
+        this.hasPlayedWinnerSoundThisVisit = true;
+        this.tvSoundDesign.playWinnerElected(WINNER_SOUND_DELAY_IN_SECONDS);
+      }
+    });
+  }
 
   protected formatAverageScore(averageScore: number | null): string {
     return averageScore === null ? '–' : averageScore.toFixed(1).replace('.', ',');

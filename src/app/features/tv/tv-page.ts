@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { TvNavigationStore } from '../../core/navigation/tv-navigation.store';
 import { TvVotingSessionStore } from '../../core/voting/tv-voting-session.store';
+import { TvSoundDesign } from '../../core/sound/tv-sound-design';
 import { TvSection } from '../../core/navigation/tv-section.model';
 import { FilmSection } from './film-section/film-section';
 import { IntroSection } from './intro-section/intro-section';
@@ -36,7 +37,10 @@ const MINIMUM_WHEEL_DELTA: number = 15;
   templateUrl: './tv-page.html',
   styleUrl: './tv-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(document:keydown)': 'handleKeyboardNavigation($event)' },
+  host: {
+    '(document:keydown)': 'handleKeyboardNavigation($event)',
+    '(document:pointerdown)': 'wakeUpSoundDesign()',
+  },
 })
 export class TvPage {
   private readonly tvNavigationStore: TvNavigationStore = inject(TvNavigationStore);
@@ -45,6 +49,10 @@ export class TvPage {
     PixelDripTransitionService,
   );
   private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
+  private readonly tvSoundDesign: TvSoundDesign = inject(TvSoundDesign);
+
+  protected readonly isSoundAwake: Signal<boolean> = this.tvSoundDesign.isAwake;
+  protected readonly isSoundMuted: Signal<boolean> = this.tvSoundDesign.isMuted;
 
   private lastWheelNavigationTimestamp: number = 0;
 
@@ -61,7 +69,13 @@ export class TvPage {
     inject(DestroyRef).onDestroy(() => this.tvVotingSessionStore.stopHosting());
   }
 
+  /** Le navigateur n'autorise le son qu'après un geste : la première touche ou le premier clic. */
+  protected wakeUpSoundDesign(): void {
+    this.tvSoundDesign.wakeUp();
+  }
+
   protected handleKeyboardNavigation(keyboardEvent: KeyboardEvent): void {
+    this.tvSoundDesign.wakeUp();
     switch (keyboardEvent.key) {
       case 'ArrowDown':
       case 'PageDown':
@@ -83,6 +97,10 @@ export class TvPage {
       case 'r':
       case 'R':
         this.tvNavigator.forceNavigationToVoteSlide();
+        break;
+      case 'm':
+      case 'M':
+        this.tvSoundDesign.toggleMute();
         break;
       default:
         return;

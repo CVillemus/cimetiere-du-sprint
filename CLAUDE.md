@@ -37,6 +37,14 @@ Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 
 - Les décors sont dessinés sur `<canvas>` (128×96) avec `PixelPainter` ; les lumières sont sur un second canvas qui vacille.
 - Les fonds des panneaux (`PixelBackdrop`) alternent crâne, tête de mort, arbre mort, corbeau, araignée, avec une animation « idle ».
 
+## Sound design
+
+- Uniquement sur la TV (`core/sound/`) : les téléphones restent muets.
+- Sons 8-bit synthétisés en Web Audio par `SpookySynth` (aucun fichier audio), avec une réverbération de « crypte ».
+- `TvSoundDesign` : vent de crypte au changement de section, boîte à musique à l'arrivée d'une âme, toc toc à chaque vote, glas au dernier vote, coup de théâtre à la révélation, orgue + glas au podium.
+- Les événements de vote sont détectés en comparant deux photos de la session (`detectVotingSoundCues`, testé).
+- Le navigateur bloque le son jusqu'à la première touche ou au premier clic ; touche `M` pour couper. Volume baissé pendant la bande-annonce.
+
 ## Arborescence
 
 ```

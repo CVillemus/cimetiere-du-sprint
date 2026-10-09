@@ -3,6 +3,7 @@ import { Film } from '../../../core/films/film.model';
 import { FILM_SLIDE_ORDER, VOTE_SLIDE_INDEX } from '../../../core/navigation/tv-section.model';
 import { TvNavigationStore } from '../../../core/navigation/tv-navigation.store';
 import { FilmVoteSummary } from '../../../core/voting/film-vote-summary';
+import { TvSoundDesign } from '../../../core/sound/tv-sound-design';
 import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
 import { PixelDripTransitionService } from '../../../shared/components/pixel-drip-transition/pixel-drip-transition.service';
 
@@ -17,13 +18,19 @@ export class TvNavigator {
   private readonly pixelDripTransitionService: PixelDripTransitionService = inject(
     PixelDripTransitionService,
   );
+  private readonly tvSoundDesign: TvSoundDesign = inject(TvSoundDesign);
 
   navigateToSection(sectionIndex: number): void {
     const isOutOfRange: boolean =
       sectionIndex < 0 || sectionIndex >= this.tvNavigationStore.sections.length;
-    if (isOutOfRange || sectionIndex === this.tvNavigationStore.currentSectionIndex()) {
+    if (
+      isOutOfRange ||
+      sectionIndex === this.tvNavigationStore.currentSectionIndex() ||
+      this.pixelDripTransitionService.isPlaying()
+    ) {
       return;
     }
+    this.tvSoundDesign.playSectionChange();
     this.pixelDripTransitionService.playTransition(() =>
       this.tvNavigationStore.goToSection(sectionIndex),
     );

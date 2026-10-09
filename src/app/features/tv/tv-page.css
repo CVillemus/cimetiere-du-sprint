@@ -8,3 +8,19 @@
 .tv-page__section {
   height: 100dvh;
 }
+
+/* Discret, en bas à gauche : visible pour le Scrum Master, sans gêner l'image. */
+.tv-page__sound-status {
+  position: fixed;
+  bottom: 1vw;
+  left: 1vw;
+  z-index: 1;
+  margin: 0;
+  padding: 0.4vw 0.8vw;
+  border: 2px solid var(--color-violet);
+  background: var(--color-night);
+  color: var(--color-violet-muted);
+  font-family: var(--font-pixel-label);
+  font-size: max(0.8vw, 14px);
+  pointer-events: none;
+}

@@ -24,5 +24,13 @@
   </div>
 </main>
 
+@if (!isSoundAwake()) {
+  <p class="tv-page__sound-status">
+    ♪ Son endormi : appuie sur une touche pour réveiller les morts
+  </p>
+} @else if (isSoundMuted()) {
+  <p class="tv-page__sound-status">♪ Son coupé · M pour le remettre</p>
+}
+
 <app-section-progress />
 <app-pixel-drip-transition />
