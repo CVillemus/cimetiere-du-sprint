@@ -8,10 +8,12 @@ import {
   InputSignal,
   Signal,
 } from '@angular/core';
+import { Film, STREAMING_CHECKED_ON } from '../../../core/films/film.model';
 import { TvSoundDesign } from '../../../core/sound/tv-sound-design';
 import { FilmRanking, VETO_THRESHOLD } from '../../../core/voting/film-ranking';
 import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
 import { FilmScene } from '../film-section/film-scene/film-scene';
+import { GothicLettrine } from './gothic-lettrine/gothic-lettrine';
 import { ReviewSpider } from './review-spider/review-spider';
 
 interface RankedFilm {
@@ -19,19 +21,23 @@ interface RankedFilm {
   readonly filmRanking: FilmRanking;
 }
 
-const PODIUM_SIZE: number = 3;
-/** Ordre d'affichage du podium : 2e à gauche, 1er au centre, 3e à droite. */
-const PODIUM_DISPLAY_ORDER: readonly number[] = [2, 1, 3];
-/** Avec ce délai, le glas de l'orgue tombe quand le film élu apparaît (2,5 s, voir le CSS). */
+interface WinnerStreaming {
+  readonly label: string;
+  readonly platforms: readonly string[];
+}
+
+/** Les 2e et 3e sont mis en avant dans le reste du classement. */
+const RUNNER_UP_MAXIMUM_RANK: number = 3;
+/** Avec ce délai, le glas de l'orgue tombe quand la gravure du 1 se termine (2,5 s). */
 const WINNER_SOUND_DELAY_IN_SECONDS: number = 0.3;
 
 /**
- * Section finale : le podium des films, le film de la soirée, puis le reste du classement.
- * Les marches montent une à une quand la section s'affiche (3e, 2e, puis 1er).
+ * Section finale : l'illustration du film de la soirée, son « 1 » gothique gravé à l'arrivée,
+ * où le regarder, puis le reste du classement.
  */
 @Component({
   selector: 'app-sprint-review-section',
-  imports: [FilmScene, ReviewSpider],
+  imports: [FilmScene, GothicLettrine, ReviewSpider],
   templateUrl: './sprint-review-section.html',
   styleUrl: './sprint-review-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,33 +60,40 @@ export class SprintReviewSection {
         })),
   );
 
-  /** Seuls les films votés et non vétoés peuvent monter sur le podium. */
-  private readonly podiumFilms: Signal<readonly RankedFilm[]> = computed(
-    (): readonly RankedFilm[] =>
-      this.rankedFilms()
-        .filter(
-          (rankedFilm: RankedFilm): boolean =>
-            !rankedFilm.filmRanking.isVetoed && rankedFilm.filmRanking.averageScore !== null,
-        )
-        .slice(0, PODIUM_SIZE),
+  /** Le film de la soirée : le premier film voté et non vétoé. */
+  protected readonly winningFilm: Signal<FilmRanking | null> = computed(
+    (): FilmRanking | null =>
+      this.rankedFilms().find(
+        (rankedFilm: RankedFilm): boolean =>
+          !rankedFilm.filmRanking.isVetoed && rankedFilm.filmRanking.averageScore !== null,
+      )?.filmRanking ?? null,
   );
 
-  protected readonly podiumSteps: Signal<readonly RankedFilm[]> = computed(
+  protected readonly otherRankedFilms: Signal<readonly RankedFilm[]> = computed(
     (): readonly RankedFilm[] =>
-      PODIUM_DISPLAY_ORDER.map((rank: number): RankedFilm | undefined =>
-        this.podiumFilms().find((rankedFilm: RankedFilm): boolean => rankedFilm.rank === rank),
-      ).filter(
-        (rankedFilm: RankedFilm | undefined): rankedFilm is RankedFilm => rankedFilm !== undefined,
+      this.rankedFilms().filter(
+        (rankedFilm: RankedFilm): boolean => rankedFilm.filmRanking !== this.winningFilm(),
       ),
   );
 
-  protected readonly winningFilm: Signal<FilmRanking | null> = computed(
-    (): FilmRanking | null => this.podiumFilms()[0]?.filmRanking ?? null,
-  );
+  protected readonly runnerUpMaximumRank: number = RUNNER_UP_MAXIMUM_RANK;
+  protected readonly streamingCheckedOn: string = STREAMING_CHECKED_ON;
 
-  protected readonly remainingRankedFilms: Signal<readonly RankedFilm[]> = computed(
-    (): readonly RankedFilm[] => this.rankedFilms().slice(this.podiumFilms().length),
-  );
+  /** Comme sous la bande-annonce : l'abonnement d'abord, la location sinon. */
+  protected readonly winnerStreaming: Signal<WinnerStreaming> = computed((): WinnerStreaming => {
+    const winningFilm: Film | undefined = this.winningFilm()?.film;
+    if (winningFilm === undefined) {
+      return { label: '', platforms: [] };
+    }
+    const { subscriptionPlatforms, rentalPlatforms } = winningFilm.streamingAvailability;
+    if (subscriptionPlatforms.length > 0) {
+      return { label: 'À voir sur', platforms: subscriptionPlatforms };
+    }
+    if (rentalPlatforms.length > 0) {
+      return { label: 'En location', platforms: rentalPlatforms };
+    }
+    return { label: 'Introuvable en streaming', platforms: [] };
+  });
 
   /** Le classement est recalculé à chaque vote rechargé : on ne joue l'orgue qu'une fois par visite. */
   private hasPlayedWinnerSoundThisVisit: boolean = false;

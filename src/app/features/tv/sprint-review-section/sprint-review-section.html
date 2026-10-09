@@ -8,25 +8,13 @@
 
   @if (winningFilm(); as winner) {
     <div class="sprint-review__stage">
-      <ol class="sprint-review__podium" aria-label="Podium">
-        @for (podiumStep of podiumSteps(); track podiumStep.rank) {
-          <li [class]="'sprint-review__step sprint-review__step--rank-' + podiumStep.rank">
-            <span class="sprint-review__step-title">{{
-              podiumStep.filmRanking.film.frenchTitle
-            }}</span>
-            <span class="sprint-review__step-score">
-              {{ formatAverageScore(podiumStep.filmRanking.averageScore) }} / 5
-            </span>
-            <span class="sprint-review__step-rank">{{ podiumStep.rank }}</span>
-          </li>
-        }
-      </ol>
+      <div class="sprint-review__winner-scene">
+        <app-film-scene [filmId]="winner.film.id" />
+      </div>
 
-      <figure class="sprint-review__winner">
-        <div class="sprint-review__winner-scene">
-          <app-film-scene [filmId]="winner.film.id" />
-        </div>
-        <figcaption class="sprint-review__winner-caption">
+      <div class="sprint-review__winner">
+        <app-gothic-lettrine class="sprint-review__lettrine" [isActive]="isCurrentSection()" />
+        <div class="sprint-review__winner-caption">
           <span class="sprint-review__winner-eyebrow">Le film de la soirée</span>
           <span class="sprint-review__winner-title">{{ winner.film.frenchTitle }}</span>
           <span class="sprint-review__winner-details">
@@ -34,15 +22,25 @@
             OHHHHH OUI ! ·
             {{ formatDuration(winner.film.durationInMinutes) }}
           </span>
-        </figcaption>
-      </figure>
+          <p class="sprint-review__streaming">
+            <span class="sprint-review__streaming-label">{{ winnerStreaming().label }}</span>
+            @for (platform of winnerStreaming().platforms; track platform) {
+              <span class="sprint-review__platform">{{ platform }}</span>
+            }
+            <span class="sprint-review__streaming-source"
+              >JustWatch · {{ streamingCheckedOn }}</span
+            >
+          </p>
+        </div>
+      </div>
     </div>
 
-    @if (remainingRankedFilms().length > 0) {
+    @if (otherRankedFilms().length > 0) {
       <ol class="sprint-review__others" aria-label="Reste du classement">
-        @for (rankedFilm of remainingRankedFilms(); track rankedFilm.filmRanking.film.id) {
+        @for (rankedFilm of otherRankedFilms(); track rankedFilm.filmRanking.film.id) {
           <li
             class="sprint-review__other"
+            [class.sprint-review__other--runner-up]="rankedFilm.rank <= runnerUpMaximumRank"
             [class.sprint-review__other--vetoed]="rankedFilm.filmRanking.isVetoed"
           >
             <span class="sprint-review__other-rank">{{ rankedFilm.rank }}.</span>

@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+.gothic-lettrine {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
