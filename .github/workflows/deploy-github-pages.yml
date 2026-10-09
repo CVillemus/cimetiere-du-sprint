@@ -38,11 +38,11 @@ jobs:
       - name: Copier index.html en 404.html
         run: cp dist/cimetiere-du-sprint/browser/index.html dist/cimetiere-du-sprint/browser/404.html
 
-      # Le teaser est partagé sur Messenger : son robot doit recevoir un code 200, pas la page 404.
-      - name: Créer la vraie page /teaser/
-        run: |
-          mkdir -p dist/cimetiere-du-sprint/browser/teaser
-          cp dist/cimetiere-du-sprint/browser/index.html dist/cimetiere-du-sprint/browser/teaser/index.html
+      # Le teaser est partagé sur Messenger, dont l'aperçu est généré sur le téléphone de l'expéditeur
+      # et ne suit pas les redirections. GitHub Pages sert teaser.html directement à l'adresse /teaser,
+      # en 200 et sans redirection (un dossier teaser/ provoquerait une redirection 301 vers /teaser/).
+      - name: Créer la vraie page /teaser
+        run: cp dist/cimetiere-du-sprint/browser/index.html dist/cimetiere-du-sprint/browser/teaser.html
 
       - uses: actions/upload-pages-artifact@v4
         with:
