@@ -123,7 +123,13 @@ export class BatSwarmTransition implements BatSwarmTransitionPlayer {
 
         context.clearRect(0, 0, GRID_WIDTH, this.gridHeight);
         if (progress < 1) {
-          this.paintVeil(context, batSwarmColors, swarmVeilAt(progress, GRID_WIDTH), direction);
+          this.paintVeil(
+            context,
+            batSwarmColors,
+            swarmVeilAt(progress, GRID_WIDTH),
+            progress,
+            direction,
+          );
           this.paintBats(context, batSwarmColors, progress, elapsedMilliseconds, direction);
           requestAnimationFrame(animateFrame);
         } else {
@@ -141,26 +147,30 @@ export class BatSwarmTransition implements BatSwarmTransitionPlayer {
     batSwarmCanvasElement.height = this.gridHeight;
   }
 
-  /** Voile sombre, tramé sur ses bords, avec un léger grain. */
+  /** Voile sombre au bord long et effiloché, avec un grain en petites touffes. */
   private paintVeil(
     context: CanvasRenderingContext2D,
     batSwarmColors: BatSwarmColors,
     swarmVeil: SwarmVeil,
+    progress: number,
     direction: BatSwarmDirection,
   ): void {
-    for (let columnX: number = 0; columnX < GRID_WIDTH; columnX++) {
-      const columnInFlightDirection: number =
-        direction === 'to-right' ? columnX : GRID_WIDTH - 1 - columnX;
-      const veilDensity: number = swarmVeilDensityAt(columnInFlightDirection, swarmVeil);
-      if (veilDensity <= 0) {
-        continue;
-      }
-      for (let rowY: number = 0; rowY < this.gridHeight; rowY++) {
-        const bayerThreshold: number = BAYER_THRESHOLDS[rowY % 4][columnX % 4];
-        if (bayerThreshold > veilDensity) {
+    for (let rowY: number = 0; rowY < this.gridHeight; rowY++) {
+      for (let columnX: number = 0; columnX < GRID_WIDTH; columnX++) {
+        const columnInFlightDirection: number =
+          direction === 'to-right' ? columnX : GRID_WIDTH - 1 - columnX;
+        const veilDensity: number = swarmVeilDensityAt(
+          columnInFlightDirection,
+          rowY,
+          swarmVeil,
+          progress,
+        );
+        if (veilDensity <= 0 || BAYER_THRESHOLDS[rowY % 4][columnX % 4] > veilDensity) {
           continue;
         }
-        const isTexturePixel: boolean = BAYER_THRESHOLDS[rowY % 4][(columnX + rowY) % 4] < 0.1;
+        // Touffes de 2×2 pixels plus sombres : de la matière, pas un aplat.
+        const isTexturePixel: boolean =
+          BAYER_THRESHOLDS[(rowY >> 1) % 4][((columnX >> 1) + (rowY >> 2)) % 4] < 0.15;
         context.fillStyle = isTexturePixel ? batSwarmColors.veilTexture : batSwarmColors.veil;
         context.fillRect(columnX, rowY, 1, 1);
       }
