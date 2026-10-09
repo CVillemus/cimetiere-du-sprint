@@ -1,8 +1,13 @@
 @if (triggerWarnings().length > 0) {
-  <ul class="trigger-warning-list" aria-label="Avertissements de contenu">
-    <li class="trigger-warning-list__icon" aria-hidden="true">⚠</li>
-    @for (triggerWarning of triggerWarnings(); track triggerWarning) {
-      <li class="trigger-warning-list__item">{{ triggerWarning }}</li>
+  <p class="trigger-warning-list">
+    <span class="trigger-warning-list__label"
+      ><span class="trigger-warning-list__icon" aria-hidden="true">⚠</span> Warning :</span
+    >
+    @for (triggerWarning of triggerWarnings(); track triggerWarning; let isLast = $last) {
+      <span class="trigger-warning-list__item">{{ triggerWarning }}</span>
+      @if (!isLast) {
+        <span class="trigger-warning-list__separator" aria-hidden="true">◆</span>
+      }
     }
-  </ul>
+  </p>
 }
