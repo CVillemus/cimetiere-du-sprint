@@ -78,6 +78,15 @@ svg {
   image-rendering: pixelated;
 }
 
+/*
+ * Focus clavier : un cadre bougie épais, décalé pour rester lisible sur tous les fonds
+ * (y compris sur le bouton bougie du téléphone). Invisible au clic souris ou au doigt.
+ */
+:focus-visible {
+  outline: 3px solid var(--color-candle-warning);
+  outline-offset: 3px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

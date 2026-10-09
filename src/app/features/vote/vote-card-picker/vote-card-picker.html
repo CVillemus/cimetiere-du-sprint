@@ -1,12 +1,15 @@
 <div class="vote-card-picker" role="radiogroup" aria-label="Ton vote">
   @for (voteCard of voteCards; track voteCard.score) {
     <button
+      #voteCardButton
       type="button"
       role="radio"
       class="vote-card"
       [class.vote-card--selected]="voteCard.score === selectedScore()"
       [attr.aria-checked]="voteCard.score === selectedScore()"
+      [attr.tabindex]="voteCard.score === focusableScore() ? 0 : -1"
       (click)="selectVoteCard(voteCard)"
+      (keydown)="selectVoteCardWithArrows($event, $index)"
     >
       <span class="vote-card__score">{{ voteCard.score }}</span>
       <app-pixel-icon class="vote-card__icon" [iconGrid]="voteCard.iconGrid" />

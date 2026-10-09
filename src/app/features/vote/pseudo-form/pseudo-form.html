@@ -6,14 +6,18 @@
     type="text"
     autocomplete="nickname"
     placeholder="Morticia"
+    aria-describedby="pseudo-errors"
+    [attr.aria-invalid]="pseudoForm.pseudo().touched() && pseudoForm.pseudo().invalid()"
     [formField]="pseudoForm.pseudo"
   />
 
-  @if (pseudoForm.pseudo().touched()) {
-    @for (pseudoError of pseudoForm.pseudo().errors(); track pseudoError.kind) {
-      <p class="pseudo-form__error">{{ pseudoError.message }}</p>
+  <div id="pseudo-errors" aria-live="polite">
+    @if (pseudoForm.pseudo().touched()) {
+      @for (pseudoError of pseudoForm.pseudo().errors(); track pseudoError.kind) {
+        <p class="pseudo-form__error">{{ pseudoError.message }}</p>
+      }
     }
-  }
+  </div>
 
   <button class="pseudo-form__submit" type="submit" [disabled]="pseudoForm().submitting()">
     @if (pseudoForm().submitting()) {
