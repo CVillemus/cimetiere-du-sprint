@@ -1,10 +1,8 @@
-import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   effect,
   ElementRef,
-  inject,
   input,
   InputSignal,
   Signal,
@@ -12,6 +10,7 @@ import {
 } from '@angular/core';
 import { PixelPainter } from '../../../../shared/pixel-art/pixel-painter';
 import { prefersReducedMotion } from '../../../../shared/utils/prefers-reduced-motion';
+import { pickSnakeSkin, SnakeSkin } from './snake-skins';
 import { GridCell, SnakeDirection, SnakeWanderer } from './snake-wanderer';
 
 /** Grille de 64×36 cases de 2×2 pixels : un canvas de 128×72. */
@@ -31,20 +30,12 @@ const PAUSE_PROBABILITY_PER_STEP: number = 0.02;
 const MAXIMUM_PAUSE_STEP_COUNT: number = 15;
 const TONGUE_PROBABILITY_PER_STEP: number = 0.1;
 
-interface SnakeColors {
-  readonly body: string;
-  readonly belly: string;
-  readonly head: string;
-  readonly eye: string;
-  readonly tongue: string;
-}
-
 function randomDurationBetween(minimumDuration: number, maximumDuration: number): number {
   return minimumDuration + Math.random() * (maximumDuration - minimumDuration);
 }
 
 /**
- * Un serpent pixel qui rôde en fond de l'écran du QR code.
+ * Un serpent pixel qui rôde en fond de l'écran du QR code, avec une robe tirée au sort à chaque apparition.
  * Il apparaît 15 s après l'arrivée sur l'écran, se promène, file par un bord,
  * puis revient à un moment imprévisible.
  */
@@ -55,8 +46,6 @@ function randomDurationBetween(minimumDuration: number, maximumDuration: number)
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IntroSnake {
-  private readonly document: Document = inject(DOCUMENT);
-
   /** Le serpent ne vit que quand l'écran du QR code est affiché. */
   readonly isActive: InputSignal<boolean> = input.required<boolean>();
 
@@ -88,12 +77,14 @@ export class IntroSnake {
   /** Lance la boucle de vie du serpent ; renvoie la fonction qui arrête tout. */
   private startSnakeLife(snakePainter: PixelPainter): () => void {
     const snakeWanderer: SnakeWanderer = new SnakeWanderer(GRID_COLUMNS, GRID_ROWS, SNAKE_LENGTH);
-    const snakeColors: SnakeColors = this.readSnakeColors();
+    let snakeSkin: SnakeSkin = pickSnakeSkin(Math.random());
     let remainingPauseSteps: number = 0;
     let phaseTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
     const scheduleAppearance = (delayInMilliseconds: number): void => {
       phaseTimeoutId = setTimeout(() => {
+        // Nouvelle apparition, nouvelle robe.
+        snakeSkin = pickSnakeSkin(Math.random());
         snakeWanderer.enterFromRandomEdge();
         phaseTimeoutId = setTimeout(
           () => snakeWanderer.startLeaving(),
@@ -118,7 +109,7 @@ export class IntroSnake {
       }
 
       snakeWanderer.advance();
-      this.paintSnake(snakePainter, snakeWanderer, snakeColors);
+      this.paintSnake(snakePainter, snakeWanderer, snakeSkin);
 
       if (snakeWanderer.isHidden()) {
         scheduleAppearance(
@@ -143,7 +134,7 @@ export class IntroSnake {
   private paintSnake(
     snakePainter: PixelPainter,
     snakeWanderer: SnakeWanderer,
-    snakeColors: SnakeColors,
+    snakeSkin: SnakeSkin,
   ): void {
     snakePainter.clear();
     const bodySegments: readonly GridCell[] = snakeWanderer.bodySegments;
@@ -152,7 +143,8 @@ export class IntroSnake {
     for (let segmentIndex: number = bodySegments.length - 1; segmentIndex > 0; segmentIndex--) {
       const segment: GridCell = bodySegments[segmentIndex];
       const isTailTip: boolean = segmentIndex === bodySegments.length - 1;
-      const segmentColor: string = segmentIndex % 2 === 0 ? snakeColors.body : snakeColors.belly;
+      const segmentColor: string =
+        snakeSkin.ringColors[(segmentIndex - 1) % snakeSkin.ringColors.length];
       if (isTailTip) {
         snakePainter.fillPixel(segment.column * CELL_SIZE, segment.row * CELL_SIZE, segmentColor);
       } else {
@@ -172,15 +164,15 @@ export class IntroSnake {
     }
     const headX: number = headCell.column * CELL_SIZE;
     const headY: number = headCell.row * CELL_SIZE;
-    snakePainter.fillRect(headX, headY, CELL_SIZE, CELL_SIZE, snakeColors.head);
-    snakePainter.fillPixel(headX, headY, snakeColors.eye);
+    snakePainter.fillRect(headX, headY, CELL_SIZE, CELL_SIZE, snakeSkin.headColor);
+    snakePainter.fillPixel(headX, headY, snakeSkin.eyeColor);
 
     if (Math.random() < TONGUE_PROBABILITY_PER_STEP) {
       const tongueOffset: GridCell = this.tongueOffset(snakeWanderer.headDirection);
       snakePainter.fillPixel(
         headX + tongueOffset.column,
         headY + tongueOffset.row,
-        snakeColors.tongue,
+        snakeSkin.tongueColor,
       );
     }
   }
@@ -197,18 +189,5 @@ export class IntroSnake {
       case 'right':
         return { column: CELL_SIZE, row: 0 };
     }
-  }
-
-  private readSnakeColors(): SnakeColors {
-    const rootStyles: CSSStyleDeclaration = getComputedStyle(this.document.documentElement);
-    const readColor = (variableName: string): string =>
-      rootStyles.getPropertyValue(variableName).trim();
-    return {
-      body: readColor('--color-snake-body'),
-      belly: readColor('--color-snake-belly'),
-      head: readColor('--color-snake-head'),
-      eye: readColor('--color-snake-eye'),
-      tongue: readColor('--color-snake-tongue'),
-    };
   }
 }
