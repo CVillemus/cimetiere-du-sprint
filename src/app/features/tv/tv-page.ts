@@ -1,30 +1,29 @@
-import {
-  afterRenderEffect,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  inject,
-  Signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { TvNavigationStore } from '../../core/navigation/tv-navigation.store';
 import { TvSection } from '../../core/navigation/tv-section.model';
 import { FilmSection } from './film-section/film-section';
 import { IntroSection } from './intro-section/intro-section';
+import { PixelDripTransition } from './pixel-drip-transition/pixel-drip-transition';
+import { PixelDripTransitionService } from './pixel-drip-transition/pixel-drip-transition.service';
 import { SectionProgress } from './section-progress/section-progress';
 import { SprintReviewSection } from './sprint-review-section/sprint-review-section';
+import { TvNavigator } from './tv-navigator/tv-navigator';
+
+/** Un geste de trackpad envoie des dizaines d'événements : on n'en garde qu'un par transition. */
+const WHEEL_NAVIGATION_COOLDOWN_IN_MILLISECONDS: number = 1500;
+/** En dessous, c'est un effleurement de trackpad, pas une intention de navigation. */
+const MINIMUM_WHEEL_DELTA: number = 15;
 
 /**
- * Page projetée sur la TV : 12 sections plein écran avec scroll vertical aimanté.
+ * Page projetée sur la TV : 12 sections plein écran.
  *
- * Le store décide de la section courante, le scroll suit :
- * - clavier → méthode du store → signal → `afterRenderEffect` fait défiler ;
- * - molette → `scroll-snap` CSS → `scrollend` → `syncSectionFromScroll()`.
- * On écoute `scrollend` (et pas `scroll`) pour ne jamais signaler les sections traversées.
+ * Il n'y a plus de scroll : la piste des sections est simplement translatée selon la section
+ * courante du store. Clavier, molette et clics passent par le `TvNavigator`, qui joue chaque
+ * changement derrière la coulure de pixels.
  */
 @Component({
   selector: 'app-tv-page',
-  imports: [IntroSection, FilmSection, SprintReviewSection, SectionProgress],
+  imports: [IntroSection, FilmSection, SprintReviewSection, SectionProgress, PixelDripTransition],
   templateUrl: './tv-page.html',
   styleUrl: './tv-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,58 +31,73 @@ import { SprintReviewSection } from './sprint-review-section/sprint-review-secti
 })
 export class TvPage {
   private readonly tvNavigationStore: TvNavigationStore = inject(TvNavigationStore);
+  private readonly tvNavigator: TvNavigator = inject(TvNavigator);
+  private readonly pixelDripTransitionService: PixelDripTransitionService = inject(
+    PixelDripTransitionService,
+  );
+
+  private lastWheelNavigationTimestamp: number = 0;
 
   protected readonly sections: readonly TvSection[] = this.tvNavigationStore.sections;
   protected readonly currentSectionIndex: Signal<number> =
     this.tvNavigationStore.currentSectionIndex;
 
-  private readonly sectionScroller: Signal<ElementRef<HTMLElement>> =
-    viewChild.required<ElementRef<HTMLElement>>('sectionScroller');
-
-  constructor() {
-    afterRenderEffect(() => {
-      const sectionScrollerElement: HTMLElement = this.sectionScroller().nativeElement;
-      const targetScrollTop: number =
-        this.currentSectionIndex() * sectionScrollerElement.clientHeight;
-      if (Math.abs(sectionScrollerElement.scrollTop - targetScrollTop) < 1) {
-        return;
-      }
-      sectionScrollerElement.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
-    });
-  }
-
-  /** Fin d'un scroll vertical manuel : on informe le store de la section visible. */
-  protected handleSectionScrollEnd(): void {
-    const sectionScrollerElement: HTMLElement = this.sectionScroller().nativeElement;
-    const visibleSectionIndex: number = Math.round(
-      sectionScrollerElement.scrollTop / sectionScrollerElement.clientHeight,
-    );
-    this.tvNavigationStore.syncSectionFromScroll(visibleSectionIndex);
-  }
+  protected readonly sectionTrackTransform: Signal<string> = computed(
+    (): string => `translateY(calc(-100dvh * ${this.currentSectionIndex()}))`,
+  );
 
   protected handleKeyboardNavigation(keyboardEvent: KeyboardEvent): void {
     switch (keyboardEvent.key) {
       case 'ArrowDown':
       case 'PageDown':
-        this.tvNavigationStore.goToNextSection();
+        this.tvNavigator.navigateToNextSection();
         break;
       case 'ArrowUp':
       case 'PageUp':
-        this.tvNavigationStore.goToPreviousSection();
+        this.tvNavigator.navigateToPreviousSection();
         break;
       case 'ArrowRight':
-        this.tvNavigationStore.goToNextSlide();
+        this.tvNavigator.navigateToNextSlide();
         break;
       case 'ArrowLeft':
-        this.tvNavigationStore.goToPreviousSlide();
+        this.tvNavigator.navigateToPreviousSlide();
         break;
       case 'Escape':
-        this.tvNavigationStore.goToIntroSection();
+        this.tvNavigator.navigateToIntroSection();
         break;
       default:
         return;
     }
-    // On empêche le scroll natif du navigateur : c'est le store qui pilote.
     keyboardEvent.preventDefault();
+  }
+
+  /** Un cran de molette = une section (ou une slide si le geste est horizontal). */
+  protected handleWheelNavigation(wheelEvent: WheelEvent): void {
+    wheelEvent.preventDefault();
+    const isWithinCooldown: boolean =
+      wheelEvent.timeStamp - this.lastWheelNavigationTimestamp <
+      WHEEL_NAVIGATION_COOLDOWN_IN_MILLISECONDS;
+    if (this.pixelDripTransitionService.isPlaying() || isWithinCooldown) {
+      return;
+    }
+
+    const isHorizontalGesture: boolean = Math.abs(wheelEvent.deltaX) > Math.abs(wheelEvent.deltaY);
+    const dominantDelta: number = isHorizontalGesture ? wheelEvent.deltaX : wheelEvent.deltaY;
+    if (Math.abs(dominantDelta) < MINIMUM_WHEEL_DELTA) {
+      return;
+    }
+
+    this.lastWheelNavigationTimestamp = wheelEvent.timeStamp;
+    if (isHorizontalGesture) {
+      if (dominantDelta > 0) {
+        this.tvNavigator.navigateToNextSlide();
+      } else {
+        this.tvNavigator.navigateToPreviousSlide();
+      }
+    } else if (dominantDelta > 0) {
+      this.tvNavigator.navigateToNextSection();
+    } else {
+      this.tvNavigator.navigateToPreviousSection();
+    }
   }
 }

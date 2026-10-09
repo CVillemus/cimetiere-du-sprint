@@ -1,0 +1,15 @@
+<svg
+  [class]="'pixel-backdrop pixel-backdrop--' + backdropKind()"
+  [attr.viewBox]="viewBox()"
+  shape-rendering="crispEdges"
+  aria-hidden="true"
+>
+  @if (backdropDefinition().hangsFromThread) {
+    <g class="pixel-backdrop__hanging">
+      <rect [attr.x]="threadX()" [attr.y]="threadTopY" width="1" [attr.height]="threadHeight" />
+      <path [attr.d]="currentFramePath()" />
+    </g>
+  } @else {
+    <path [attr.d]="currentFramePath()" />
+  }
+</svg>

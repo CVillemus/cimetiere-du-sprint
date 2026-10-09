@@ -26,6 +26,12 @@
   --color-warning-background: #1a1610;
   --color-warning-border: #6b5a2e;
 
+  /* Transition « sang séché » */
+  --color-drip-body: #140a10;
+  --color-drip-texture: #1c0d15;
+  --color-drip-edge: #2e1019;
+  --color-drip-gloss: #5a2230;
+
   /* Décors pixel */
   --color-hills: #211d36;
   --color-tree-silhouette: #110f1f;

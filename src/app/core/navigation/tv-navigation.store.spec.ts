@@ -53,11 +53,11 @@ describe('TvNavigationStore', () => {
     expect(tvNavigationStore.currentSlideIndex()).toBe(0);
   });
 
-  it('should keep the slide when the scroll sync reports the current section again', () => {
+  it('should keep the slide when asked to go to the current section again', () => {
     tvNavigationStore.goToNextSection();
     tvNavigationStore.goToNextSlide();
 
-    tvNavigationStore.syncSectionFromScroll(1);
+    tvNavigationStore.goToSection(1);
 
     expect(tvNavigationStore.currentSlideKind()).toBe('trailer');
   });

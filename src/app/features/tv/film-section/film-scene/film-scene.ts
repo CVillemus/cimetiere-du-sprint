@@ -1,8 +1,25 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import {
+  afterRenderEffect,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  input,
+  InputSignal,
+  Signal,
+  viewChild,
+} from '@angular/core';
+import { FilmId } from '../../../../core/films/film.model';
+import { PixelPainter } from '../../../../shared/pixel-art/pixel-painter';
+import {
+  FILM_SCENE_HEIGHT,
+  FILM_SCENE_WIDTH,
+  FilmScenePainter,
+} from './scenes/film-scene-painter.model';
+import { FILM_SCENE_PAINTERS } from './scenes/film-scene-painters';
 
 /**
- * Décor pixel art à droite du panneau texte.
- * Étape 2 : un cimetière générique avec le numéro de la tombe. Étape 3 : un décor par film.
+ * Décor pixel art d'un film, dessiné sur deux canvas superposés :
+ * le décor fixe, et un calque de lumières qui vacille en CSS.
  */
 @Component({
   selector: 'app-film-scene',
@@ -11,5 +28,32 @@ import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilmScene {
-  readonly tombNumber: InputSignal<number> = input.required<number>();
+  readonly filmId: InputSignal<FilmId> = input.required<FilmId>();
+
+  protected readonly sceneWidth: number = FILM_SCENE_WIDTH;
+  protected readonly sceneHeight: number = FILM_SCENE_HEIGHT;
+
+  private readonly sceneCanvas: Signal<ElementRef<HTMLCanvasElement>> =
+    viewChild.required<ElementRef<HTMLCanvasElement>>('sceneCanvas');
+  private readonly lightCanvas: Signal<ElementRef<HTMLCanvasElement>> =
+    viewChild.required<ElementRef<HTMLCanvasElement>>('lightCanvas');
+
+  constructor() {
+    // Redessine uniquement quand le film change (seul signal lu ici).
+    afterRenderEffect(() => {
+      const paintFilmScene: FilmScenePainter = FILM_SCENE_PAINTERS[this.filmId()];
+      const scenePainter: PixelPainter | null = PixelPainter.fromCanvas(
+        this.sceneCanvas().nativeElement,
+      );
+      const lightPainter: PixelPainter | null = PixelPainter.fromCanvas(
+        this.lightCanvas().nativeElement,
+      );
+      if (scenePainter === null || lightPainter === null) {
+        return;
+      }
+      scenePainter.clear();
+      lightPainter.clear();
+      paintFilmScene(scenePainter, lightPainter);
+    });
+  }
 }

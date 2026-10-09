@@ -1,23 +1,26 @@
-<main class="tv-page" #sectionScroller (scrollend)="handleSectionScrollEnd()">
-  @for (section of sections; track $index; let sectionIndex = $index) {
-    <section class="tv-page__section">
-      @switch (section.kind) {
-        @case ('intro') {
-          <app-intro-section />
+<main class="tv-page" (wheel)="handleWheelNavigation($event)">
+  <div class="tv-page__track" [style.transform]="sectionTrackTransform()">
+    @for (section of sections; track $index; let sectionIndex = $index) {
+      <section class="tv-page__section" [attr.aria-hidden]="sectionIndex !== currentSectionIndex()">
+        @switch (section.kind) {
+          @case ('intro') {
+            <app-intro-section />
+          }
+          @case ('film') {
+            <app-film-section
+              [film]="section.film"
+              [tombNumber]="section.tombNumber"
+              [isCurrentSection]="sectionIndex === currentSectionIndex()"
+            />
+          }
+          @case ('sprint-review') {
+            <app-sprint-review-section />
+          }
         }
-        @case ('film') {
-          <app-film-section
-            [film]="section.film"
-            [tombNumber]="section.tombNumber"
-            [isCurrentSection]="sectionIndex === currentSectionIndex()"
-          />
-        }
-        @case ('sprint-review') {
-          <app-sprint-review-section />
-        }
-      }
-    </section>
-  }
+      </section>
+    }
+  </div>
 </main>
 
 <app-section-progress />
+<app-pixel-drip-transition />

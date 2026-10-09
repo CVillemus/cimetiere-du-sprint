@@ -1,5 +1,5 @@
 <div class="film-panel">
-  <app-skull-backdrop />
+  <app-pixel-backdrop [backdropKind]="backdropKind()" />
 
   <div class="film-panel__content">
     <p class="film-panel__tomb-label">Tombe {{ tombNumber() }} / {{ filmCount() }}</p>
@@ -22,5 +22,5 @@
 </div>
 
 <div class="film-scene-frame">
-  <app-film-scene [tombNumber]="tombNumber()" />
+  <app-film-scene [filmId]="film().id" />
 </div>

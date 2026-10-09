@@ -8,7 +8,11 @@ import {
 } from '@angular/core';
 import { Film } from '../../../../core/films/film.model';
 import { IntensityMeter } from '../../../../shared/components/intensity-meter/intensity-meter';
-import { SkullBackdrop } from '../../../../shared/components/skull-backdrop/skull-backdrop';
+import { PixelBackdrop } from '../../../../shared/components/pixel-backdrop/pixel-backdrop';
+import {
+  PIXEL_BACKDROP_ROTATION,
+  PixelBackdropKind,
+} from '../../../../shared/components/pixel-backdrop/pixel-backdrop.definitions';
 import { TriggerWarningList } from '../../../../shared/components/trigger-warning-list/trigger-warning-list';
 import { FilmScene } from '../film-scene/film-scene';
 
@@ -18,7 +22,7 @@ import { FilmScene } from '../film-scene/film-scene';
  */
 @Component({
   selector: 'app-film-panel-layout',
-  imports: [SkullBackdrop, IntensityMeter, TriggerWarningList, FilmScene],
+  imports: [PixelBackdrop, IntensityMeter, TriggerWarningList, FilmScene],
   templateUrl: './film-panel-layout.html',
   styleUrl: './film-panel-layout.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,4 +43,10 @@ export class FilmPanelLayout {
     const minutes: string = String(durationInMinutes % 60).padStart(2, '0');
     return `${hours}h${minutes}`;
   });
+
+  /** Les fonds alternent d'un film à l'autre : crâne, tête de mort, arbre, corbeau, araignée… */
+  protected readonly backdropKind: Signal<PixelBackdropKind> = computed(
+    (): PixelBackdropKind =>
+      PIXEL_BACKDROP_ROTATION[(this.tombNumber() - 1) % PIXEL_BACKDROP_ROTATION.length],
+  );
 }

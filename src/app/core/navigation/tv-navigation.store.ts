@@ -7,8 +7,8 @@ import { FILM_SLIDE_ORDER, FilmSlideKind, TvSection } from './tv-section.model';
  * Source de vérité unique de la position sur la TV : quelle section verticale, quelle slide horizontale.
  *
  * Les composants lisent des Signal en lecture seule et agissent via des méthodes nommées.
- * Le DOM (scroll) est une conséquence de cet état, jamais l'inverse : quand l'utilisateur
- * fait défiler à la molette, le composant appelle `syncSectionFromScroll()` à la fin du scroll.
+ * L'affichage (translation des pistes) est une conséquence de cet état, jamais l'inverse.
+ * Côté TV, on ne l'appelle pas directement : on passe par le `TvNavigator`, qui ajoute la transition.
  */
 @Injectable({ providedIn: 'root' })
 export class TvNavigationStore {
@@ -79,16 +79,6 @@ export class TvNavigationStore {
 
   goToPreviousSlide(): void {
     this.goToSlide(this.currentSlideIndexState() - 1);
-  }
-
-  /** Appelé quand un scroll vertical manuel (molette, trackpad) se termine. */
-  syncSectionFromScroll(sectionIndex: number): void {
-    this.goToSection(sectionIndex);
-  }
-
-  /** Appelé quand un scroll horizontal manuel se termine dans le film courant. */
-  syncSlideFromScroll(slideIndex: number): void {
-    this.goToSlide(slideIndex);
   }
 
   private clampIndex(index: number, itemCount: number): number {

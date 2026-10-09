@@ -2,15 +2,9 @@
   height: 100dvh;
   /* Laisse la place au rail de progression fixé à droite. */
   margin-right: 2.2vw;
-  overflow-x: hidden;
-  overflow-y: auto;
-  scroll-snap-type: y mandatory;
-  scrollbar-width: none;
+  overflow: hidden;
 }
 
 .tv-page__section {
   height: 100dvh;
-  scroll-snap-align: start;
-  /* Un coup de molette = une section, même avec un trackpad nerveux. */
-  scroll-snap-stop: always;
 }

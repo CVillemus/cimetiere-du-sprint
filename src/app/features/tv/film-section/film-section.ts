@@ -1,14 +1,11 @@
 import {
-  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
-  ElementRef,
   inject,
   input,
   InputSignal,
   Signal,
-  viewChild,
 } from '@angular/core';
 import { Film } from '../../../core/films/film.model';
 import {
@@ -17,6 +14,7 @@ import {
   FilmSlideKind,
 } from '../../../core/navigation/tv-section.model';
 import { TvNavigationStore } from '../../../core/navigation/tv-navigation.store';
+import { TvNavigator } from '../tv-navigator/tv-navigator';
 import { PressSlide } from './press-slide/press-slide';
 import { SummarySlide } from './summary-slide/summary-slide';
 import { TrailerSlide } from './trailer-slide/trailer-slide';
@@ -27,8 +25,8 @@ interface FilmSlideTab {
 }
 
 /**
- * Une section verticale « film » : contient le carrousel horizontal Résumé → Trailer → Presse.
- * Même principe que la TvPage, sur l'axe horizontal : le store décide, le scroll suit.
+ * Une section verticale « film » : le carrousel horizontal Résumé → Trailer → Presse.
+ * La piste des slides est translatée selon la slide active du store.
  */
 @Component({
   selector: 'app-film-section',
@@ -39,6 +37,7 @@ interface FilmSlideTab {
 })
 export class FilmSection {
   private readonly tvNavigationStore: TvNavigationStore = inject(TvNavigationStore);
+  private readonly tvNavigator: TvNavigator = inject(TvNavigator);
 
   readonly film: InputSignal<Film> = input.required<Film>();
   readonly tombNumber: InputSignal<number> = input.required<number>();
@@ -63,37 +62,11 @@ export class FilmSection {
       this.isCurrentSection() && FILM_SLIDE_ORDER[this.activeSlideIndex()] === 'trailer',
   );
 
-  private readonly slideTrack: Signal<ElementRef<HTMLElement>> =
-    viewChild.required<ElementRef<HTMLElement>>('slideTrack');
-
-  constructor() {
-    afterRenderEffect(() => {
-      const slideTrackElement: HTMLElement = this.slideTrack().nativeElement;
-      const targetScrollLeft: number = this.activeSlideIndex() * slideTrackElement.clientWidth;
-      if (Math.abs(slideTrackElement.scrollLeft - targetScrollLeft) < 1) {
-        return;
-      }
-      slideTrackElement.scrollTo({
-        left: targetScrollLeft,
-        // Hors écran, on revient au Résumé sans animation.
-        behavior: this.isCurrentSection() ? 'smooth' : 'instant',
-      });
-    });
-  }
+  protected readonly slideTrackTransform: Signal<string> = computed(
+    (): string => `translateX(${-100 * this.activeSlideIndex()}%)`,
+  );
 
   protected selectSlide(slideIndex: number): void {
-    this.tvNavigationStore.goToSlide(slideIndex);
-  }
-
-  /** Fin d'un scroll horizontal manuel (trackpad, swipe) : on informe le store. */
-  protected handleSlideTrackScrollEnd(): void {
-    if (!this.isCurrentSection()) {
-      return;
-    }
-    const slideTrackElement: HTMLElement = this.slideTrack().nativeElement;
-    const visibleSlideIndex: number = Math.round(
-      slideTrackElement.scrollLeft / slideTrackElement.clientWidth,
-    );
-    this.tvNavigationStore.syncSlideFromScroll(visibleSlideIndex);
+    this.tvNavigator.navigateToSlide(slideIndex);
   }
 }

@@ -1,4 +1,4 @@
-<div class="film-section__track" #slideTrack (scrollend)="handleSlideTrackScrollEnd()">
+<div class="film-section__track" [style.transform]="slideTrackTransform()">
   <div class="film-section__slide">
     <app-summary-slide [film]="film()" [tombNumber]="tombNumber()" [filmCount]="filmCount" />
   </div>

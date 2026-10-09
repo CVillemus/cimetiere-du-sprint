@@ -1,0 +1,57 @@
+:host {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pixel-backdrop {
+  position: absolute;
+  fill: var(--color-void);
+  opacity: var(--skull-opacity);
+}
+
+.pixel-backdrop--skull {
+  right: -8%;
+  bottom: -12%;
+  width: 70%;
+}
+
+.pixel-backdrop--jolly-roger {
+  right: -4%;
+  bottom: -6%;
+  width: 62%;
+}
+
+.pixel-backdrop--dead-tree {
+  right: -6%;
+  bottom: 0;
+  width: 66%;
+}
+
+.pixel-backdrop--raven {
+  right: -4%;
+  bottom: 6%;
+  width: 62%;
+}
+
+.pixel-backdrop--spider {
+  top: 0;
+  right: 10%;
+  width: 22%;
+}
+
+.pixel-backdrop__hanging {
+  animation: pixel-backdrop-spider-drop 9s ease-in-out infinite;
+}
+
+/* Les valeurs en px sont des unités du viewBox : 1px = 1 pixel « art ». */
+@keyframes pixel-backdrop-spider-drop {
+  0%,
+  100% {
+    transform: translateY(3px);
+  }
+  50% {
+    transform: translateY(17px);
+  }
+}

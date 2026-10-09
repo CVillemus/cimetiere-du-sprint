@@ -2,22 +2,17 @@
   position: relative;
   display: block;
   height: 100%;
+  overflow: hidden;
 }
 
 .film-section__track {
   display: flex;
   height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
 }
 
 .film-section__slide {
   flex: 0 0 100%;
   height: 100%;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 .film-section__tabs {

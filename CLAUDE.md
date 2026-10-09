@@ -25,8 +25,16 @@ Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 
 - **Lisibilité** : `films.length > 0` plutôt que `!films.length`.
 - **Template d'une resource** : `hasValue()` → `error()` → sinon chargement.
 - **Lazy loading** : chaque page passe par `loadComponent`.
-- **Couleurs** : uniquement via les variables CSS de `src/styles.css`.
+- **Couleurs** : uniquement via les variables CSS de `src/styles.css`. Seule exception : les fichiers `*.scene.ts`, qui sont des illustrations pixel art et gardent leur palette avec le dessin.
 - Nommage des fichiers selon le style guide Angular actuel : `tv-page.ts` / classe `TvPage`.
+
+## Navigation de la TV
+
+- `TvNavigationStore` (core) est la seule source de vérité : section courante, slide courante.
+- Aucun scroll natif : les pistes de sections et de slides sont translatées en CSS selon le store.
+- Clavier, molette et clics passent par `TvNavigator`, qui joue chaque changement derrière la transition `PixelDripTransition` (coulure de pixels, 1,2 s, teinte « sang séché »).
+- Les décors sont dessinés sur `<canvas>` (128×96) avec `PixelPainter` ; les lumières sont sur un second canvas qui vacille.
+- Les fonds des panneaux (`PixelBackdrop`) alternent crâne, tête de mort, arbre mort, corbeau, araignée, avec une animation « idle ».
 
 ## Arborescence
 
