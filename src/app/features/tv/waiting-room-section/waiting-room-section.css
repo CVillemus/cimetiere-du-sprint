@@ -1,0 +1,105 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.waiting-room {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4vw;
+  height: 100%;
+  padding: 3vw 6vw;
+  text-align: center;
+}
+
+.waiting-room__eyebrow {
+  margin: 0;
+  font-family: var(--font-pixel-label);
+  font-size: 1.1vw;
+  color: var(--color-violet-muted);
+}
+
+.waiting-room__title {
+  margin: 0;
+  font-size: 4.2vw;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.waiting-room__tagline {
+  margin: 0.4vw 0 0;
+  font-size: 1.6vw;
+  color: var(--color-candle);
+}
+
+.waiting-room__board {
+  position: relative;
+}
+
+/* Le plateau garde ses proportions (31 × 16) et ses pixels nets. */
+.waiting-room__canvas {
+  display: block;
+  width: min(72vw, 125vh);
+  height: auto;
+  image-rendering: pixelated;
+}
+
+.waiting-room__game-over {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-family: var(--font-pixel-label);
+  font-size: 4vw;
+  color: var(--color-gore-text);
+  text-shadow: 0.3vw 0.3vw 0 var(--color-night-deep);
+}
+
+.waiting-room__score {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5vw;
+  margin: 0;
+  font-family: var(--font-pixel-label);
+  font-size: 1.2vw;
+  color: var(--color-bone-muted);
+}
+
+.waiting-room__score strong {
+  font-size: 2vw;
+  color: var(--color-candle);
+}
+
+.waiting-room__best {
+  color: var(--color-violet-muted);
+}
+
+.waiting-room__demo {
+  padding: 0.2vw 0.6vw;
+  border: 0.15vw solid var(--color-violet);
+  color: var(--color-violet-muted);
+  animation: waiting-room-blink 1.4s steps(2) infinite;
+}
+
+.waiting-room__hint {
+  margin: 0;
+  font-family: var(--font-pixel-label);
+  font-size: 0.9vw;
+  color: var(--color-violet-muted);
+}
+
+@keyframes waiting-room-blink {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waiting-room__demo {
+    animation: none;
+  }
+}

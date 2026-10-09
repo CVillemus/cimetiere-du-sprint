@@ -1,0 +1,30 @@
+<div class="waiting-room">
+  <header class="waiting-room__header">
+    <p class="waiting-room__eyebrow">Avant la soirée</p>
+    <h2 class="waiting-room__title">Salle d'attente</h2>
+    <p class="waiting-room__tagline">Les âmes arrivent… En attendant, nourris le serpent.</p>
+  </header>
+
+  <div class="waiting-room__board">
+    <canvas
+      #boardCanvas
+      class="waiting-room__canvas"
+      [width]="canvasWidth"
+      [height]="canvasHeight"
+      role="img"
+      aria-label="Partie de Snake : le serpent du cimetière dévore des âmes"
+    ></canvas>
+    @if (isGameOver()) {
+      <p class="waiting-room__game-over" aria-live="polite">Croqué !</p>
+    }
+  </div>
+
+  <p class="waiting-room__score">
+    Âmes dévorées <strong>{{ score() }}</strong>
+    <span class="waiting-room__best">Record {{ bestScore() }}</span>
+    @if (isDemo()) {
+      <span class="waiting-room__demo">Démo</span>
+    }
+  </p>
+  <p class="waiting-room__hint">← ↑ → ↓ pour jouer · Entrée pour ouvrir le cimetière</p>
+</div>

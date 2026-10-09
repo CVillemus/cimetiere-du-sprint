@@ -14,12 +14,20 @@ import { TvSection } from '../../core/navigation/tv-section.model';
 import { BatSwarmTransition } from './bat-swarm-transition/bat-swarm-transition';
 import { FilmSection } from './film-section/film-section';
 import { IntroSection } from './intro-section/intro-section';
+import { WaitingRoomSection } from './waiting-room-section/waiting-room-section';
 import { PixelDripTransition } from '../../shared/components/pixel-drip-transition/pixel-drip-transition';
 import { PixelDripTransitionService } from '../../shared/components/pixel-drip-transition/pixel-drip-transition.service';
 import { SectionProgress } from './section-progress/section-progress';
 import { SprintReviewSection } from './sprint-review-section/sprint-review-section';
 import { TvNavigator } from './tv-navigator/tv-navigator';
 
+/** Touches réservées au serpent de la salle d'attente (gérées par le composant du jeu). */
+const WAITING_ROOM_SNAKE_KEYS: Readonly<Record<string, true>> = {
+  ArrowUp: true,
+  ArrowDown: true,
+  ArrowLeft: true,
+  ArrowRight: true,
+};
 /** Un geste de trackpad envoie des dizaines d'événements : on n'en garde qu'un par transition. */
 const WHEEL_NAVIGATION_COOLDOWN_IN_MILLISECONDS: number = 1000;
 /** En dessous, c'est un effleurement de trackpad, pas une intention de navigation. */
@@ -35,6 +43,7 @@ const MINIMUM_WHEEL_DELTA: number = 15;
 @Component({
   selector: 'app-tv-page',
   imports: [
+    WaitingRoomSection,
     IntroSection,
     FilmSection,
     SprintReviewSection,
@@ -84,6 +93,17 @@ export class TvPage {
 
   protected handleKeyboardNavigation(keyboardEvent: KeyboardEvent): void {
     this.tvSoundDesign.wakeUp();
+    // Salle d'attente : les flèches pilotent le serpent, Entrée ouvre le cimetière.
+    if (this.tvNavigationStore.currentSection().kind === 'waiting-room') {
+      if (keyboardEvent.key in WAITING_ROOM_SNAKE_KEYS) {
+        return;
+      }
+      if (keyboardEvent.key === 'Enter') {
+        keyboardEvent.preventDefault();
+        this.tvNavigator.navigateToNextSection();
+        return;
+      }
+    }
     switch (keyboardEvent.key) {
       case 'ArrowDown':
       case 'PageDown':

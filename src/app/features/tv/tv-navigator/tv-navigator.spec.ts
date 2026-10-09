@@ -8,6 +8,9 @@ import { TvNavigator } from './tv-navigator';
  * Sans composant de transition enregistré, la navigation s'applique immédiatement.
  * La séance de vote n'est pas démarrée : personne n'est inscrit, la slide Vote reste verrouillée.
  */
+/** Salle d'attente, puis intro, puis le premier film. */
+const FIRST_FILM_SECTION_INDEX: number = 2;
+
 describe('TvNavigator', () => {
   let tvNavigator: TvNavigator;
   let tvNavigationStore: TvNavigationStore;
@@ -38,12 +41,12 @@ describe('TvNavigator', () => {
 
     tvNavigator.navigateToIntroSection();
 
-    expect(tvNavigationStore.currentSectionIndex()).toBe(0);
+    expect(tvNavigationStore.currentSectionIndex()).toBe(tvNavigationStore.introSectionIndex);
     expect(tvNavigationStore.currentSlideIndex()).toBe(0);
   });
 
   it('should stop on the trailer while the vote slide is locked', () => {
-    tvNavigator.navigateToSection(1);
+    tvNavigator.navigateToSection(FIRST_FILM_SECTION_INDEX);
     for (let slideStep: number = 0; slideStep < 5; slideStep++) {
       tvNavigator.navigateToNextSlide();
     }
@@ -52,7 +55,7 @@ describe('TvNavigator', () => {
   });
 
   it('should open the vote slide when the Scrum Master forces it', () => {
-    tvNavigator.navigateToSection(1);
+    tvNavigator.navigateToSection(FIRST_FILM_SECTION_INDEX);
 
     tvNavigator.forceNavigationToVoteSlide();
 

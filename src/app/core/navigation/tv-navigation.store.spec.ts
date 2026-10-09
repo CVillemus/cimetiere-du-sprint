@@ -9,20 +9,22 @@ describe('TvNavigationStore', () => {
     tvNavigationStore = TestBed.inject(TvNavigationStore);
   });
 
-  it('should build 12 sections: intro, 10 films, sprint review', () => {
-    expect(tvNavigationStore.sections.length).toBe(FILMS.length + 2);
-    expect(tvNavigationStore.sections[0].kind).toBe('intro');
+  it('should build 13 sections: waiting room, intro, 10 films, sprint review', () => {
+    expect(tvNavigationStore.sections.length).toBe(FILMS.length + 3);
+    expect(tvNavigationStore.sections[0].kind).toBe('waiting-room');
+    expect(tvNavigationStore.sections[1].kind).toBe('intro');
     expect(tvNavigationStore.sections[tvNavigationStore.sections.length - 1].kind).toBe(
       'sprint-review',
     );
   });
 
-  it('should start on the intro without current film', () => {
+  it('should start on the waiting room without current film', () => {
     expect(tvNavigationStore.currentSectionIndex()).toBe(0);
     expect(tvNavigationStore.currentFilm()).toBeNull();
   });
 
-  it('should expose the first film after going to the next section', () => {
+  it('should expose the first film after the waiting room and the intro', () => {
+    tvNavigationStore.goToNextSection();
     tvNavigationStore.goToNextSection();
 
     expect(tvNavigationStore.currentFilm()?.id).toBe(FILMS[0].id);
@@ -37,7 +39,7 @@ describe('TvNavigationStore', () => {
   });
 
   it('should reset the slide to the summary when entering another film', () => {
-    tvNavigationStore.goToNextSection();
+    tvNavigationStore.goToSection(2);
     tvNavigationStore.goToNextSlide();
     tvNavigationStore.goToNextSlide();
     expect(tvNavigationStore.currentSlideKind()).toBe('trailer');
@@ -54,10 +56,10 @@ describe('TvNavigationStore', () => {
   });
 
   it('should keep the slide when asked to go to the current section again', () => {
-    tvNavigationStore.goToNextSection();
+    tvNavigationStore.goToSection(2);
     tvNavigationStore.goToNextSlide();
 
-    tvNavigationStore.goToSection(1);
+    tvNavigationStore.goToSection(2);
 
     expect(tvNavigationStore.currentSlideKind()).toBe('press');
   });

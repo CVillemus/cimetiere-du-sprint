@@ -47,6 +47,16 @@ export const SNAKE_SKINS: readonly SnakeSkin[] = [
   },
 ];
 
+/**
+ * La mascotte des jeux (salle d'attente, spinner du téléphone) : un serpent corail
+ * aux anneaux rouges, noirs et orange. Tête rouge sang, pour ne pas se perdre sur les fonds sombres.
+ */
+export const MASCOT_SNAKE_SKIN: SnakeSkin = {
+  ...SNAKE_SKINS[0],
+  ringColors: ['#c0392b', '#0a0707', '#e8732a', '#0a0707'],
+  headColor: '#8e2a2a',
+};
+
 /** Tirage au sort pondéré : `randomValue` entre 0 et 1. */
 export function pickSnakeSkin(randomValue: number): SnakeSkin {
   const totalWeight: number = SNAKE_SKINS.reduce(

@@ -20,6 +20,8 @@ export class SectionProgress {
 
   protected describeSection(section: TvSection): string {
     switch (section.kind) {
+      case 'waiting-room':
+        return "Salle d'attente";
       case 'intro':
         return 'QR code';
       case 'film':

@@ -26,6 +26,7 @@ interface VotingStageTarget {
 
 function toVotingStageTarget(tvSection: TvSection): VotingStageTarget {
   switch (tvSection.kind) {
+    case 'waiting-room':
     case 'intro':
       return { stage: 'lobby', currentFilmId: null };
     case 'film':

@@ -48,7 +48,7 @@ export class TvNavigator {
   }
 
   navigateToIntroSection(): void {
-    this.navigateToSection(0);
+    this.navigateToSection(this.tvNavigationStore.introSectionIndex);
   }
 
   /** La slide Vote reste verrouillée tant que tout le monde n'a pas voté (sauf si déjà révélée). */

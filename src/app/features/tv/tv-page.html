@@ -3,6 +3,9 @@
     @for (section of sections; track $index; let sectionIndex = $index) {
       <section class="tv-page__section" [inert]="sectionIndex !== currentSectionIndex()">
         @switch (section.kind) {
+          @case ('waiting-room') {
+            <app-waiting-room-section [isCurrentSection]="sectionIndex === currentSectionIndex()" />
+          }
           @case ('intro') {
             <app-intro-section [isCurrentSection]="sectionIndex === currentSectionIndex()" />
           }
