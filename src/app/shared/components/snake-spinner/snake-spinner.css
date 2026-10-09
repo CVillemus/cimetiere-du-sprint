@@ -4,9 +4,9 @@
   padding: 1rem 0;
 }
 
-/* 28 × 18 pixels « art », agrandis cinq fois et demie. */
+/* 24 × 24 pixels « art », agrandis cinq fois. */
 .snake-spinner {
-  width: 9.6rem;
-  height: auto;
+  width: 7.5rem;
+  height: 7.5rem;
   image-rendering: pixelated;
 }

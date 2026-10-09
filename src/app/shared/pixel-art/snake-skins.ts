@@ -12,6 +12,16 @@ export interface SnakeSkin {
   readonly appearanceWeight: number;
 }
 
+/** Le serpent d'os : anneaux gris os, yeux rouges. C'est aussi lui qui tourne sur les téléphones en attente. */
+export const BONE_SNAKE_SKIN: SnakeSkin = {
+  name: 'Serpent d’os',
+  ringColors: ['#cfc6ae', '#a89f8a'],
+  headColor: '#e9e2cf',
+  eyeColor: '#8e2a2a',
+  tongueColor: '#8e2a2a',
+  appearanceWeight: 1,
+};
+
 export const SNAKE_SKINS: readonly SnakeSkin[] = [
   {
     name: 'Serpent corail (rayé rouge, blanc, orange)',
@@ -29,14 +39,7 @@ export const SNAKE_SKINS: readonly SnakeSkin[] = [
     tongueColor: '#8e2a2a',
     appearanceWeight: 2,
   },
-  {
-    name: 'Serpent d’os',
-    ringColors: ['#cfc6ae', '#a89f8a'],
-    headColor: '#e9e2cf',
-    eyeColor: '#8e2a2a',
-    tongueColor: '#8e2a2a',
-    appearanceWeight: 1,
-  },
+  BONE_SNAKE_SKIN,
   {
     name: 'Vipère de minuit',
     ringColors: ['#3a3352', '#4a4065', '#3a3352', '#e8a33d'],
@@ -46,16 +49,6 @@ export const SNAKE_SKINS: readonly SnakeSkin[] = [
     appearanceWeight: 1,
   },
 ];
-
-/**
- * La mascotte du spinner du téléphone : un serpent corail
- * aux anneaux rouges, gris pierre et orange. Tête rouge sang, pour ne pas se perdre sur les fonds sombres.
- */
-export const MASCOT_SNAKE_SKIN: SnakeSkin = {
-  ...SNAKE_SKINS[0],
-  ringColors: ['#c0392b', '#6b6577', '#e8732a', '#6b6577'],
-  headColor: '#8e2a2a',
-};
 
 /** Tirage au sort pondéré : `randomValue` entre 0 et 1. */
 export function pickSnakeSkin(randomValue: number): SnakeSkin {
