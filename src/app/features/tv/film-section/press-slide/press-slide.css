@@ -1,0 +1,30 @@
+.press-rating {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+  font-family: var(--font-pixel-label);
+  font-size: 1.2vw;
+  color: var(--color-bone);
+}
+
+.press-rating__gauge {
+  flex: 1;
+  max-width: 18vw;
+  height: 1.2vw;
+  border: 0.2vw solid var(--color-violet);
+  background: var(--color-night-deep);
+}
+
+.press-rating__gauge-fill {
+  display: block;
+  height: 100%;
+  background: var(--color-candle);
+}
+
+.press-rating__value {
+  color: var(--color-candle);
+}
+
+.press-review {
+  margin: 1.5vw 0 0;
+}

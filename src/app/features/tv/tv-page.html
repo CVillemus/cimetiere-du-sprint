@@ -1,5 +1,23 @@
-<main class="tv-page">
-  <p class="tv-page__eyebrow">Soirée horreur · Sprint 1</p>
-  <h1 class="tv-page__title">Le Cimetière du Sprint</h1>
-  <p class="tv-page__tagline">10 tombes. 1 seul film survivra.</p>
+<main class="tv-page" #sectionScroller (scrollend)="handleSectionScrollEnd()">
+  @for (section of sections; track $index; let sectionIndex = $index) {
+    <section class="tv-page__section">
+      @switch (section.kind) {
+        @case ('intro') {
+          <app-intro-section />
+        }
+        @case ('film') {
+          <app-film-section
+            [film]="section.film"
+            [tombNumber]="section.tombNumber"
+            [isCurrentSection]="sectionIndex === currentSectionIndex()"
+          />
+        }
+        @case ('sprint-review') {
+          <app-sprint-review-section />
+        }
+      }
+    </section>
+  }
 </main>
+
+<app-section-progress />

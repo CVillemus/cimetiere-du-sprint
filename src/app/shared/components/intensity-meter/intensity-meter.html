@@ -1,0 +1,6 @@
+<span class="intensity-meter__label">{{ label() }}</span>
+<span class="intensity-meter__squares" [attr.aria-label]="level() + ' sur 5'">
+  @for (isFilled of filledSquares(); track $index) {
+    <span class="intensity-meter__square" [class.intensity-meter__square--filled]="isFilled"></span>
+  }
+</span>

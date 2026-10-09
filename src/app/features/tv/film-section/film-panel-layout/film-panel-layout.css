@@ -1,0 +1,58 @@
+:host {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.film-panel {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-night);
+}
+
+.film-panel__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2vw;
+  height: 100%;
+  padding: 4vw 4vw 7vw 5vw;
+}
+
+.film-panel__tomb-label {
+  margin: 0;
+  font-family: var(--font-pixel-label);
+  font-size: 1vw;
+  color: var(--color-violet-muted);
+}
+
+.film-panel__title {
+  margin: 0;
+  font-size: 4.2vw;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.film-panel__meta {
+  margin: 0;
+  font-size: 1.3vw;
+  color: var(--color-bone-dim);
+}
+
+.film-panel__meters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8vw;
+}
+
+.film-panel__body {
+  font-size: 1.6vw;
+  line-height: 1.45;
+  color: var(--color-bone-muted);
+}
+
+.film-scene-frame {
+  position: relative;
+  overflow: hidden;
+}

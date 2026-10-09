@@ -1,0 +1,26 @@
+<div class="film-panel">
+  <app-skull-backdrop />
+
+  <div class="film-panel__content">
+    <p class="film-panel__tomb-label">Tombe {{ tombNumber() }} / {{ filmCount() }}</p>
+    <h2 class="film-panel__title">{{ film().frenchTitle }}</h2>
+    <p class="film-panel__meta">
+      {{ film().releaseYear }} · {{ directorNames() }} · {{ formattedDuration() }}
+    </p>
+
+    <div class="film-panel__meters">
+      <app-intensity-meter label="Peur" tone="fear" [level]="film().fearLevel" />
+      <app-intensity-meter label="Gore" tone="gore" [level]="film().goreLevel" />
+    </div>
+
+    <app-trigger-warning-list [triggerWarnings]="triggerWarnings()" />
+
+    <div class="film-panel__body">
+      <ng-content />
+    </div>
+  </div>
+</div>
+
+<div class="film-scene-frame">
+  <app-film-scene [tombNumber]="tombNumber()" />
+</div>

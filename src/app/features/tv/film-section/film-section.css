@@ -1,0 +1,47 @@
+:host {
+  position: relative;
+  display: block;
+  height: 100%;
+}
+
+.film-section__track {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.film-section__slide {
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.film-section__tabs {
+  position: absolute;
+  left: 5vw;
+  bottom: 2.5vw;
+  display: flex;
+  gap: 1vw;
+  padding-top: 0.5vw;
+  border-top: 0.2vw solid var(--color-violet);
+}
+
+.film-section__tab {
+  padding: 0.3vw 0.6vw;
+  border: 0;
+  border-bottom: 0.2vw solid transparent;
+  background: none;
+  color: var(--color-violet-muted);
+  font-family: var(--font-pixel-label);
+  font-size: 1.1vw;
+  cursor: pointer;
+}
+
+.film-section__tab--active {
+  border-bottom-color: var(--color-candle);
+  color: var(--color-candle);
+}

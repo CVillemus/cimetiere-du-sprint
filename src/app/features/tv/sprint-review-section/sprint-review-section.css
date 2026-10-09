@@ -1,0 +1,68 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.sprint-review {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2vw;
+  height: 100%;
+  padding: 4vw;
+}
+
+.sprint-review__eyebrow {
+  margin: 0;
+  font-family: var(--font-pixel-label);
+  font-size: 1.2vw;
+  color: var(--color-violet-muted);
+}
+
+.sprint-review__title {
+  margin: 0;
+  font-size: 5vw;
+  font-weight: 500;
+}
+
+.sprint-review__podium {
+  display: flex;
+  align-items: flex-end;
+  gap: 1vw;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sprint-review__step {
+  display: flex;
+  justify-content: center;
+  width: 14vw;
+  padding-top: 1vw;
+  background: var(--color-tombstone);
+}
+
+.sprint-review__step--first {
+  height: 18vw;
+}
+
+.sprint-review__step--second {
+  height: 13vw;
+}
+
+.sprint-review__step--third {
+  height: 9vw;
+}
+
+.sprint-review__rank {
+  font-family: var(--font-pixel-label);
+  font-size: 3vw;
+  color: var(--color-tombstone-engraving);
+}
+
+.sprint-review__hint {
+  margin: 0;
+  font-size: 1.6vw;
+  color: var(--color-candle);
+}

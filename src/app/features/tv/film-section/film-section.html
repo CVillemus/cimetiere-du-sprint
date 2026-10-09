@@ -1,0 +1,25 @@
+<div class="film-section__track" #slideTrack (scrollend)="handleSlideTrackScrollEnd()">
+  <div class="film-section__slide">
+    <app-summary-slide [film]="film()" [tombNumber]="tombNumber()" [filmCount]="filmCount" />
+  </div>
+  <div class="film-section__slide">
+    <app-trailer-slide [film]="film()" [isActive]="isTrailerSlideActive()" />
+  </div>
+  <div class="film-section__slide">
+    <app-press-slide [film]="film()" [tombNumber]="tombNumber()" [filmCount]="filmCount" />
+  </div>
+</div>
+
+<nav class="film-section__tabs" aria-label="Slides du film">
+  @for (slideTab of slideTabs; track slideTab.slideKind; let slideIndex = $index) {
+    <button
+      type="button"
+      class="film-section__tab"
+      [class.film-section__tab--active]="slideIndex === activeSlideIndex()"
+      [attr.aria-current]="slideIndex === activeSlideIndex() ? 'step' : null"
+      (click)="selectSlide(slideIndex)"
+    >
+      {{ slideTab.label }}
+    </button>
+  }
+</nav>

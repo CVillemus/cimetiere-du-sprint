@@ -1,0 +1,76 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.film-scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.film-scene__sky {
+  fill: var(--color-dusk);
+}
+
+.film-scene__stars,
+.film-scene__moon {
+  fill: var(--color-bone);
+}
+
+.film-scene__hills {
+  fill: var(--color-hills);
+}
+
+.film-scene__trees {
+  fill: var(--color-tree-silhouette);
+}
+
+.film-scene__ground {
+  fill: var(--color-ground);
+}
+
+.film-scene__tomb {
+  fill: var(--color-tombstone);
+}
+
+.film-scene__tomb-number {
+  fill: var(--color-tombstone-engraving);
+  font-family: var(--font-pixel-label);
+  font-size: 6px;
+}
+
+.film-scene__candle {
+  fill: var(--color-bone);
+}
+
+.film-scene__flame {
+  fill: var(--color-candle);
+  animation: film-scene-flicker 2.4s infinite;
+}
+
+.film-scene__fog {
+  fill: var(--color-bone);
+  opacity: 0.07;
+  animation: film-scene-fog-drift 6s ease-in-out infinite alternate;
+}
+
+@keyframes film-scene-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes film-scene-fog-drift {
+  from {
+    transform: translateX(-20px);
+  }
+  to {
+    transform: translateX(20px);
+  }
+}

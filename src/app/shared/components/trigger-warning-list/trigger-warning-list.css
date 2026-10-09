@@ -1,0 +1,23 @@
+.trigger-warning-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-pixel-label);
+  font-size: var(--trigger-warning-font-size, 0.85vw);
+}
+
+.trigger-warning-list__icon {
+  color: var(--color-candle-warning);
+  font-size: 1.2em;
+}
+
+.trigger-warning-list__item {
+  padding: 0.1em 0.5em;
+  border: 1px solid var(--color-warning-border);
+  background: var(--color-warning-background);
+  color: var(--color-candle-warning);
+}

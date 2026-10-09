@@ -1,0 +1,38 @@
+:host {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  width: 2.2vw;
+  background: var(--color-night-rail);
+}
+
+.section-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5vw;
+  width: 100%;
+}
+
+.section-progress__step {
+  width: 0.5vw;
+  height: 0.5vw;
+  padding: 0;
+  border: 0;
+  background: var(--color-candle);
+  cursor: pointer;
+}
+
+.section-progress__step--film {
+  background: var(--color-violet);
+}
+
+.section-progress__step--current {
+  width: 0.75vw;
+  height: 0.75vw;
+  background: var(--color-bone);
+}

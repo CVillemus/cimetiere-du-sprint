@@ -1,0 +1,8 @@
+@if (triggerWarnings().length > 0) {
+  <ul class="trigger-warning-list" aria-label="Avertissements de contenu">
+    <li class="trigger-warning-list__icon" aria-hidden="true">⚠</li>
+    @for (triggerWarning of triggerWarnings(); track triggerWarning) {
+      <li class="trigger-warning-list__item">{{ triggerWarning }}</li>
+    }
+  </ul>
+}

@@ -15,6 +15,23 @@
   --color-bone: #e9e2cf;
   --color-bone-muted: #d6cfbd;
   --color-blood: #8e2a2a;
+  --color-void: #000;
+
+  --color-bone-dim: #b8b0c9;
+  --color-night-rail: #100e19;
+  --color-fear-background: #2b2140;
+  --color-fear-text: #c9b8f0;
+  --color-gore-background: #3a1c1f;
+  --color-gore-text: #e6a3a3;
+  --color-warning-background: #1a1610;
+  --color-warning-border: #6b5a2e;
+
+  /* Décors pixel */
+  --color-hills: #211d36;
+  --color-tree-silhouette: #110f1f;
+  --color-ground: #1f2a1a;
+  --color-tombstone: #6b6577;
+  --color-tombstone-engraving: #3f3a4a;
 
   /* Crâne en fond des panneaux texte : à recalibrer sur la TV le soir même. */
   --skull-opacity: 0.14;

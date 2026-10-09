@@ -1,0 +1,26 @@
+<header class="trailer-slide__header">
+  <h2 class="trailer-slide__title">{{ film().frenchTitle }} · Bande-annonce</h2>
+  <app-trigger-warning-list [triggerWarnings]="film().trailer.triggerWarnings" />
+</header>
+
+<div class="trailer-slide__screen">
+  @if (isActive()) {
+    @if (isWarningScreenVisible()) {
+      <div class="trailer-slide__warning">
+        <p class="trailer-slide__warning-title">⚠ Attention</p>
+        <app-trigger-warning-list [triggerWarnings]="film().trailer.triggerWarnings" />
+        <p class="trailer-slide__countdown">{{ warningSecondsLeft() }}</p>
+      </div>
+    } @else if (trailerEmbedUrl(); as embedUrl) {
+      <iframe
+        class="trailer-slide__player"
+        [src]="embedUrl"
+        [title]="'Bande-annonce de ' + film().frenchTitle"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    } @else {
+      <p class="trailer-slide__missing">La bande-annonce rôde encore quelque part…</p>
+    }
+  }
+</div>

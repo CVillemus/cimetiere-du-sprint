@@ -1,0 +1,33 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.25em 0.6em;
+  font-family: var(--font-pixel-label);
+  font-size: var(--intensity-meter-font-size, 0.9vw);
+}
+
+:host(.intensity-meter--fear) {
+  background: var(--color-fear-background);
+  color: var(--color-fear-text);
+}
+
+:host(.intensity-meter--gore) {
+  background: var(--color-gore-background);
+  color: var(--color-gore-text);
+}
+
+.intensity-meter__squares {
+  display: inline-flex;
+  gap: 0.2em;
+}
+
+.intensity-meter__square {
+  width: 0.7em;
+  height: 0.7em;
+  border: 0.12em solid currentColor;
+}
+
+.intensity-meter__square--filled {
+  background: currentColor;
+}

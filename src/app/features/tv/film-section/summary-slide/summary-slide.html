@@ -1,0 +1,8 @@
+<app-film-panel-layout
+  [film]="film()"
+  [tombNumber]="tombNumber()"
+  [filmCount]="filmCount()"
+  [triggerWarnings]="film().triggerWarnings"
+>
+  <p>{{ film().summary }}</p>
+</app-film-panel-layout>

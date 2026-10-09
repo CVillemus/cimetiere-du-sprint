@@ -1,0 +1,14 @@
+<nav class="section-progress" aria-label="Sections de la soirée">
+  @for (section of sections; track $index; let sectionIndex = $index) {
+    <button
+      type="button"
+      class="section-progress__step"
+      [class.section-progress__step--film]="section.kind === 'film'"
+      [class.section-progress__step--current]="sectionIndex === currentSectionIndex()"
+      [attr.aria-current]="sectionIndex === currentSectionIndex() ? 'step' : null"
+      [attr.aria-label]="describeSection(section)"
+      [title]="describeSection(section)"
+      (click)="selectSection(sectionIndex)"
+    ></button>
+  }
+</nav>
