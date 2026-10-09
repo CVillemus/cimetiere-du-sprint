@@ -4,10 +4,18 @@
   [filmCount]="filmCount()"
   [triggerWarnings]="pressTriggerWarnings()"
 >
-  <div class="press-rating">
+  <div class="press-rating" [class.press-rating--charging]="isActive()">
     <span class="press-rating__label">IMDb</span>
     <span class="press-rating__gauge" aria-hidden="true">
-      <span class="press-rating__gauge-fill" [style.width.%]="imdbGaugeWidthPercentage()"></span>
+      @for (segmentFillRatio of imdbGaugeSegmentFillRatios(); track $index) {
+        <span class="press-rating__segment">
+          <span
+            class="press-rating__segment-fill"
+            [style.width.%]="segmentFillRatio * 100"
+            [style.animation-delay.ms]="$index * segmentChargeDelayInMilliseconds"
+          ></span>
+        </span>
+      }
     </span>
     <span class="press-rating__value">{{ formattedImdbRating() }} / 10</span>
   </div>

@@ -10,6 +10,10 @@ import { Film, IMDB_RATINGS_CHECKED_ON } from '../../../../core/films/film.model
 import { FilmPanelLayout } from '../film-panel-layout/film-panel-layout';
 
 const SPOILER_TRIGGER_WARNING: string = 'Spoilers légers';
+/** Une case de la jauge par point IMDb, comme les cœurs ou les crans d'une barre de vie. */
+const IMDB_GAUGE_SEGMENT_COUNT: number = 10;
+/** Les cases s'allument l'une après l'autre en arrivant sur la slide. */
+const SEGMENT_CHARGE_DELAY_IN_MILLISECONDS: number = 70;
 
 @Component({
   selector: 'app-press-slide',
@@ -23,6 +27,11 @@ export class PressSlide {
   readonly film: InputSignal<Film> = input.required<Film>();
   readonly tombNumber: InputSignal<number> = input.required<number>();
   readonly filmCount: InputSignal<number> = input.required<number>();
+  /** La jauge se recharge case par case à chaque arrivée sur la slide Presse. */
+  readonly isActive: InputSignal<boolean> = input.required<boolean>();
+
+  protected readonly segmentChargeDelayInMilliseconds: number =
+    SEGMENT_CHARGE_DELAY_IN_MILLISECONDS;
 
   protected readonly imdbRatingsCheckedOn: string = IMDB_RATINGS_CHECKED_ON;
 
@@ -31,9 +40,12 @@ export class PressSlide {
       this.film().pressReception.containsSpoilers ? [SPOILER_TRIGGER_WARNING] : [],
   );
 
-  /** Note IMDb sur 10 convertie en largeur de jauge (%). */
-  protected readonly imdbGaugeWidthPercentage: Signal<number> = computed(
-    (): number => this.film().pressReception.imdbRating * 10,
+  /** Remplissage de chaque case, entre 0 et 1 : 7,3 / 10 donne 7 cases pleines et une case à 30 %. */
+  protected readonly imdbGaugeSegmentFillRatios: Signal<readonly number[]> = computed(
+    (): readonly number[] =>
+      Array.from({ length: IMDB_GAUGE_SEGMENT_COUNT }, (_: unknown, segmentIndex: number): number =>
+        Math.max(0, Math.min(1, this.film().pressReception.imdbRating - segmentIndex)),
+      ),
   );
 
   protected readonly formattedImdbRating: Signal<string> = computed((): string =>

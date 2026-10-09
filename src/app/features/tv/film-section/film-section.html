@@ -3,7 +3,12 @@
     <app-summary-slide [film]="film()" [tombNumber]="tombNumber()" [filmCount]="filmCount" />
   </div>
   <div class="film-section__slide" [inert]="activeSlideIndex() !== 1">
-    <app-press-slide [film]="film()" [tombNumber]="tombNumber()" [filmCount]="filmCount" />
+    <app-press-slide
+      [film]="film()"
+      [tombNumber]="tombNumber()"
+      [filmCount]="filmCount"
+      [isActive]="activeSlideKind() === 'press'"
+    />
   </div>
   <div class="film-section__slide" [inert]="activeSlideIndex() !== 2">
     <app-trailer-slide [film]="film()" [isActive]="activeSlideKind() === 'trailer'" />

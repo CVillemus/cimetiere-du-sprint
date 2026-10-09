@@ -12,6 +12,9 @@
   --color-moss: #4f6b3a;
   --color-candle: #e8a33d;
   --color-candle-warning: #e6c27a;
+  /* Reflet et ombre des segments de la jauge IMDb, façon barre de vie de jeu vidéo. */
+  --color-candle-highlight: #ffe39a;
+  --color-candle-shadow: #8a5418;
   --color-bone: #e9e2cf;
   --color-bone-muted: #d6cfbd;
   --color-blood: #8e2a2a;
