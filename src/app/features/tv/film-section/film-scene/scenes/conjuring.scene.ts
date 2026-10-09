@@ -21,31 +21,53 @@ function paintBathshebaApparition(apparitionPainter: PixelPainter): void {
   apparitionPainter.fillPixel(50, 33, '#0a0812');
 }
 
+/** L'horloge murale, arrêtée à 3 h 07 comme toutes celles de la maison des Perron. */
+const CLOCK_CENTER_X: number = 88;
+const CLOCK_CENTER_Y: number = 22;
+
+function paintStoppedClock(scenePainter: PixelPainter): void {
+  // Caisse à balancier, vitrée
+  scenePainter.fillRect(83, 28, 11, 26, '#3b2c26');
+  scenePainter.fillRect(83, 28, 1, 26, '#4a372d');
+  scenePainter.fillRect(85, 31, 7, 19, '#1a1626');
+  scenePainter.fillRect(88, 31, 1, 12, '#8a6a3a');
+  scenePainter.fillCircle(88, 45, 2, '#b8742a');
+  scenePainter.fillPixel(87, 44, '#e6c27a');
+  scenePainter.fillRect(84, 54, 9, 2, '#2a1f1c');
+
+  // Cadran rond
+  scenePainter.fillCircle(CLOCK_CENTER_X, CLOCK_CENTER_Y, 7, '#4a372d');
+  scenePainter.fillCircle(CLOCK_CENTER_X, CLOCK_CENTER_Y, 5, '#d8cfb8');
+  [
+    [0, -4],
+    [4, 0],
+    [0, 4],
+    [-4, 0],
+  ].forEach(([offsetX, offsetY]: number[]) =>
+    scenePainter.fillPixel(CLOCK_CENTER_X + offsetX, CLOCK_CENTER_Y + offsetY, '#5a4334'),
+  );
+  // Aiguilles figées : la petite sur le 3, la grande sur 7 minutes
+  scenePainter.drawLine(
+    CLOCK_CENTER_X,
+    CLOCK_CENTER_Y,
+    CLOCK_CENTER_X + 3,
+    CLOCK_CENTER_Y,
+    '#1a1210',
+  );
+  scenePainter.drawLine(
+    CLOCK_CENTER_X,
+    CLOCK_CENTER_Y,
+    CLOCK_CENTER_X + 2,
+    CLOCK_CENTER_Y - 4,
+    '#1a1210',
+  );
+  scenePainter.fillPixel(CLOCK_CENTER_X, CLOCK_CENTER_Y, '#8e2a2a');
+}
+
 /**
- * Conjuring : « tape, tape ». Deux mains sortent de l'armoire, la boîte à musique veille…
- * et de temps en temps, un œil de Bathsheba se devine dans l'entrebâillement.
+ * Conjuring : la chambre des Perron. L'armoire du jeu de cache-cache, l'horloge arrêtée à 3 h 07,
+ * un rayon de lune… et de temps en temps, un œil de Bathsheba dans l'entrebâillement.
  */
-type HandPixel = readonly [x: number, y: number, color: string];
-
-const HAND_SKIN: string = '#d9cfc0';
-const HAND_SHADOW: string = '#a89d8b';
-
-/** Main gauche (doigts vers la gauche) et main droite (doigts vers la droite), de part et d'autre de la fente. */
-const CLAPPING_HAND_PIXELS: readonly HandPixel[] = [
-  [47, 45, HAND_SKIN],
-  [47, 46, HAND_SHADOW],
-  [46, 44, HAND_SKIN],
-  [45, 45, HAND_SKIN],
-  [45, 46, HAND_SKIN],
-  [46, 47, HAND_SHADOW],
-  [52, 45, HAND_SKIN],
-  [52, 46, HAND_SHADOW],
-  [53, 44, HAND_SKIN],
-  [54, 45, HAND_SKIN],
-  [54, 46, HAND_SKIN],
-  [53, 47, HAND_SHADOW],
-];
-
 export function paintConjuringScene(
   scenePainter: PixelPainter,
   lightPainter: PixelPainter,
@@ -59,22 +81,20 @@ export function paintConjuringScene(
   }
   scenePainter.paintPlanks(0, 78, 128, 18, '#2a1f1c', '#1f1714', 3);
 
-  // Fenêtre et rayon de lune
-  scenePainter.fillRect(96, 12, 22, 28, '#2a1f1c');
-  scenePainter.fillRect(98, 14, 18, 24, '#1b2340');
-  scenePainter.fillRect(106, 14, 2, 24, '#2a1f1c');
-  scenePainter.fillRect(98, 25, 18, 2, '#2a1f1c');
+  // Rayon de lune venu d'une fenêtre hors champ, qui glisse sur le mur et le parquet
   lightPainter.setOpacity(0.08);
   lightPainter.fillPolygon(
     [
-      [98, 38],
-      [116, 38],
-      [100, 96],
-      [70, 96],
+      [108, 0],
+      [128, 0],
+      [104, 96],
+      [74, 96],
     ],
     '#9fb0d9',
   );
   lightPainter.setOpacity(1);
+
+  paintStoppedClock(scenePainter);
 
   // Armoire
   scenePainter.fillRect(26, 14, 46, 4, '#4a372d');
@@ -89,25 +109,4 @@ export function paintConjuringScene(
   scenePainter.fillRect(51, 18, 1, 62, '#4a372d');
   scenePainter.fillPixel(46, 49, '#b8742a');
   scenePainter.fillPixel(54, 49, '#b8742a');
-
-  // Les deux mains qui tapent, sorties de l'entrebâillement : petites, doigts écartés
-  // (le jeu de cache-cache du film). Paume de 2 pixels, trois doigts fins, pouce vers le haut.
-  CLAPPING_HAND_PIXELS.forEach(([x, y, color]: HandPixel) => scenePainter.fillPixel(x, y, color));
-
-  // Commode
-  scenePainter.fillRect(84, 60, 34, 4, '#4a372d');
-  scenePainter.fillRect(86, 64, 30, 18, '#3b2c26');
-  scenePainter.fillRect(88, 67, 26, 6, '#2f231e');
-  scenePainter.fillRect(88, 75, 26, 5, '#2f231e');
-  scenePainter.fillPixel(101, 70, '#b8742a');
-  scenePainter.fillPixel(101, 77, '#b8742a');
-
-  // Boîte à musique et son miroir
-  scenePainter.fillRect(92, 54, 14, 6, '#5a3a22');
-  scenePainter.fillRect(92, 44, 14, 10, '#4a372d');
-  scenePainter.fillRect(94, 46, 10, 7, '#8d86a3');
-  scenePainter.fillRect(95, 47, 3, 3, '#b8b0c9');
-  scenePainter.fillRect(100, 49, 2, 3, '#14111f');
-  scenePainter.fillRect(98, 52, 1, 3, '#e9e2cf');
-  scenePainter.fillRect(97, 51, 3, 1, '#e9e2cf');
 }
