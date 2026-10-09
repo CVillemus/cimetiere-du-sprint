@@ -1,3 +1,5 @@
+import { PixelGrid } from './pixel-grid';
+
 export type PixelPoint = readonly [x: number, y: number];
 
 type PixelGlyph = readonly [string, string, string, string, string];
@@ -246,6 +248,17 @@ export class PixelPainter {
       this.fillRect(x, jointY, width, 1, jointColor);
     }
     this.sprinkle(x, y, width, height, jointColor, 0.03);
+  }
+
+  /** Dessine une grille `#`/`.` (fonds animés, sprites) en silhouette, agrandie `scale` fois. */
+  paintPixelGrid(pixelGrid: PixelGrid, x: number, y: number, scale: number, color: string): void {
+    pixelGrid.forEach((pixelRow: string, rowIndex: number) => {
+      [...pixelRow].forEach((pixel: string, columnIndex: number) => {
+        if (pixel === '#') {
+          this.fillRect(x + columnIndex * scale, y + rowIndex * scale, scale, scale, color);
+        }
+      });
+    });
   }
 
   writePixelText(text: string, x: number, y: number, color: string): void {

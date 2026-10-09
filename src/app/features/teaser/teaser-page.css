@@ -32,31 +32,37 @@
   --skull-opacity: 0.55;
 }
 
+/*
+ * Carte opaque : tout le texte est sur un fond uni, le contraste ne dépend plus du décor.
+ * Elle est remontée pour laisser voir les tombes et le serpent en dessous.
+ */
 .teaser-page__content {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.6rem, 1.6vh, 1.2rem);
-  max-width: 44rem;
-  margin-bottom: 18vh;
-  padding: 1.5rem 1rem;
+  gap: clamp(0.6rem, 1.6vh, 1.1rem);
+  width: min(40rem, calc(100% - 2rem));
+  margin-bottom: 16vh;
+  padding: clamp(1.25rem, 3vh, 2rem) clamp(1rem, 3vw, 2.25rem);
+  border: 3px solid var(--color-violet);
+  background: var(--color-night);
+  box-shadow: 0 0 0 3px var(--color-night-deep);
   text-align: center;
 }
 
 .teaser-page__eyebrow {
   margin: 0;
   font-family: var(--font-pixel-label);
-  font-size: clamp(0.7rem, 1.2vw, 1rem);
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
   color: var(--color-violet-muted);
 }
 
 .teaser-page__title {
   margin: 0;
-  font-size: clamp(2.4rem, 7vw, 5.5rem);
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
   font-weight: 500;
   line-height: 0.95;
-  text-shadow: 0 0.08em 0 var(--color-night-deep);
 }
 
 .teaser-page__tagline {
@@ -69,7 +75,7 @@
   margin: 0.4rem 0 0;
   padding: 0.35em 0.9em;
   border: 3px solid var(--color-candle);
-  background: var(--color-vote-status-background);
+  background: var(--color-night-deep);
   font-family: var(--font-pixel-label);
   font-size: clamp(0.95rem, 2vw, 1.5rem);
   color: var(--color-bone);
@@ -90,7 +96,7 @@
   min-width: clamp(3.6rem, 9vw, 6rem);
   padding: 0.5em 0.3em 0.4em;
   border: 3px solid var(--color-violet);
-  background: var(--color-vote-status-background);
+  background: var(--color-night-deep);
 }
 
 .teaser-page__countdown-value {
@@ -102,7 +108,7 @@
 
 .teaser-page__countdown-label {
   font-family: var(--font-pixel-label);
-  font-size: clamp(0.6rem, 1vw, 0.8rem);
+  font-size: 0.875rem;
   color: var(--color-violet-muted);
 }
 
@@ -114,18 +120,14 @@
 
 .teaser-page__rules {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.4rem 1rem;
+  flex-direction: column;
+  gap: 0.35rem;
   margin: 0.4rem 0 0;
   padding: 0;
   list-style: none;
-  font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  line-height: 1.4;
   color: var(--color-bone-muted);
-  /* Lisible même par-dessus les tombes du décor. */
-  text-shadow:
-    0 2px 0 var(--color-night-deep),
-    0 0 6px var(--color-night-deep);
 }
 
 .teaser-page__rules li::before {

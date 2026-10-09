@@ -66,7 +66,8 @@ const JOLLY_ROGER: PixelGrid = [
 ];
 const JOLLY_ROGER_JAW_ROW: number = 9;
 
-const DEAD_TREE: PixelGrid = [
+/** Aussi utilisé en grand dans le décor de la page teaser. */
+export const DEAD_TREE: PixelGrid = [
   '..#.........#....#...',
   '...#...#....#...#....',
   '#...#..#...#...#...#.',
@@ -92,7 +93,7 @@ const DEAD_TREE: PixelGrid = [
 ];
 const DEAD_TREE_BRANCH_ROWS: readonly number[] = [0, 1, 2, 3];
 
-const RAVEN_LOOKING_LEFT: PixelGrid = [
+export const RAVEN_LOOKING_LEFT: PixelGrid = [
   '......####........',
   '.....######.......',
   '..####.#####......',

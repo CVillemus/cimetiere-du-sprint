@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { PixelPainter } from '../../../../shared/pixel-art/pixel-painter';
 import { prefersReducedMotion } from '../../../../shared/utils/prefers-reduced-motion';
-import { pickSnakeSkin, SnakeSkin } from './snake-skins';
+import { pickSnakeSkin, SnakeSkin } from '../../../../shared/pixel-art/snake-skins';
 import { GridCell, SnakeDirection, SnakeWanderer } from './snake-wanderer';
 
 /** Grille de 64×36 cases de 2×2 pixels : un canvas de 128×72. */
