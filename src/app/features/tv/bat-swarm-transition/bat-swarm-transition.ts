@@ -29,7 +29,7 @@ import {
 /** Pixels plus fins que la coulure (64 colonnes) : les chauves-souris doivent rester lisibles. */
 const GRID_WIDTH: number = 128;
 const DEFAULT_GRID_HEIGHT: number = 72;
-const BAT_COUNT: number = 42;
+const BAT_COUNT: number = 70;
 /** Un changement d'onglet est plus fréquent qu'un changement de film : plus court que la coulure. */
 const DURATION_IN_MILLISECONDS: number = 650;
 const FRAME_INTERVAL_IN_MILLISECONDS: number = 33;
