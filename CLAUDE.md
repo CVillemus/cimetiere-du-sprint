@@ -32,7 +32,7 @@ Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 
 
 - `TvNavigationStore` (core) est la seule source de vérité : section courante, slide courante.
 - Aucun scroll natif : les pistes de sections et de slides sont translatées en CSS selon le store.
-- Clavier, molette et clics passent par `TvNavigator`, qui joue chaque changement derrière la transition `PixelDripTransition` (coulure de pixels, 1,2 s, teinte « sang séché »).
+- Clavier, molette et clics passent par `TvNavigator`, qui joue chaque changement derrière la transition `PixelDripTransition` (coulure de pixels, 0,8 s, teinte « sang séché »), aussi sur le téléphone.
 - Les décors sont dessinés sur `<canvas>` (128×96) avec `PixelPainter` ; les lumières sont sur un second canvas qui vacille.
 - Les fonds des panneaux (`PixelBackdrop`) alternent crâne, tête de mort, arbre mort, corbeau, araignée, avec une animation « idle ».
 

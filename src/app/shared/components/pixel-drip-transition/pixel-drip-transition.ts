@@ -23,8 +23,8 @@ import {
 const GRID_WIDTH: number = 64;
 const DEFAULT_GRID_HEIGHT: number = 36;
 const LAG_TO_HEIGHT_RATIO: number = 0.65;
-/** 1,2 s au total : 600 ms pour couvrir, 600 ms pour découvrir. */
-const HALF_DURATION_IN_MILLISECONDS: number = 600;
+/** 0,8 s au total : 400 ms pour couvrir, 400 ms pour découvrir. */
+const HALF_DURATION_IN_MILLISECONDS: number = 400;
 /** ~30 images/s : un rendu volontairement saccadé, plus « jeu rétro ». */
 const FRAME_INTERVAL_IN_MILLISECONDS: number = 33;
 const DITHER_BAND_HEIGHT: number = 3;

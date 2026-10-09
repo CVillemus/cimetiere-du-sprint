@@ -19,7 +19,7 @@ import { SprintReviewSection } from './sprint-review-section/sprint-review-secti
 import { TvNavigator } from './tv-navigator/tv-navigator';
 
 /** Un geste de trackpad envoie des dizaines d'événements : on n'en garde qu'un par transition. */
-const WHEEL_NAVIGATION_COOLDOWN_IN_MILLISECONDS: number = 1500;
+const WHEEL_NAVIGATION_COOLDOWN_IN_MILLISECONDS: number = 1000;
 /** En dessous, c'est un effleurement de trackpad, pas une intention de navigation. */
 const MINIMUM_WHEEL_DELTA: number = 15;
 
