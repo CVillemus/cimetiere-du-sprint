@@ -1,6 +1,12 @@
 import { PixelPainter } from '../../../../../shared/pixel-art/pixel-painter';
+import { paintChimney } from './chimney.painter';
 
 const RAINDROP_COUNT: number = 70;
+
+/** Pan droit du toit : du faîte (64, 6) jusqu'au bord (116, 27). */
+function roofHeightAt(x: number): number {
+  return Math.round(6 + ((x - 64) * 21) / 52);
+}
 
 interface Missionary {
   readonly x: number;
@@ -66,7 +72,20 @@ export function paintHereticScene(scenePainter: PixelPainter, lightPainter: Pixe
   );
   scenePainter.drawLine(12, 27, 64, 6, '#2c2640');
   scenePainter.drawLine(64, 6, 116, 27, '#2c2640');
-  scenePainter.fillRect(84, 10, 6, 10, '#1f1a29');
+  // Cheminée en briques sombres, posée sur le pan droit du toit
+  paintChimney(
+    scenePainter,
+    { leftX: 86, width: 5, topY: 8, blockWidth: 3, blockHeight: 2, roofHeightAt },
+    {
+      blockColor: '#4a2f2a',
+      litEdgeColor: '#5e3d35',
+      shadedEdgeColor: '#3a2420',
+      mortarColor: '#241818',
+      capColor: '#1f1a29',
+      capHighlightColor: '#3a3448',
+      flueColor: '#07060c',
+    },
+  );
 
   // Fenêtres : une sombre, une où brûle la bougie à l'odeur de tarte aux myrtilles
   [

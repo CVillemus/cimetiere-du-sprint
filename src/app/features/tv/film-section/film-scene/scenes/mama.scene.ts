@@ -1,4 +1,5 @@
 import { PixelPainter, PixelPoint } from '../../../../../shared/pixel-art/pixel-painter';
+import { paintChimney } from './chimney.painter';
 
 type PineTree = readonly [x: number, baseY: number, height: number];
 type SmokePuff = readonly [centerX: number, centerY: number, radius: number, opacity: number];
@@ -8,65 +9,35 @@ const ROOF_RIDGE_X: number = 66;
 const ROOF_RIDGE_Y: number = 34;
 const ROOF_RIGHT_SLOPE: number = 20 / 26;
 
-const CHIMNEY_LEFT_X: number = 74;
-const CHIMNEY_WIDTH: number = 8;
-const CHIMNEY_TOP_Y: number = 30;
-const STONE_ROW_HEIGHT: number = 3;
-const STONE_WIDTH: number = 4;
-
-/** Des volutes de plus en plus grosses et transparentes, qui s'envolent vers la droite. */
+/** Un fin filet de volutes qui s'élargissent et s'effacent en montant vers la droite. */
 const SMOKE_PUFFS: readonly SmokePuff[] = [
-  [78, 25, 2, 0.4],
-  [80, 20, 3, 0.3],
-  [83, 14, 3, 0.22],
-  [87, 8, 4, 0.14],
+  [78, 29, 1, 0.4],
+  [79, 25, 2, 0.3],
+  [81, 20, 2, 0.22],
+  [84, 15, 3, 0.14],
 ];
 
 function roofHeightAt(x: number): number {
   return Math.round(ROOF_RIDGE_Y + (x - ROOF_RIDGE_X) * ROOF_RIGHT_SLOPE);
 }
 
-/**
- * Cheminée en pierres sèches : posée sur la pente du toit, appareillage en quinconce,
- * arête éclairée par la lune à gauche, ombre à droite, chapeau débordant et filet de fumée.
- */
-function paintStoneChimney(scenePainter: PixelPainter, lightPainter: PixelPainter): void {
-  for (let columnIndex: number = 0; columnIndex < CHIMNEY_WIDTH; columnIndex++) {
-    const columnX: number = CHIMNEY_LEFT_X + columnIndex;
-    const columnBottomY: number = roofHeightAt(columnX);
-    const isLitEdge: boolean = columnIndex === 0;
-    const isShadedEdge: boolean = columnIndex >= CHIMNEY_WIDTH - 2;
-    const stoneColor: string = isLitEdge ? '#7d778a' : isShadedEdge ? '#4a4556' : '#615b70';
+/** Petite cheminée en pierres grises, et son filet de fumée bleuté par la lune. */
+function paintStoneChimneyWithSmoke(scenePainter: PixelPainter, lightPainter: PixelPainter): void {
+  paintChimney(
+    scenePainter,
+    { leftX: 76, width: 5, topY: 35, blockWidth: 3, blockHeight: 3, roofHeightAt },
+    {
+      blockColor: '#615b70',
+      litEdgeColor: '#7d778a',
+      shadedEdgeColor: '#4a4556',
+      mortarColor: '#3a3448',
+      capColor: '#3a3448',
+      capHighlightColor: '#7d778a',
+      flueColor: '#14111f',
+    },
+  );
 
-    for (let rowY: number = CHIMNEY_TOP_Y; rowY <= columnBottomY; rowY++) {
-      const stoneRowIndex: number = Math.floor((rowY - CHIMNEY_TOP_Y) / STONE_ROW_HEIGHT);
-      const isMortarRow: boolean =
-        (rowY - CHIMNEY_TOP_Y) % STONE_ROW_HEIGHT === STONE_ROW_HEIGHT - 1;
-      // Joints verticaux décalés d'une rangée à l'autre, comme un vrai mur de pierres.
-      const jointOffset: number = stoneRowIndex % 2 === 0 ? 0 : STONE_WIDTH / 2;
-      const isMortarJoint: boolean = (columnIndex + jointOffset) % STONE_WIDTH === STONE_WIDTH - 1;
-      scenePainter.fillPixel(columnX, rowY, isMortarRow || isMortarJoint ? '#3a3448' : stoneColor);
-    }
-  }
-  scenePainter.sprinkle(CHIMNEY_LEFT_X + 1, CHIMNEY_TOP_Y, CHIMNEY_WIDTH - 2, 12, '#575166', 0.08);
-
-  // Chapeau qui déborde, avec le conduit noir au sommet
-  scenePainter.fillRect(CHIMNEY_LEFT_X - 1, CHIMNEY_TOP_Y - 2, CHIMNEY_WIDTH + 2, 2, '#3a3448');
-  scenePainter.fillRect(CHIMNEY_LEFT_X - 1, CHIMNEY_TOP_Y - 2, CHIMNEY_WIDTH + 2, 1, '#7d778a');
-  scenePainter.fillRect(CHIMNEY_LEFT_X + 1, CHIMNEY_TOP_Y - 3, CHIMNEY_WIDTH - 2, 1, '#14111f');
-
-  // Ombre portée de la cheminée sur les bardeaux, juste en dessous
-  scenePainter.setOpacity(0.35);
-  for (
-    let shadowX: number = CHIMNEY_LEFT_X + CHIMNEY_WIDTH;
-    shadowX < CHIMNEY_LEFT_X + CHIMNEY_WIDTH + 3;
-    shadowX++
-  ) {
-    scenePainter.fillRect(shadowX, roofHeightAt(shadowX) - 4, 1, 4, '#0a0812');
-  }
-  scenePainter.setOpacity(1);
-
-  // Filet de fumée bleuté par la lune : sur le calque des lumières, il ondule avec le vacillement
+  // Sur le calque des lumières : la fumée ondule avec le vacillement
   SMOKE_PUFFS.forEach(([centerX, centerY, radius, opacity]: SmokePuff) => {
     lightPainter.setOpacity(opacity);
     lightPainter.fillCircle(centerX, centerY, radius, '#c9d1e6');
@@ -122,7 +93,7 @@ export function paintMamaScene(scenePainter: PixelPainter, lightPainter: PixelPa
   scenePainter.drawLine(40, 54, 66, 34, '#4a372d');
   scenePainter.drawLine(66, 34, 92, 54, '#4a372d');
 
-  paintStoneChimney(scenePainter, lightPainter);
+  paintStoneChimneyWithSmoke(scenePainter, lightPainter);
 
   // Porte et fenêtre condamnée
   scenePainter.fillRect(59, 60, 10, 16, '#4a372d');

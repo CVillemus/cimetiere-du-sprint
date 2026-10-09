@@ -1,50 +1,29 @@
 import { PixelPainter } from '../../../../../shared/pixel-art/pixel-painter';
 
 /**
- * L'apparition de Bathsheba, qui surgit par flashs dans l'entrebâillement de l'armoire :
- * visage livide aux orbites noires, longs cheveux, et une main grise agrippée au bord de la porte.
+ * L'apparition de Bathsheba : à peine un fragment de visage, coincé dans la fente noire
+ * entre les deux portes de l'armoire (x 48 à 50). Un œil, une joue grise, une mèche.
+ * Couleurs sourdes exprès : on doit se demander si on l'a vraiment vue.
  */
 function paintBathshebaApparition(apparitionPainter: PixelPainter): void {
-  // Longs cheveux noirs qui encadrent le visage et tombent jusqu'aux épaules
-  apparitionPainter.fillRect(44, 22, 13, 4, '#0a0812');
-  apparitionPainter.fillRect(43, 26, 3, 20, '#0a0812');
-  apparitionPainter.fillRect(55, 26, 3, 22, '#0a0812');
+  // Joue et front, gris livide, plus sombres côté gauche (dans l'ombre de la porte)
+  apparitionPainter.fillRect(49, 27, 2, 10, '#6e7487');
+  apparitionPainter.fillRect(48, 28, 1, 8, '#4f5466');
+  apparitionPainter.fillPixel(49, 37, '#4f5466');
 
-  // Visage livide, ombré sur la droite
-  apparitionPainter.fillEllipse(50, 31, 5, 6, '#d7dbe6');
-  apparitionPainter.fillRect(52, 27, 3, 10, '#a9b0c4');
-  apparitionPainter.fillRect(46, 25, 9, 2, '#0a0812');
+  // Un seul œil, noir, qui fixe la pièce
+  apparitionPainter.fillRect(49, 30, 1, 2, '#07060c');
+  apparitionPainter.fillPixel(50, 30, '#8d93a6');
 
-  // Orbites noires, bouche béante
-  apparitionPainter.fillRect(47, 29, 2, 3, '#07060c');
-  apparitionPainter.fillRect(51, 29, 2, 3, '#07060c');
-  apparitionPainter.fillRect(49, 34, 2, 3, '#07060c');
-  apparitionPainter.fillPixel(48, 30, '#c0392b');
-  apparitionPainter.fillPixel(52, 30, '#c0392b');
-
-  // Robe sombre qui se perd dans l'obscurité de l'armoire
-  apparitionPainter.fillPolygon(
-    [
-      [45, 38],
-      [55, 38],
-      [58, 62],
-      [42, 62],
-    ],
-    '#1d1a2e',
-  );
-
-  // Main décharnée agrippée au bord de la porte gauche, ongles noirs
-  apparitionPainter.fillRect(40, 52, 7, 3, '#c3c9d8');
-  [40, 42, 44].forEach((fingerX: number) => {
-    apparitionPainter.fillRect(fingerX, 55, 1, 4, '#c3c9d8');
-    apparitionPainter.fillPixel(fingerX, 59, '#07060c');
-  });
-  apparitionPainter.fillRect(46, 51, 2, 2, '#a9b0c4');
+  // Une mèche de cheveux qui barre le visage
+  apparitionPainter.fillRect(48, 26, 3, 1, '#0a0812');
+  apparitionPainter.fillRect(48, 27, 1, 6, '#0a0812');
+  apparitionPainter.fillPixel(50, 33, '#0a0812');
 }
 
 /**
  * Conjuring : « tape, tape ». Deux mains sortent de l'armoire, la boîte à musique veille…
- * et de temps en temps, Bathsheba surgit dans l'armoire.
+ * et de temps en temps, un œil de Bathsheba se devine dans l'entrebâillement.
  */
 export function paintConjuringScene(
   scenePainter: PixelPainter,

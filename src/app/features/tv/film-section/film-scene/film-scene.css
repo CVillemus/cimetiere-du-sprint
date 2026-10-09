@@ -35,29 +35,25 @@
 }
 
 /*
- * Calque d'apparition : invisible presque tout le temps, puis deux flashs rapprochés,
- * comme un jump scare. Le cycle est long pour que ça reste une surprise.
+ * Calque d'apparition : invisible la plupart du temps. Toutes les 20 s environ,
+ * il se dessine en fondu très lent, reste un instant, puis s'efface. Jamais de flash.
  */
 .film-scene__canvas--apparition {
   opacity: 0;
-  animation: film-scene-apparition 11s steps(1, end) infinite 4s;
+  animation: film-scene-apparition 21s ease-in-out infinite 6s;
 }
 
 @keyframes film-scene-apparition {
   0%,
-  86% {
+  62% {
     opacity: 0;
   }
-  87% {
-    opacity: 0.75;
+  74%,
+  84% {
+    opacity: 0.85;
   }
-  88% {
-    opacity: 0;
-  }
-  89.5% {
-    opacity: 0.55;
-  }
-  91.5% {
+  96%,
+  100% {
     opacity: 0;
   }
 }

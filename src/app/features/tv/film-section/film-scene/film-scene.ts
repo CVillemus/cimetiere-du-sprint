@@ -19,7 +19,7 @@ import { FILM_SCENE_PAINTERS } from './scenes/film-scene-painters';
 
 /**
  * Décor pixel art d'un film, dessiné sur trois canvas superposés :
- * le décor fixe, un calque de lumières qui vacille, et un calque d'apparition qui surgit par flashs.
+ * le décor fixe, un calque de lumières qui vacille, et un calque d'apparition qui se dessine en fondu de temps en temps.
  */
 @Component({
   selector: 'app-film-scene',
