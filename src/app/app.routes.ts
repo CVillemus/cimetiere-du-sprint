@@ -11,5 +11,11 @@ export const routes: Routes = [
     title: 'Vote · Le Cimetière du Sprint',
     loadComponent: () => import('./features/vote/vote-page').then((module) => module.VotePage),
   },
+  {
+    path: 'teaser',
+    title: 'Le Cimetière du Sprint · Samedi 18h',
+    loadComponent: () =>
+      import('./features/teaser/teaser-page').then((module) => module.TeaserPage),
+  },
   { path: '**', redirectTo: '' },
 ];

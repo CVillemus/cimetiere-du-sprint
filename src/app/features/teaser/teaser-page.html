@@ -1,0 +1,48 @@
+<main class="teaser-page">
+  <canvas
+    #graveyardCanvas
+    class="teaser-page__graveyard"
+    [width]="graveyardWidth"
+    [height]="graveyardHeight"
+    role="img"
+    aria-label="Cimetière pixel au clair de lune, dix tombes"
+  ></canvas>
+  <canvas
+    #graveyardLightCanvas
+    class="teaser-page__graveyard teaser-page__graveyard--lights"
+    [width]="graveyardWidth"
+    [height]="graveyardHeight"
+    aria-hidden="true"
+  ></canvas>
+
+  <div class="teaser-page__spider">
+    <app-pixel-backdrop backdropKind="spider" />
+  </div>
+
+  <section class="teaser-page__content">
+    <p class="teaser-page__eyebrow">Soirée horreur · Sprint 1</p>
+    <h1 class="teaser-page__title">Le Cimetière du Sprint</h1>
+    <p class="teaser-page__tagline">10 films. 10 âmes. 1 seul survivra.</p>
+
+    <p class="teaser-page__date">{{ partyDateLabel }}</p>
+
+    @if (countdown().hasStarted) {
+      <p class="teaser-page__started">Les tombes sont ouvertes. Rejoins-nous !</p>
+    } @else {
+      <ol class="teaser-page__countdown" aria-label="Temps restant avant la soirée">
+        @for (countdownUnit of countdownUnits(); track countdownUnit.label) {
+          <li class="teaser-page__countdown-unit">
+            <span class="teaser-page__countdown-value">{{ countdownUnit.value }}</span>
+            <span class="teaser-page__countdown-label">{{ countdownUnit.label }}</span>
+          </li>
+        }
+      </ol>
+    }
+
+    <ul class="teaser-page__rules">
+      <li>Viens avec ton téléphone : c'est toi qui votes</li>
+      <li>Les cartes restent face cachée jusqu'à la révélation</li>
+      <li>Trigger warnings fournis, courage conseillé</li>
+    </ul>
+  </section>
+</main>

@@ -5,6 +5,7 @@
 Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 10 personnes choisisse un film d'horreur, façon poker planning. Chacun vote depuis son téléphone (route `/vote`, ouverte via un QR code).
 
 - **TV (`/`)** : 12 sections plein écran avec scroll vertical aimanté (QR code, 10 films, Sprint Review). Chaque film a un carrousel horizontal : Résumé → Trailer → Presse.
+- **Teaser (`/teaser`)** : un seul écran à partager avant la soirée (samedi 10 octobre, 18h), avec compte à rebours.
 - **Téléphones (`/vote`)** : pseudo, puis 5 cartes (Hors de question / Bof / Ok / Cool ! / OHHHHH OUI !).
 - **Mode Scrum Master** : la TV pilote le film en cours, les votes restent secrets jusqu'à la révélation (touche `R`).
 - **Podium** : moyenne des scores, puis nombre de « OHHHHH OUI ! », puis film le plus court. Veto : au moins 3 « Hors de question » éliminent le film.
@@ -25,7 +26,7 @@ Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 
 - **Lisibilité** : `films.length > 0` plutôt que `!films.length`.
 - **Template d'une resource** : `hasValue()` → `error()` → sinon chargement.
 - **Lazy loading** : chaque page passe par `loadComponent`.
-- **Couleurs** : uniquement via les variables CSS de `src/styles.css`. Seules exceptions : les illustrations pixel art (le dossier `film-scene/scenes/`, `snake-skins.ts`, `spider-sprite.ts`), qui gardent leur palette avec le dessin.
+- **Couleurs** : uniquement via les variables CSS de `src/styles.css`. Seules exceptions : les illustrations pixel art (le dossier `film-scene/scenes/`, les fichiers `*.scene.ts`, `snake-skins.ts`, `spider-sprite.ts`), qui gardent leur palette avec le dessin.
 - Nommage des fichiers selon le style guide Angular actuel : `tv-page.ts` / classe `TvPage`.
 
 ## Navigation de la TV
