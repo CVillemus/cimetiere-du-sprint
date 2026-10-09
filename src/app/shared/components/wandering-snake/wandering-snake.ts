@@ -6,11 +6,12 @@ import {
   input,
   InputSignal,
   Signal,
+  untracked,
   viewChild,
 } from '@angular/core';
-import { PixelPainter } from '../../../../shared/pixel-art/pixel-painter';
-import { prefersReducedMotion } from '../../../../shared/utils/prefers-reduced-motion';
-import { pickSnakeSkin, SnakeSkin } from '../../../../shared/pixel-art/snake-skins';
+import { PixelPainter } from '../../pixel-art/pixel-painter';
+import { prefersReducedMotion } from '../../utils/prefers-reduced-motion';
+import { pickSnakeSkin, SnakeSkin } from '../../pixel-art/snake-skins';
 import { GridCell, SnakeDirection, SnakeWanderer } from './snake-wanderer';
 
 /** Grille de 64×36 cases de 2×2 pixels : un canvas de 128×72. */
@@ -35,19 +36,27 @@ function randomDurationBetween(minimumDuration: number, maximumDuration: number)
 }
 
 /**
- * Un serpent pixel qui rôde en fond de l'écran du QR code, avec une robe tirée au sort à chaque apparition.
- * Il apparaît 15 s après l'arrivée sur l'écran, se promène, file par un bord,
- * puis revient à un moment imprévisible.
+ * Un serpent pixel qui rôde dans sa zone, avec une robe tirée au sort à chaque apparition.
+ * Il apparaît après un délai, se promène, file par un bord, puis revient à un moment imprévisible.
+ * Sur la TV, il hante le fond de l'écran du QR code ; sur le téléphone, le bas des écrans d'attente.
  */
 @Component({
-  selector: 'app-intro-snake',
-  templateUrl: './intro-snake.html',
-  styleUrl: './intro-snake.css',
+  selector: 'app-wandering-snake',
+  templateUrl: './wandering-snake.html',
+  styleUrl: './wandering-snake.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IntroSnake {
-  /** Le serpent ne vit que quand l'écran du QR code est affiché. */
+export class WanderingSnake {
+  /** Le serpent ne vit que quand son écran est affiché. */
   readonly isActive: InputSignal<boolean> = input.required<boolean>();
+  /** Délai avant la première apparition (15 s par défaut, pour laisser lire l'écran). */
+  readonly firstAppearanceDelayInMilliseconds: InputSignal<number> = input<number>(
+    FIRST_APPEARANCE_DELAY_IN_MILLISECONDS,
+  );
+  /** Absence maximale entre deux apparitions. */
+  readonly maximumHiddenDurationInMilliseconds: InputSignal<number> = input<number>(
+    MAXIMUM_HIDDEN_DURATION_IN_MILLISECONDS,
+  );
 
   protected readonly canvasWidth: number = GRID_COLUMNS * CELL_SIZE;
   protected readonly canvasHeight: number = GRID_ROWS * CELL_SIZE;
@@ -66,7 +75,11 @@ export class IntroSnake {
       if (snakePainter === null) {
         return;
       }
-      const stopSnakeLife: () => void = this.startSnakeLife(snakePainter);
+      const stopSnakeLife: () => void = this.startSnakeLife(
+        snakePainter,
+        untracked(this.firstAppearanceDelayInMilliseconds),
+        untracked(this.maximumHiddenDurationInMilliseconds),
+      );
       onCleanup(() => {
         stopSnakeLife();
         snakePainter.clear();
@@ -75,7 +88,11 @@ export class IntroSnake {
   }
 
   /** Lance la boucle de vie du serpent ; renvoie la fonction qui arrête tout. */
-  private startSnakeLife(snakePainter: PixelPainter): () => void {
+  private startSnakeLife(
+    snakePainter: PixelPainter,
+    firstAppearanceDelayInMilliseconds: number,
+    maximumHiddenDurationInMilliseconds: number,
+  ): () => void {
     const snakeWanderer: SnakeWanderer = new SnakeWanderer(GRID_COLUMNS, GRID_ROWS, SNAKE_LENGTH);
     let snakeSkin: SnakeSkin = pickSnakeSkin(Math.random());
     let remainingPauseSteps: number = 0;
@@ -114,14 +131,14 @@ export class IntroSnake {
       if (snakeWanderer.isHidden()) {
         scheduleAppearance(
           randomDurationBetween(
-            MINIMUM_HIDDEN_DURATION_IN_MILLISECONDS,
-            MAXIMUM_HIDDEN_DURATION_IN_MILLISECONDS,
+            Math.min(MINIMUM_HIDDEN_DURATION_IN_MILLISECONDS, maximumHiddenDurationInMilliseconds),
+            maximumHiddenDurationInMilliseconds,
           ),
         );
       }
     }, STEP_INTERVAL_IN_MILLISECONDS);
 
-    scheduleAppearance(FIRST_APPEARANCE_DELAY_IN_MILLISECONDS);
+    scheduleAppearance(firstAppearanceDelayInMilliseconds);
 
     return (): void => {
       clearInterval(stepIntervalId);

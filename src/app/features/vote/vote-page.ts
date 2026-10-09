@@ -22,7 +22,7 @@ import {
 } from '../../core/voting/phone-voting-session.store';
 import { Participant, VoteScore } from '../../core/voting/voting.model';
 import { TriggerWarningList } from '../../shared/components/trigger-warning-list/trigger-warning-list';
-import { SnakeSpinner } from '../../shared/components/snake-spinner/snake-spinner';
+import { WanderingSnake } from '../../shared/components/wandering-snake/wandering-snake';
 import { PixelDripTransition } from '../../shared/components/pixel-drip-transition/pixel-drip-transition';
 import { PixelDripTransitionService } from '../../shared/components/pixel-drip-transition/pixel-drip-transition.service';
 import { PseudoForm } from './pseudo-form/pseudo-form';
@@ -48,13 +48,17 @@ interface PhoneScreen {
     RevealedVotes,
     TriggerWarningList,
     PixelDripTransition,
-    SnakeSpinner,
+    WanderingSnake,
   ],
   templateUrl: './vote-page.html',
   styleUrl: './vote-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VotePage {
+  /** Sur le téléphone, le serpent arrive vite et ne s'absente pas longtemps : la zone ne reste pas vide. */
+  protected readonly snakeFirstAppearanceDelayInMilliseconds: number = 1_500;
+  protected readonly snakeMaximumHiddenDurationInMilliseconds: number = 5_000;
+
   private readonly phoneVotingSessionStore: PhoneVotingSessionStore =
     inject(PhoneVotingSessionStore);
 

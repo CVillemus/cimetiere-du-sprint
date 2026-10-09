@@ -16,7 +16,7 @@ import {
   TvVotingSessionStore,
 } from '../../../core/voting/tv-voting-session.store';
 import { Participant } from '../../../core/voting/voting.model';
-import { IntroSnake } from './intro-snake/intro-snake';
+import { WanderingSnake } from '../../../shared/components/wandering-snake/wandering-snake';
 
 /**
  * Section 0 : l'accroche et le QR code qui mène vers /vote.
@@ -24,7 +24,7 @@ import { IntroSnake } from './intro-snake/intro-snake';
  */
 @Component({
   selector: 'app-intro-section',
-  imports: [IntroSnake],
+  imports: [WanderingSnake],
   templateUrl: './intro-section.html',
   styleUrl: './intro-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

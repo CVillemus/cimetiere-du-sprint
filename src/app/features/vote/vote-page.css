@@ -48,3 +48,16 @@
   color: var(--color-violet-muted);
   text-align: center;
 }
+
+/*
+ * Fosse aux serpents : le bas de l'écran pendant les temps d'attente.
+ * Un serpent (robe tirée au sort) s'y promène, entre et sort par les bords.
+ */
+.vote-page__snake-pit {
+  position: relative;
+  margin-top: auto;
+  aspect-ratio: 16 / 9;
+  border-top: 2px solid var(--color-violet);
+  background: var(--color-night);
+  --snake-opacity: 1;
+}
