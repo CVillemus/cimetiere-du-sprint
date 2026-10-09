@@ -58,6 +58,8 @@ export class VotePage {
   /** Sur le téléphone, le serpent arrive vite et ne s'absente pas longtemps : la zone ne reste pas vide. */
   protected readonly snakeFirstAppearanceDelayInMilliseconds: number = 1_500;
   protected readonly snakeMaximumHiddenDurationInMilliseconds: number = 5_000;
+  /** Grille plus grossière que sur la TV (64 colonnes) : le serpent est un peu plus gros sur un petit écran. */
+  protected readonly snakeGridColumns: number = 48;
 
   private readonly phoneVotingSessionStore: PhoneVotingSessionStore =
     inject(PhoneVotingSessionStore);

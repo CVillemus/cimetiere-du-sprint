@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   ElementRef,
   input,
@@ -14,9 +15,10 @@ import { prefersReducedMotion } from '../../utils/prefers-reduced-motion';
 import { pickSnakeSkin, SnakeSkin } from '../../pixel-art/snake-skins';
 import { GridCell, SnakeDirection, SnakeWanderer } from './snake-wanderer';
 
-/** Grille de 64×36 cases de 2×2 pixels : un canvas de 128×72. */
-const GRID_COLUMNS: number = 64;
-const GRID_ROWS: number = 36;
+/** Par défaut, grille de 64×36 cases de 2×2 pixels : un canvas de 128×72. */
+const DEFAULT_GRID_COLUMNS: number = 64;
+/** La zone du serpent est toujours en 16:9. */
+const GRID_ROWS_PER_COLUMN: number = 9 / 16;
 const CELL_SIZE: number = 2;
 const SNAKE_LENGTH: number = 10;
 
@@ -57,9 +59,14 @@ export class WanderingSnake {
   readonly maximumHiddenDurationInMilliseconds: InputSignal<number> = input<number>(
     MAXIMUM_HIDDEN_DURATION_IN_MILLISECONDS,
   );
+  /** Moins de colonnes sur la même zone : des cases plus grandes, donc un serpent plus gros. */
+  readonly gridColumns: InputSignal<number> = input<number>(DEFAULT_GRID_COLUMNS);
 
-  protected readonly canvasWidth: number = GRID_COLUMNS * CELL_SIZE;
-  protected readonly canvasHeight: number = GRID_ROWS * CELL_SIZE;
+  protected readonly gridRows: Signal<number> = computed(() =>
+    Math.round(this.gridColumns() * GRID_ROWS_PER_COLUMN),
+  );
+  protected readonly canvasWidth: Signal<number> = computed(() => this.gridColumns() * CELL_SIZE);
+  protected readonly canvasHeight: Signal<number> = computed(() => this.gridRows() * CELL_SIZE);
 
   private readonly snakeCanvas: Signal<ElementRef<HTMLCanvasElement>> =
     viewChild.required<ElementRef<HTMLCanvasElement>>('snakeCanvas');
@@ -93,7 +100,11 @@ export class WanderingSnake {
     firstAppearanceDelayInMilliseconds: number,
     maximumHiddenDurationInMilliseconds: number,
   ): () => void {
-    const snakeWanderer: SnakeWanderer = new SnakeWanderer(GRID_COLUMNS, GRID_ROWS, SNAKE_LENGTH);
+    const snakeWanderer: SnakeWanderer = new SnakeWanderer(
+      untracked(this.gridColumns),
+      untracked(this.gridRows),
+      SNAKE_LENGTH,
+    );
     let snakeSkin: SnakeSkin = pickSnakeSkin(Math.random());
     let remainingPauseSteps: number = 0;
     let phaseTimeoutId: ReturnType<typeof setTimeout> | null = null;

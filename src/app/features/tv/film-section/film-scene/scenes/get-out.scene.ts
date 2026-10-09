@@ -29,7 +29,10 @@ export function paintGetOutScene(scenePainter: PixelPainter): void {
     scenePainter.fillPixel(flowerX + 1, 67, '#4a5a8a');
     scenePainter.fillPixel(flowerX + 1, 71, '#6a7bb0');
   }
-  scenePainter.fillRect(40, 74, 48, 1, '#4a5a8a');
+  // Liseré bleu : il suit le galbe de la tasse au lieu de dépasser sur les côtés.
+  const bandRowY: number = 74;
+  const bandHalfWidth: number = Math.round(27 - (bandRowY - 58) ** 2 / 48);
+  scenePainter.fillRect(64 - bandHalfWidth, bandRowY, bandHalfWidth * 2, 1, '#4a5a8a');
 
   // Anse
   for (let angle: number = 0; angle < 6.3; angle += 0.15) {
