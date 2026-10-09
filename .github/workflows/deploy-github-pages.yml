@@ -38,6 +38,12 @@ jobs:
       - name: Copier index.html en 404.html
         run: cp dist/cimetiere-du-sprint/browser/index.html dist/cimetiere-du-sprint/browser/404.html
 
+      # Le teaser est partagé sur Messenger : son robot doit recevoir un code 200, pas la page 404.
+      - name: Créer la vraie page /teaser/
+        run: |
+          mkdir -p dist/cimetiere-du-sprint/browser/teaser
+          cp dist/cimetiere-du-sprint/browser/index.html dist/cimetiere-du-sprint/browser/teaser/index.html
+
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist/cimetiere-du-sprint/browser

@@ -9,7 +9,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:ci": "ng test --watch=false",
-    "prepare": "husky"
+    "prepare": "husky",
+    "generer:image-partage": "tsx scripts/generer-image-partage.ts",
+    "generer:favicon": "node scripts/generer-favicon.mjs"
   },
   "private": true,
   "packageManager": "npm@11.13.0",
@@ -36,6 +38,7 @@
     "jsdom": "^30.0.0",
     "lint-staged": "^17.6.0",
     "prettier": "^3.8.1",
+    "tsx": "^4.23.15",
     "typescript": "~6.0.2",
     "vitest": "^5.0.0"
   },
