@@ -1,5 +1,62 @@
 <main class="vote-page">
-  <p class="vote-page__eyebrow">Le Cimetière du Sprint</p>
-  <h1 class="vote-page__title">Les urnes ne sont pas encore ouvertes</h1>
-  <p class="vote-page__hint">Garde ton téléphone à portée de main…</p>
+  <p class="vote-page__eyebrow">
+    Le Cimetière du Sprint
+    @if (myParticipant(); as participant) {
+      · {{ participant.pseudo }}
+    }
+  </p>
+
+  @switch (phoneVotingStep()) {
+    @case ('loading') {
+      <p class="vote-page__message">Ouverture du caveau…</p>
+    }
+    @case ('connection-failed') {
+      <h1 class="vote-page__title">Le cimetière ne répond pas</h1>
+      <p class="vote-page__message">Vérifie ta connexion, puis recharge la page.</p>
+    }
+    @case ('waiting-for-tv') {
+      <h1 class="vote-page__title">Les urnes ne sont pas encore ouvertes</h1>
+      <p class="vote-page__message">La TV n'a pas encore lancé la séance. Ne bouge pas…</p>
+    }
+    @case ('pseudo') {
+      <h1 class="vote-page__title">Bienvenue au cimetière</h1>
+      <app-pseudo-form />
+    }
+    @case ('lobby') {
+      <h1 class="vote-page__title">Ta tombe est prête</h1>
+      <p class="vote-page__message">Regarde la TV : le premier film va sortir de terre.</p>
+    }
+    @case ('voting') {
+      @if (currentFilm(); as film) {
+        <p class="vote-page__tomb-label">Tombe {{ currentTombNumber() }} / {{ filmCount }}</p>
+        <h1 class="vote-page__title">{{ film.frenchTitle }}</h1>
+        <app-trigger-warning-list
+          class="vote-page__trigger-warnings"
+          [triggerWarnings]="film.triggerWarnings"
+        />
+        <app-vote-card-picker
+          [selectedScore]="myScoreForCurrentFilm()"
+          (scoreSelected)="castFilmVote($event)"
+        />
+        <p class="vote-page__hint">
+          @if (myScoreForCurrentFilm() === null) {
+            Ton vote reste secret jusqu'à la révélation.
+          } @else {
+            Vote scellé · modifiable jusqu'à la révélation.
+          }
+        </p>
+      }
+    }
+    @case ('revealed') {
+      @if (currentFilm(); as film) {
+        <p class="vote-page__tomb-label">Cartes retournées</p>
+        <h1 class="vote-page__title">{{ film.frenchTitle }}</h1>
+        <app-revealed-votes [revealedVotes]="revealedVotesForCurrentFilm()" />
+      }
+    }
+    @case ('sprint-review') {
+      <h1 class="vote-page__title">Sprint Review</h1>
+      <p class="vote-page__message">Les tombes s'ouvrent… Regarde la TV pour le podium.</p>
+    }
+  }
 </main>

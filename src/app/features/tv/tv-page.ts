@@ -1,5 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  Signal,
+} from '@angular/core';
 import { TvNavigationStore } from '../../core/navigation/tv-navigation.store';
+import { TvVotingSessionStore } from '../../core/voting/tv-voting-session.store';
 import { TvSection } from '../../core/navigation/tv-section.model';
 import { FilmSection } from './film-section/film-section';
 import { IntroSection } from './intro-section/intro-section';
@@ -35,6 +44,7 @@ export class TvPage {
   private readonly pixelDripTransitionService: PixelDripTransitionService = inject(
     PixelDripTransitionService,
   );
+  private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
 
   private lastWheelNavigationTimestamp: number = 0;
 
@@ -45,6 +55,11 @@ export class TvPage {
   protected readonly sectionTrackTransform: Signal<string> = computed(
     (): string => `translateY(calc(-100dvh * ${this.currentSectionIndex()}))`,
   );
+
+  constructor() {
+    afterNextRender(() => void this.tvVotingSessionStore.startHosting());
+    inject(DestroyRef).onDestroy(() => this.tvVotingSessionStore.stopHosting());
+  }
 
   protected handleKeyboardNavigation(keyboardEvent: KeyboardEvent): void {
     switch (keyboardEvent.key) {
@@ -64,6 +79,10 @@ export class TvPage {
         break;
       case 'Escape':
         this.tvNavigator.navigateToIntroSection();
+        break;
+      case 'r':
+      case 'R':
+        void this.tvVotingSessionStore.revealCurrentFilmVotes();
         break;
       default:
         return;

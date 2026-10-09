@@ -26,6 +26,9 @@
   --color-warning-background: #1a1610;
   --color-warning-border: #6b5a2e;
 
+  --color-vote-card-selected: #2b2335;
+  --color-vote-status-background: rgba(13, 11, 20, 0.88);
+
   /* Transition « sang séché » */
   --color-drip-body: #140a10;
   --color-drip-texture: #1c0d15;

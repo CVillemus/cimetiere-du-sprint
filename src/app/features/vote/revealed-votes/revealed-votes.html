@@ -1,0 +1,18 @@
+<p class="revealed-votes__average">Moyenne : {{ formattedAverageScore() }} / 5</p>
+
+@if (revealedVoteLines().length > 0) {
+  <ul class="revealed-votes">
+    @for (revealedVoteLine of revealedVoteLines(); track revealedVoteLine.pseudo) {
+      <li class="revealed-vote" [class.revealed-vote--mine]="revealedVoteLine.isMine">
+        <app-pixel-icon
+          class="revealed-vote__icon"
+          [iconGrid]="revealedVoteLine.voteCard.iconGrid"
+        />
+        <span class="revealed-vote__pseudo">{{ revealedVoteLine.pseudo }}</span>
+        <span class="revealed-vote__label">{{ revealedVoteLine.voteCard.label }}</span>
+      </li>
+    }
+  </ul>
+} @else {
+  <p class="revealed-votes__empty">Personne n'a osé voter pour ce film.</p>
+}

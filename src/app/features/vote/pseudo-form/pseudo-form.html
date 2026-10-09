@@ -1,0 +1,25 @@
+<form class="pseudo-form" novalidate (submit)="submitPseudo($event)">
+  <label class="pseudo-form__label" for="pseudo">Grave ton nom</label>
+  <input
+    id="pseudo"
+    class="pseudo-form__input"
+    type="text"
+    autocomplete="nickname"
+    placeholder="Morticia"
+    [formField]="pseudoForm.pseudo"
+  />
+
+  @if (pseudoForm.pseudo().touched()) {
+    @for (pseudoError of pseudoForm.pseudo().errors(); track pseudoError.kind) {
+      <p class="pseudo-form__error">{{ pseudoError.message }}</p>
+    }
+  }
+
+  <button class="pseudo-form__submit" type="submit" [disabled]="pseudoForm().submitting()">
+    @if (pseudoForm().submitting()) {
+      Gravure…
+    } @else {
+      Rejoindre le sprint
+    }
+  </button>
+</form>

@@ -40,3 +40,9 @@
   border-bottom-color: var(--color-candle);
   color: var(--color-candle);
 }
+
+.film-section__vote-status {
+  position: absolute;
+  right: 1.5vw;
+  bottom: 1.5vw;
+}

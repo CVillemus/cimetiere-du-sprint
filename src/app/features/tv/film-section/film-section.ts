@@ -15,6 +15,7 @@ import {
 } from '../../../core/navigation/tv-section.model';
 import { TvNavigationStore } from '../../../core/navigation/tv-navigation.store';
 import { TvNavigator } from '../tv-navigator/tv-navigator';
+import { VoteStatus } from '../vote-status/vote-status';
 import { PressSlide } from './press-slide/press-slide';
 import { SummarySlide } from './summary-slide/summary-slide';
 import { TrailerSlide } from './trailer-slide/trailer-slide';
@@ -30,7 +31,7 @@ interface FilmSlideTab {
  */
 @Component({
   selector: 'app-film-section',
-  imports: [SummarySlide, TrailerSlide, PressSlide],
+  imports: [SummarySlide, TrailerSlide, PressSlide, VoteStatus],
   templateUrl: './film-section.html',
   styleUrl: './film-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

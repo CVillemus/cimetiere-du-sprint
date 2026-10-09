@@ -1,6 +1,18 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, resource, ResourceRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  resource,
+  ResourceRef,
+  Signal,
+} from '@angular/core';
 import QRCode from 'qrcode';
+import {
+  TvConnectionStatus,
+  TvVotingSessionStore,
+} from '../../../core/voting/tv-voting-session.store';
+import { Participant } from '../../../core/voting/voting.model';
 
 /**
  * Section 0 : l'accroche et le QR code qui mène vers /vote.
@@ -14,6 +26,12 @@ import QRCode from 'qrcode';
 })
 export class IntroSection {
   private readonly document: Document = inject(DOCUMENT);
+  private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
+
+  protected readonly participants: Signal<readonly Participant[]> =
+    this.tvVotingSessionStore.participants;
+  protected readonly connectionStatus: Signal<TvConnectionStatus> =
+    this.tvVotingSessionStore.connectionStatus;
 
   protected readonly voteUrl: string = new URL('vote', this.document.baseURI).href;
 

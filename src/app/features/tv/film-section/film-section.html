@@ -10,6 +10,10 @@
   </div>
 </div>
 
+@if (!isTrailerSlideActive()) {
+  <app-vote-status class="film-section__vote-status" [filmId]="film().id" />
+}
+
 <nav class="film-section__tabs" aria-label="Slides du film">
   @for (slideTab of slideTabs; track slideTab.slideKind; let slideIndex = $index) {
     <button

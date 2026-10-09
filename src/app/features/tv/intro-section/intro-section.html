@@ -7,6 +7,27 @@
       Scanne le QR code, choisis ton pseudo, et vote pour chaque film. Les cartes restent face
       cachée jusqu'à la révélation.
     </p>
+
+    @switch (connectionStatus()) {
+      @case ('connecting') {
+        <p class="intro-section__status">Ouverture du caveau…</p>
+      }
+      @case ('failed') {
+        <p class="intro-section__status intro-section__status--failed">
+          Impossible de joindre Supabase : les votes ne fonctionneront pas.
+        </p>
+      }
+      @case ('connected') {
+        <p class="intro-section__status">Âmes présentes : {{ participants().length }}</p>
+        @if (participants().length > 0) {
+          <ul class="intro-section__participants">
+            @for (participant of participants(); track participant.id) {
+              <li class="intro-section__participant">{{ participant.pseudo }}</li>
+            }
+          </ul>
+        }
+      }
+    }
   </div>
 
   <figure class="intro-section__qr-frame">
