@@ -5,7 +5,10 @@ import { TvNavigationStore } from '../../../core/navigation/tv-navigation.store'
 import { FilmVoteSummary } from '../../../core/voting/film-vote-summary';
 import { TvSoundDesign } from '../../../core/sound/tv-sound-design';
 import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
-import { PixelDripTransitionService } from '../../../shared/components/pixel-drip-transition/pixel-drip-transition.service';
+import {
+  BatSwarmDirection,
+  PixelDripTransitionService,
+} from '../../../shared/components/pixel-drip-transition/pixel-drip-transition.service';
 
 /**
  * Toutes les intentions de navigation de la TV (clavier, molette, clics) passent par ici :
@@ -90,8 +93,15 @@ export class TvNavigator {
     ) {
       return;
     }
-    this.pixelDripTransitionService.playTransition(() =>
-      this.tvNavigationStore.goToSlide(slideIndex),
+    if (this.pixelDripTransitionService.isPlaying()) {
+      return;
+    }
+    const direction: BatSwarmDirection =
+      slideIndex > this.tvNavigationStore.currentSlideIndex() ? 'to-right' : 'to-left';
+    this.tvSoundDesign.playTabChange(direction);
+    this.pixelDripTransitionService.playBatSwarmTransition(
+      () => this.tvNavigationStore.goToSlide(slideIndex),
+      direction,
     );
   }
 }

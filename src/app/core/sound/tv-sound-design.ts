@@ -8,15 +8,23 @@ import {
   untracked,
   WritableSignal,
 } from '@angular/core';
+import { FilmId } from '../films/film.model';
 import { TvNavigationStore } from '../navigation/tv-navigation.store';
+import { FilmVoteSummary } from '../voting/film-vote-summary';
 import { TvVotingSessionStore } from '../voting/tv-voting-session.store';
-import { SpookySynth } from './spooky-synth';
+import { chooseRevealMood } from './reveal-mood';
+import { SpookySynth, StereoFlightDirection } from './spooky-synth';
 import { detectVotingSoundCues, VotingSoundCue, VotingSoundSnapshot } from './voting-sound-cues';
 
 const NORMAL_VOLUME: number = 0.6;
 /** Pendant la bande-annonce, les sons de vote restent audibles sans couvrir YouTube. */
 const TRAILER_VOLUME: number = 0.2;
 const VOLUME_FADE_TIME_CONSTANT_IN_SECONDS: number = 0.15;
+/**
+ * Les scores arrivent juste après la révélation (la RLS ne les rend lisibles qu'à ce moment).
+ * S'ils tardent, on joue quand même le coup de théâtre, version « suspense ».
+ */
+const REVEAL_SCORES_MAXIMUM_WAIT_IN_MILLISECONDS: number = 1_200;
 
 /**
  * Sound design de la TV (les téléphones restent muets : dix téléphones qui sonnent, c'est la cacophonie).
@@ -46,6 +54,10 @@ export class TvSoundDesign {
   private masterVolume: GainNode | null = null;
   private spookySynth: SpookySynth | null = null;
   private previousVotingSoundSnapshot: VotingSoundSnapshot | null = null;
+
+  /** Film qui vient d'être révélé, dont on attend les scores pour choisir la couleur du son. */
+  private readonly filmAwaitingRevealSoundState: WritableSignal<FilmId | null> = signal(null);
+  private revealSoundFallbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     effect(() => {
@@ -88,6 +100,19 @@ export class TvSoundDesign {
       }
       this.previousVotingSoundSnapshot = currentVotingSoundSnapshot;
     });
+
+    // Dès que les scores du film révélé sont lisibles, on joue le coup de théâtre à sa couleur.
+    effect(() => {
+      const filmAwaitingRevealSound: FilmId | null = this.filmAwaitingRevealSoundState();
+      if (filmAwaitingRevealSound === null) {
+        return;
+      }
+      const filmVoteSummary: FilmVoteSummary =
+        this.tvVotingSessionStore.filmVoteSummary(filmAwaitingRevealSound);
+      if (filmVoteSummary.revealedVoteCards.length > 0) {
+        untracked(() => this.playRevealSound(filmVoteSummary));
+      }
+    });
   }
 
   /** À appeler depuis un geste de l'utilisateur (touche, clic) : le navigateur autorise alors le son. */
@@ -121,6 +146,11 @@ export class TvSoundDesign {
     this.spookySynth?.playCryptWind();
   }
 
+  /** Changement d'onglet : le bruit d'ailes de la nuée de chauves-souris, dans le sens du vol. */
+  playTabChange(direction: StereoFlightDirection): void {
+    this.spookySynth?.playBatSwarm(direction);
+  }
+
   /** Le glas tombe 2,2 s après le début de l'orgue, plus le délai demandé. */
   playWinnerElected(startDelayInSeconds: number): void {
     this.spookySynth?.playCryptOrgan(startDelayInSeconds);
@@ -138,8 +168,39 @@ export class TvSoundDesign {
         this.spookySynth?.playFuneralBell();
         break;
       case 'votes-revealed':
-        this.spookySynth?.playDramaticReveal();
+        this.waitForRevealedScores();
         break;
+    }
+  }
+
+  private waitForRevealedScores(): void {
+    const revealedFilmIds: readonly FilmId[] = this.tvVotingSessionStore.revealedFilmIds();
+    const lastRevealedFilmId: FilmId | undefined = revealedFilmIds[revealedFilmIds.length - 1];
+    if (lastRevealedFilmId === undefined) {
+      return;
+    }
+    this.filmAwaitingRevealSoundState.set(lastRevealedFilmId);
+    this.clearRevealSoundFallback();
+    this.revealSoundFallbackTimeoutId = setTimeout(() => {
+      if (this.filmAwaitingRevealSoundState() !== null) {
+        this.filmAwaitingRevealSoundState.set(null);
+        this.spookySynth?.playDramaticReveal('suspense');
+      }
+    }, REVEAL_SCORES_MAXIMUM_WAIT_IN_MILLISECONDS);
+  }
+
+  private playRevealSound(filmVoteSummary: FilmVoteSummary): void {
+    this.filmAwaitingRevealSoundState.set(null);
+    this.clearRevealSoundFallback();
+    this.spookySynth?.playDramaticReveal(
+      chooseRevealMood(filmVoteSummary.averageScore, filmVoteSummary.revealedVoteCards),
+    );
+  }
+
+  private clearRevealSoundFallback(): void {
+    if (this.revealSoundFallbackTimeoutId !== null) {
+      clearTimeout(this.revealSoundFallbackTimeoutId);
+      this.revealSoundFallbackTimeoutId = null;
     }
   }
 

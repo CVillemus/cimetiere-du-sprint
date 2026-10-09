@@ -11,6 +11,7 @@ import { TvNavigationStore } from '../../core/navigation/tv-navigation.store';
 import { TvVotingSessionStore } from '../../core/voting/tv-voting-session.store';
 import { TvSoundDesign } from '../../core/sound/tv-sound-design';
 import { TvSection } from '../../core/navigation/tv-section.model';
+import { BatSwarmTransition } from './bat-swarm-transition/bat-swarm-transition';
 import { FilmSection } from './film-section/film-section';
 import { IntroSection } from './intro-section/intro-section';
 import { PixelDripTransition } from '../../shared/components/pixel-drip-transition/pixel-drip-transition';
@@ -33,7 +34,14 @@ const MINIMUM_WHEEL_DELTA: number = 15;
  */
 @Component({
   selector: 'app-tv-page',
-  imports: [IntroSection, FilmSection, SprintReviewSection, SectionProgress, PixelDripTransition],
+  imports: [
+    IntroSection,
+    FilmSection,
+    SprintReviewSection,
+    SectionProgress,
+    PixelDripTransition,
+    BatSwarmTransition,
+  ],
   templateUrl: './tv-page.html',
   styleUrl: './tv-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,3 +1,5 @@
+import { RevealMood } from './reveal-mood';
+
 /**
  * Synthétiseur 8-bit « crypte » : tous les sons de la soirée sont fabriqués à la volée
  * avec la Web Audio API (aucun fichier audio, aucun droit d'auteur).
@@ -21,6 +23,8 @@ interface ToneSettings {
   readonly vibratoDepth?: number;
   /** Désaccordage en cents : une note légèrement fausse sonne plus inquiétante. */
   readonly detuneInCents?: number;
+  /** Par défaut, le bus de la crypte ; un panoramique stéréo par exemple. */
+  readonly outputNode?: AudioNode;
 }
 
 interface NoiseSettings {
@@ -34,6 +38,7 @@ interface NoiseSettings {
   readonly attackInSeconds?: number;
   /** Fait onduler le filtre, comme une rafale de vent qui siffle. */
   readonly wobbleRate?: number;
+  readonly outputNode?: AudioNode;
 }
 
 /** Rapport de fréquence, volume, durée : les partiels inharmoniques d'une cloche d'église. */
@@ -59,8 +64,61 @@ const MUSIC_BOX_NOTES: readonly (readonly [frequency: number, detuneInCents: num
   [466.16, -40],
 ];
 
-/** Accord diminué grave (La, Si bémol, Mi bémol) : le coup de théâtre de la révélation. */
-const REVEAL_CHORD_FREQUENCIES: readonly number[] = [110, 116.54, 155.56];
+interface RevealMoodSettings {
+  readonly rootFrequency: number;
+  readonly chordRatios: readonly number[];
+  /** L'accord glisse vers cette fraction de sa fréquence : plus c'est bas, plus ça s'effondre. */
+  readonly pitchDrift: number;
+  readonly lowpassFrequency: number;
+  readonly creakVolume: number;
+  readonly ending: 'bell' | 'coffin-knocks' | null;
+}
+
+/** Accord diminué (La, Si bémol, Mi bémol) : la tension du coup de théâtre. */
+const DISSONANT_CHORD_RATIOS: readonly number[] = [1, 1.0594, 1.4142];
+/** Accord majeur : la même révélation, mais lumineuse. */
+const MAJOR_CHORD_RATIOS: readonly number[] = [1, 1.26, 1.5];
+
+/** Un seul coup de théâtre, décliné selon l'accueil du film : du plus lumineux au plus sombre. */
+const REVEAL_MOOD_SETTINGS: Readonly<Record<RevealMood, RevealMoodSettings>> = {
+  triumph: {
+    rootFrequency: 110,
+    chordRatios: MAJOR_CHORD_RATIOS,
+    pitchDrift: 1,
+    lowpassFrequency: 1500,
+    creakVolume: 0.12,
+    ending: 'bell',
+  },
+  suspense: {
+    rootFrequency: 110,
+    chordRatios: DISSONANT_CHORD_RATIOS,
+    pitchDrift: 0.94,
+    lowpassFrequency: 1000,
+    creakVolume: 0.25,
+    ending: null,
+  },
+  disappointment: {
+    rootFrequency: 98,
+    chordRatios: DISSONANT_CHORD_RATIOS,
+    pitchDrift: 0.88,
+    lowpassFrequency: 800,
+    creakVolume: 0.25,
+    ending: null,
+  },
+  doom: {
+    rootFrequency: 82.4,
+    chordRatios: DISSONANT_CHORD_RATIOS,
+    pitchDrift: 0.8,
+    lowpassFrequency: 600,
+    creakVolume: 0.32,
+    ending: 'coffin-knocks',
+  },
+};
+
+const BAT_WING_FLAP_COUNT: number = 15;
+const BAT_WING_FLAP_SPACING_IN_SECONDS: number = 0.042;
+const BAT_FLIGHT_DURATION_IN_SECONDS: number = 0.65;
+const BAT_SQUEAK_DELAYS_IN_SECONDS: readonly number[] = [0.12, 0.31, 0.47];
 
 /** Orgue de la crypte : La mineur → Fa majeur → Mi majeur. */
 const CRYPT_ORGAN_CHORDS: readonly (readonly number[])[] = [
@@ -75,6 +133,9 @@ const REVERB_DURATION_IN_SECONDS: number = 3.5;
 const REVERB_DECAY_CURVE: number = 2.6;
 const REVERB_LOWPASS_FREQUENCY: number = 2200;
 const REVERB_LEVEL: number = 0.77;
+
+/** Vers la droite ou vers la gauche : le bruit d'ailes traverse les haut-parleurs dans ce sens. */
+export type StereoFlightDirection = 'to-right' | 'to-left';
 
 export class SpookySynth {
   private readonly soundBus: GainNode;
@@ -201,8 +262,12 @@ export class SpookySynth {
     );
   }
 
-  /** Les cartes se retournent : impact sourd, accord dissonant qui se désaccorde, porte qui grince. */
-  playDramaticReveal(): void {
+  /**
+   * Les cartes se retournent : impact sourd, accord qui se désaccorde, porte qui grince.
+   * L'accord, sa hauteur et la note de fin dépendent de l'accueil du film.
+   */
+  playDramaticReveal(revealMood: RevealMood): void {
+    const revealMoodSettings: RevealMoodSettings = REVEAL_MOOD_SETTINGS[revealMood];
     this.playTone({
       waveform: 'sine',
       frequency: 120,
@@ -217,29 +282,88 @@ export class SpookySynth {
       filterFrequency: 400,
       endFilterFrequency: 90,
     });
-    REVEAL_CHORD_FREQUENCIES.forEach((frequency: number) => {
+    revealMoodSettings.chordRatios.forEach((chordRatio: number) => {
+      const frequency: number = revealMoodSettings.rootFrequency * chordRatio;
       this.playTone({
         waveform: 'sawtooth',
         frequency,
-        endFrequency: frequency * 0.94,
+        endFrequency: frequency * revealMoodSettings.pitchDrift,
         startDelayInSeconds: 0.03,
         durationInSeconds: 2.6,
         volume: 0.06,
         attackInSeconds: 0.01,
-        lowpassFrequency: 1000,
+        lowpassFrequency: revealMoodSettings.lowpassFrequency,
         vibratoRate: 4.5,
         vibratoDepth: 1.2,
       });
       this.playTone({
         frequency: frequency * 2,
-        endFrequency: frequency * 1.88,
+        endFrequency: frequency * 2 * revealMoodSettings.pitchDrift,
         startDelayInSeconds: 0.03,
         durationInSeconds: 2.2,
         volume: 0.03,
-        lowpassFrequency: 1400,
+        lowpassFrequency: revealMoodSettings.lowpassFrequency + 400,
       });
     });
-    this.playCreakingDoor(0.5, 1.4, 0.25);
+    this.playCreakingDoor(0.5, 1.4, revealMoodSettings.creakVolume);
+
+    if (revealMoodSettings.ending === 'bell') {
+      this.playChurchBell(220, 0.35, 0.45);
+    } else if (revealMoodSettings.ending === 'coffin-knocks') {
+      [1.7, 1.88].forEach((startDelayInSeconds: number) =>
+        this.playTone({
+          waveform: 'triangle',
+          frequency: 120,
+          endFrequency: 55,
+          startDelayInSeconds,
+          durationInSeconds: 0.22,
+          volume: 0.45,
+          attackInSeconds: 0.002,
+        }),
+      );
+    }
+  }
+
+  /**
+   * Changement d'onglet : une nuée de chauves-souris passe d'un haut-parleur à l'autre,
+   * battements d'ailes serrés qui enflent puis s'éloignent, avec quelques petits cris aigus.
+   */
+  playBatSwarm(direction: StereoFlightDirection): void {
+    const startTime: number = this.audioContext.currentTime;
+    const stereoPanner: StereoPannerNode = this.audioContext.createStereoPanner();
+    const panStart: number = direction === 'to-right' ? -0.8 : 0.8;
+    stereoPanner.pan.setValueAtTime(panStart, startTime);
+    stereoPanner.pan.linearRampToValueAtTime(-panStart, startTime + BAT_FLIGHT_DURATION_IN_SECONDS);
+    stereoPanner.connect(this.soundBus);
+
+    for (let flapIndex: number = 0; flapIndex < BAT_WING_FLAP_COUNT; flapIndex++) {
+      const flightProgress: number = flapIndex / (BAT_WING_FLAP_COUNT - 1);
+      // Les ailes enflent quand la nuée passe au milieu, puis s'éloignent.
+      const swellVolume: number = 0.05 + Math.sin(flightProgress * Math.PI) * 0.13;
+      this.playNoise({
+        startDelayInSeconds: flapIndex * BAT_WING_FLAP_SPACING_IN_SECONDS + Math.random() * 0.015,
+        durationInSeconds: 0.04,
+        volume: swellVolume,
+        filterType: 'bandpass',
+        filterFrequency: 650 + Math.random() * 500,
+        filterQuality: 1.4,
+        attackInSeconds: 0.004,
+        outputNode: stereoPanner,
+      });
+    }
+    BAT_SQUEAK_DELAYS_IN_SECONDS.forEach((startDelayInSeconds: number) => {
+      const squeakFrequency: number = 3800 + Math.random() * 1200;
+      this.playTone({
+        waveform: 'sine',
+        frequency: squeakFrequency,
+        endFrequency: squeakFrequency * 1.25,
+        startDelayInSeconds,
+        durationInSeconds: 0.05,
+        volume: 0.025,
+        attackInSeconds: 0.003,
+        outputNode: stereoPanner,
+      });
+    });
   }
 
   /**
@@ -359,6 +483,7 @@ export class SpookySynth {
       toneSettings.volume,
       toneSettings.attackInSeconds ?? 0.005,
       toneSettings.durationInSeconds,
+      toneSettings.outputNode,
     );
     if (toneSettings.lowpassFrequency !== undefined) {
       const lowpass: BiquadFilterNode = this.audioContext.createBiquadFilter();
@@ -417,24 +542,26 @@ export class SpookySynth {
       noiseSettings.volume,
       noiseSettings.attackInSeconds ?? 0.01,
       noiseSettings.durationInSeconds,
+      noiseSettings.outputNode,
     );
     noiseSource.connect(filter);
     filter.connect(envelope);
     noiseSource.start(startTime);
   }
 
-  /** Attaque rapide puis extinction exponentielle, branchée sur le bus de la crypte. */
+  /** Attaque rapide puis extinction exponentielle, branchée par défaut sur le bus de la crypte. */
   private createEnvelope(
     startTime: number,
     volume: number,
     attackInSeconds: number,
     durationInSeconds: number,
+    outputNode: AudioNode = this.soundBus,
   ): GainNode {
     const envelope: GainNode = this.audioContext.createGain();
     envelope.gain.setValueAtTime(SILENT_GAIN, startTime);
     envelope.gain.exponentialRampToValueAtTime(volume, startTime + attackInSeconds);
     envelope.gain.exponentialRampToValueAtTime(SILENT_GAIN, startTime + durationInSeconds);
-    envelope.connect(this.soundBus);
+    envelope.connect(outputNode);
     return envelope;
   }
 

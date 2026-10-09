@@ -33,7 +33,7 @@ Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 
 
 - `TvNavigationStore` (core) est la seule source de vérité : section courante, slide courante.
 - Aucun scroll natif : les pistes de sections et de slides sont translatées en CSS selon le store.
-- Clavier, molette et clics passent par `TvNavigator`, qui joue chaque changement derrière la transition `PixelDripTransition` (coulure de pixels, 0,8 s, teinte « sang séché »), aussi sur le téléphone.
+- Clavier, molette et clics passent par `TvNavigator`. Changement de section : la coulure `PixelDripTransition` (0,8 s, « sang séché », aussi sur le téléphone). Changement d'onglet : la nuée `BatSwarmTransition` (0,65 s, dans le sens de la navigation). Les deux partagent le même verrou.
 - Les décors sont dessinés sur `<canvas>` (128×96) avec `PixelPainter` ; les lumières sont sur un second canvas qui vacille.
 - Les fonds des panneaux (`PixelBackdrop`) alternent crâne, tête de mort, arbre mort, corbeau, araignée, avec une animation « idle ».
 
@@ -41,7 +41,7 @@ Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 
 
 - Uniquement sur la TV (`core/sound/`) : les téléphones restent muets.
 - Sons 8-bit synthétisés en Web Audio par `SpookySynth` (aucun fichier audio), avec une réverbération de « crypte ».
-- `TvSoundDesign` : vent de crypte au changement de section, boîte à musique à l'arrivée d'une âme, toc toc à chaque vote, glas au dernier vote, coup de théâtre à la révélation, orgue + glas au podium.
+- `TvSoundDesign` : vent de crypte au changement de section, battements d'ailes en stéréo au changement d'onglet, boîte à musique à l'arrivée d'une âme, toc toc à chaque vote, glas au dernier vote, coup de théâtre à la révélation (décliné selon la moyenne : `chooseRevealMood`), orgue + glas à la Sprint Review.
 - Les événements de vote sont détectés en comparant deux photos de la session (`detectVotingSoundCues`, testé).
 - Le navigateur bloque le son jusqu'à la première touche ou au premier clic ; touche `M` pour couper. Volume baissé pendant la bande-annonce.
 
