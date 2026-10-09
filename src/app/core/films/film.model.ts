@@ -3,7 +3,7 @@ export type IntensityLevel = 1 | 2 | 3 | 4 | 5;
 
 /** Identifiant stable d'un film : servira aussi de clé dans la table des votes Supabase. */
 export type FilmId =
-  | 'les-autres'
+  | 'heretic'
   | 'get-out'
   | 'conjuring'
   | 'mama'

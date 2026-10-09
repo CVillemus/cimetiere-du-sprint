@@ -6,33 +6,38 @@ import { Film } from './film.model';
  */
 export const FILMS: readonly Film[] = [
   {
-    id: 'les-autres',
-    frenchTitle: 'Les Autres',
-    originalTitle: 'The Others',
-    releaseYear: 2001,
-    directors: ['Alejandro Amenábar'],
-    durationInMinutes: 101,
+    id: 'heretic',
+    frenchTitle: 'Heretic',
+    originalTitle: 'Heretic',
+    releaseYear: 2024,
+    directors: ['Scott Beck', 'Bryan Woods'],
+    durationInMinutes: 111,
     fearLevel: 3,
-    goreLevel: 1,
+    goreLevel: 2,
     summary:
-      "1945, île de Jersey. Grace vit seule avec ses deux enfants, malades de la lumière, dans un manoir aux rideaux toujours tirés. L'arrivée de trois domestiques coïncide avec d'étranges présences.",
-    triggerWarnings: ['Enfants en danger', 'Deuil', 'Ambiance oppressante'],
+      "Un soir d'orage, deux jeunes missionnaires frappent à la porte de M. Reed. L'homme est charmant, cultivé, et les invite à entrer goûter sa tarte. Mais la discussion sur la foi se referme sur elles comme un piège… et la porte d'entrée aussi.",
+    triggerWarnings: [
+      'Séquestration',
+      'Manipulation psychologique',
+      'Violence (seconde moitié)',
+      'Religion malmenée',
+    ],
     trailer: {
-      youtubeVideoId: 'zWxCQs7qQT4',
+      youtubeVideoId: 'zDlIP4nKBy8',
       language: 'VF',
-      triggerWarnings: ['Ambiance oppressante'],
+      triggerWarnings: ['Tension', 'Ambiance oppressante'],
     },
     pressReception: {
-      imdbTitleId: 'tt0230600',
-      imdbRating: 7.6,
+      imdbTitleId: 'tt28015403',
+      imdbRating: 7.0,
       reviewSummary:
-        'Un huis clos gothique tout en suggestion, porté par Nicole Kidman. La critique salue une mise en scène élégante et un final resté culte.',
+        "Hugh Grant à contre-emploi, salué comme l'un de ses meilleurs rôles. Un huis clos d'abord bavard et brillant, qui glisse lentement vers l'horreur.",
       containsSpoilers: false,
     },
     streamingAvailability: {
-      justWatchSlug: 'les-autres',
-      subscriptionPlatforms: ['SFR Play'],
-      rentalPlatforms: [],
+      justWatchSlug: 'heretic',
+      subscriptionPlatforms: [],
+      rentalPlatforms: ['Canal VOD', 'Apple TV', 'Amazon Video'],
     },
   },
   {
