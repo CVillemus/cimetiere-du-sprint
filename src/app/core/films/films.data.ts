@@ -29,6 +29,11 @@ export const FILMS: readonly Film[] = [
         'Un huis clos gothique tout en suggestion, porté par Nicole Kidman. La critique salue une mise en scène élégante et un final resté culte.',
       containsSpoilers: false,
     },
+    streamingAvailability: {
+      justWatchSlug: 'les-autres',
+      subscriptionPlatforms: ['SFR Play'],
+      rentalPlatforms: [],
+    },
   },
   {
     id: 'get-out',
@@ -53,6 +58,11 @@ export const FILMS: readonly Film[] = [
       reviewSummary:
         "Thriller satirique devenu une référence, récompensé par l'Oscar du meilleur scénario original. On rit jaune autant qu'on frissonne.",
       containsSpoilers: false,
+    },
+    streamingAvailability: {
+      justWatchSlug: 'get-out',
+      subscriptionPlatforms: ['Prime Video', 'Disney+', 'HBO Max'],
+      rentalPlatforms: [],
     },
   },
   {
@@ -80,6 +90,11 @@ export const FILMS: readonly Film[] = [
         "Une maison hantée à l'ancienne, d'une efficacité redoutable. Souvent cité parmi les films d'horreur grand public les plus réussis de sa décennie.",
       containsSpoilers: false,
     },
+    streamingAvailability: {
+      justWatchSlug: 'conjuring-les-dossiers-warren',
+      subscriptionPlatforms: ['Netflix', 'Prime Video', 'HBO Max'],
+      rentalPlatforms: [],
+    },
   },
   {
     id: 'mama',
@@ -104,6 +119,11 @@ export const FILMS: readonly Film[] = [
       reviewSummary:
         'Une ambiance de conte noir très réussie, produite par Guillermo del Toro. Sa dernière partie divise.',
       containsSpoilers: false,
+    },
+    streamingAvailability: {
+      justWatchSlug: 'mama',
+      subscriptionPlatforms: [],
+      rentalPlatforms: ['Canal VOD', 'Apple TV', 'Amazon Video'],
     },
   },
   {
@@ -130,6 +150,11 @@ export const FILMS: readonly Film[] = [
         "Régulièrement cité comme l'un des films les plus effrayants des années 2010, grâce à ses images d'archives glaçantes et sa bande-son.",
       containsSpoilers: false,
     },
+    streamingAvailability: {
+      justWatchSlug: 'sinister',
+      subscriptionPlatforms: ['Shadowz', 'Molotov TV'],
+      rentalPlatforms: [],
+    },
   },
   {
     id: 'heredite',
@@ -154,6 +179,11 @@ export const FILMS: readonly Film[] = [
       reviewSummary:
         'Un premier film acclamé, porté par une Toni Collette impressionnante. Lent, étouffant, et très éprouvant pour les nerfs.',
       containsSpoilers: false,
+    },
+    streamingAvailability: {
+      justWatchSlug: 'heredite',
+      subscriptionPlatforms: ['Prime Video'],
+      rentalPlatforms: [],
     },
   },
   {
@@ -180,6 +210,11 @@ export const FILMS: readonly Film[] = [
         'Un film français radical et maîtrisé, qui divise par sa violence. Ses défenseurs saluent une mise en scène virtuose.',
       containsSpoilers: false,
     },
+    streamingAvailability: {
+      justWatchSlug: 'incident-in-a-ghost-land',
+      subscriptionPlatforms: ['Shadowz', 'Molotov TV'],
+      rentalPlatforms: [],
+    },
   },
   {
     id: 'l-orphelinat',
@@ -200,6 +235,11 @@ export const FILMS: readonly Film[] = [
       reviewSummary:
         'Un conte macabre et bouleversant, produit par Guillermo del Toro. La critique le place parmi les grands films de fantômes espagnols.',
       containsSpoilers: false,
+    },
+    streamingAvailability: {
+      justWatchSlug: 'lorphelinat',
+      subscriptionPlatforms: ['Paramount+'],
+      rentalPlatforms: [],
     },
   },
   {
@@ -226,6 +266,11 @@ export const FILMS: readonly Film[] = [
         'Un found footage façon émission TV des années 70, très bien reçu. On salue surtout son format original et la performance de David Dastmalchian.',
       containsSpoilers: false,
     },
+    streamingAvailability: {
+      justWatchSlug: 'late-night-with-the-devil',
+      subscriptionPlatforms: ['Shadowz', 'Molotov TV'],
+      rentalPlatforms: [],
+    },
   },
   {
     id: 'his-house',
@@ -246,6 +291,11 @@ export const FILMS: readonly Film[] = [
       reviewSummary:
         "Un premier film unanimement salué par la critique, qui mêle maison hantée et drame de l'exil avec une grande finesse.",
       containsSpoilers: false,
+    },
+    streamingAvailability: {
+      justWatchSlug: 'his-house',
+      subscriptionPlatforms: ['Netflix'],
+      rentalPlatforms: [],
     },
   },
 ];

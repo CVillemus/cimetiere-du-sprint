@@ -3,14 +3,17 @@
     <app-summary-slide [film]="film()" [tombNumber]="tombNumber()" [filmCount]="filmCount" />
   </div>
   <div class="film-section__slide">
-    <app-trailer-slide [film]="film()" [isActive]="isTrailerSlideActive()" />
+    <app-press-slide [film]="film()" [tombNumber]="tombNumber()" [filmCount]="filmCount" />
   </div>
   <div class="film-section__slide">
-    <app-press-slide [film]="film()" [tombNumber]="tombNumber()" [filmCount]="filmCount" />
+    <app-trailer-slide [film]="film()" [isActive]="activeSlideKind() === 'trailer'" />
+  </div>
+  <div class="film-section__slide">
+    <app-vote-slide [film]="film()" [isActive]="activeSlideKind() === 'vote'" />
   </div>
 </div>
 
-@if (!isTrailerSlideActive()) {
+@if (isVoteStatusVisible()) {
   <app-vote-status class="film-section__vote-status" [filmId]="film().id" />
 }
 
@@ -20,7 +23,9 @@
       type="button"
       class="film-section__tab"
       [class.film-section__tab--active]="slideIndex === activeSlideIndex()"
+      [class.film-section__tab--locked]="slideTab.slideKind === 'vote' && !isVoteSlideUnlocked()"
       [attr.aria-current]="slideIndex === activeSlideIndex() ? 'step' : null"
+      [attr.aria-disabled]="slideTab.slideKind === 'vote' && !isVoteSlideUnlocked()"
       (click)="selectSlide(slideIndex)"
     >
       {{ slideTab.label }}

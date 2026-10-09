@@ -40,7 +40,7 @@ describe('TvNavigationStore', () => {
     tvNavigationStore.goToNextSection();
     tvNavigationStore.goToNextSlide();
     tvNavigationStore.goToNextSlide();
-    expect(tvNavigationStore.currentSlideKind()).toBe('press');
+    expect(tvNavigationStore.currentSlideKind()).toBe('trailer');
 
     tvNavigationStore.goToNextSection();
 
@@ -59,6 +59,6 @@ describe('TvNavigationStore', () => {
 
     tvNavigationStore.goToSection(1);
 
-    expect(tvNavigationStore.currentSlideKind()).toBe('trailer');
+    expect(tvNavigationStore.currentSlideKind()).toBe('press');
   });
 });

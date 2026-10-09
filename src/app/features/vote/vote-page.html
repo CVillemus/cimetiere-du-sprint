@@ -6,7 +6,7 @@
     }
   </p>
 
-  @switch (phoneVotingStep()) {
+  @switch (displayedPhoneScreen().step) {
     @case ('loading') {
       <p class="vote-page__message">Ouverture du caveau…</p>
     }
@@ -27,8 +27,8 @@
       <p class="vote-page__message">Regarde la TV : le premier film va sortir de terre.</p>
     }
     @case ('voting') {
-      @if (currentFilm(); as film) {
-        <p class="vote-page__tomb-label">Tombe {{ currentTombNumber() }} / {{ filmCount }}</p>
+      @if (displayedPhoneScreen().film; as film) {
+        <p class="vote-page__tomb-label">Tombe {{ displayedTombNumber() }} / {{ filmCount }}</p>
         <h1 class="vote-page__title">{{ film.frenchTitle }}</h1>
         <app-trigger-warning-list
           class="vote-page__trigger-warnings"
@@ -48,7 +48,7 @@
       }
     }
     @case ('revealed') {
-      @if (currentFilm(); as film) {
+      @if (displayedPhoneScreen().film; as film) {
         <p class="vote-page__tomb-label">Cartes retournées</p>
         <h1 class="vote-page__title">{{ film.frenchTitle }}</h1>
         <app-revealed-votes [revealedVotes]="revealedVotesForCurrentFilm()" />
@@ -60,3 +60,5 @@
     }
   }
 </main>
+
+<app-pixel-drip-transition />

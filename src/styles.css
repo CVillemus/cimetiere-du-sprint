@@ -31,6 +31,8 @@
 
   /* Serpent qui rôde derrière le QR code (ses robes sont dans snake-skins.ts) */
   --snake-opacity: 0.5;
+  /* Araignée qui se promène sur la Sprint Review (sprite dans spider-sprite.ts) */
+  --spider-opacity: 0.6;
 
   /* Transition « sang séché » */
   --color-drip-body: #140a10;

@@ -1,7 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { FILM_SLIDE_ORDER } from '../../../core/navigation/tv-section.model';
+import { Film } from '../../../core/films/film.model';
+import { FILM_SLIDE_ORDER, VOTE_SLIDE_INDEX } from '../../../core/navigation/tv-section.model';
 import { TvNavigationStore } from '../../../core/navigation/tv-navigation.store';
-import { PixelDripTransitionService } from '../pixel-drip-transition/pixel-drip-transition.service';
+import { FilmVoteSummary } from '../../../core/voting/film-vote-summary';
+import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
+import { PixelDripTransitionService } from '../../../shared/components/pixel-drip-transition/pixel-drip-transition.service';
 
 /**
  * Toutes les intentions de navigation de la TV (clavier, molette, clics) passent par ici :
@@ -10,6 +13,7 @@ import { PixelDripTransitionService } from '../pixel-drip-transition/pixel-drip-
 @Injectable({ providedIn: 'root' })
 export class TvNavigator {
   private readonly tvNavigationStore: TvNavigationStore = inject(TvNavigationStore);
+  private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
   private readonly pixelDripTransitionService: PixelDripTransitionService = inject(
     PixelDripTransitionService,
   );
@@ -37,7 +41,39 @@ export class TvNavigator {
     this.navigateToSection(0);
   }
 
+  /** La slide Vote reste verrouillée tant que tout le monde n'a pas voté (sauf si déjà révélée). */
   navigateToSlide(slideIndex: number): void {
+    if (slideIndex === VOTE_SLIDE_INDEX && !this.isVoteSlideUnlocked()) {
+      return;
+    }
+    this.playSlideTransition(slideIndex);
+  }
+
+  navigateToNextSlide(): void {
+    this.navigateToSlide(this.tvNavigationStore.currentSlideIndex() + 1);
+  }
+
+  navigateToPreviousSlide(): void {
+    this.navigateToSlide(this.tvNavigationStore.currentSlideIndex() - 1);
+  }
+
+  /** Touche R : le Scrum Master force l'ouverture du vote, même si des retardataires n'ont pas voté. */
+  forceNavigationToVoteSlide(): void {
+    this.playSlideTransition(VOTE_SLIDE_INDEX);
+  }
+
+  isVoteSlideUnlocked(): boolean {
+    const currentFilm: Film | null = this.tvNavigationStore.currentFilm();
+    if (currentFilm === null) {
+      return false;
+    }
+    const filmVoteSummary: FilmVoteSummary = this.tvVotingSessionStore.filmVoteSummary(
+      currentFilm.id,
+    );
+    return filmVoteSummary.hasEveryoneVoted || filmVoteSummary.isRevealed;
+  }
+
+  private playSlideTransition(slideIndex: number): void {
     const isOutOfRange: boolean = slideIndex < 0 || slideIndex >= FILM_SLIDE_ORDER.length;
     const isOutsideFilmSection: boolean = this.tvNavigationStore.currentFilm() === null;
     if (
@@ -50,13 +86,5 @@ export class TvNavigator {
     this.pixelDripTransitionService.playTransition(() =>
       this.tvNavigationStore.goToSlide(slideIndex),
     );
-  }
-
-  navigateToNextSlide(): void {
-    this.navigateToSlide(this.tvNavigationStore.currentSlideIndex() + 1);
-  }
-
-  navigateToPreviousSlide(): void {
-    this.navigateToSlide(this.tvNavigationStore.currentSlideIndex() - 1);
   }
 }

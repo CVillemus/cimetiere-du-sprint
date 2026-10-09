@@ -40,6 +40,19 @@ export interface FilmPressReception {
   readonly containsSpoilers: boolean;
 }
 
+/** Date du relevé des plateformes sur JustWatch France : l'offre change souvent. */
+export const STREAMING_CHECKED_ON: string = 'octobre 2026';
+
+/** Où regarder le film en France (source : JustWatch). */
+export interface StreamingAvailability {
+  /** Identifiant de la fiche JustWatch (justwatch.com/fr/film/<slug>) : la source. */
+  readonly justWatchSlug: string;
+  /** Inclus dans un abonnement. */
+  readonly subscriptionPlatforms: readonly string[];
+  /** Location ou achat à l'unité, quand aucun abonnement ne le propose. */
+  readonly rentalPlatforms: readonly string[];
+}
+
 export interface Film {
   readonly id: FilmId;
   readonly frenchTitle: string;
@@ -53,4 +66,5 @@ export interface Film {
   readonly triggerWarnings: readonly string[];
   readonly trailer: FilmTrailer;
   readonly pressReception: FilmPressReception;
+  readonly streamingAvailability: StreamingAvailability;
 }

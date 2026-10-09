@@ -10,6 +10,7 @@ import {
 import { FilmRanking, VETO_THRESHOLD } from '../../../core/voting/film-ranking';
 import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
 import { FilmScene } from '../film-section/film-scene/film-scene';
+import { ReviewSpider } from './review-spider/review-spider';
 
 interface RankedFilm {
   readonly rank: number;
@@ -26,7 +27,7 @@ const PODIUM_DISPLAY_ORDER: readonly number[] = [2, 1, 3];
  */
 @Component({
   selector: 'app-sprint-review-section',
-  imports: [FilmScene],
+  imports: [FilmScene, ReviewSpider],
   templateUrl: './sprint-review-section.html',
   styleUrl: './sprint-review-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

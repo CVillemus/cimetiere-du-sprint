@@ -1,15 +1,19 @@
 import { Film } from '../films/film.model';
 
-/** Les 3 slides horizontales d'un film, dans leur ordre d'affichage. */
-export type FilmSlideKind = 'summary' | 'trailer' | 'press';
+/** Les 4 slides horizontales d'un film, dans leur ordre d'affichage. */
+export type FilmSlideKind = 'summary' | 'press' | 'trailer' | 'vote';
 
-export const FILM_SLIDE_ORDER: readonly FilmSlideKind[] = ['summary', 'trailer', 'press'];
+export const FILM_SLIDE_ORDER: readonly FilmSlideKind[] = ['summary', 'press', 'trailer', 'vote'];
 
 export const FILM_SLIDE_LABELS: Readonly<Record<FilmSlideKind, string>> = {
   summary: 'Résumé',
-  trailer: 'Trailer',
   press: 'Presse',
+  trailer: 'Trailer',
+  vote: 'Vote',
 };
+
+/** Index de la slide Vote : elle reste verrouillée tant que tout le monde n'a pas voté. */
+export const VOTE_SLIDE_INDEX: number = FILM_SLIDE_ORDER.indexOf('vote');
 
 /** Une section verticale de la TV : union discriminée sur `kind`. */
 export type TvSection =

@@ -1,32 +1,16 @@
 <aside class="vote-status" aria-live="polite">
-  @if (isRevealed()) {
+  @if (filmVoteSummary().isRevealed) {
     <p class="vote-status__headline">
       Cartes retournées · moyenne {{ formattedAverageScore() }} / 5
     </p>
-    @if (revealedVoteCards().length > 0) {
-      <ul class="vote-status__revealed-cards">
-        @for (revealedVoteCard of revealedVoteCards(); track revealedVoteCard.pseudo) {
-          <li class="vote-status__revealed-card">
-            <app-pixel-icon
-              class="vote-status__card-icon"
-              [iconGrid]="revealedVoteCard.voteCard.iconGrid"
-            />
-            <span class="vote-status__card-pseudo">{{ revealedVoteCard.pseudo }}</span>
-            <span class="vote-status__card-label">{{ revealedVoteCard.voteCard.label }}</span>
-          </li>
-        }
-      </ul>
-    } @else {
-      <p class="vote-status__hint">Personne n'a osé voter.</p>
-    }
   } @else {
     <p class="vote-status__headline">
-      {{ votedCount() }} / {{ participantVoteStatuses().length }} âmes ont voté
+      {{ filmVoteSummary().votedCount }} / {{ filmVoteSummary().participantCount }} âmes ont voté
     </p>
-    @if (participantVoteStatuses().length > 0) {
+    @if (filmVoteSummary().participantCount > 0) {
       <ul class="vote-status__participants">
         @for (
-          participantVoteStatus of participantVoteStatuses();
+          participantVoteStatus of filmVoteSummary().participantVoteStatuses;
           track participantVoteStatus.participant.id
         ) {
           <li
@@ -38,8 +22,12 @@
         }
       </ul>
     }
-    @if (votedCount() > 0) {
-      <p class="vote-status__hint">Appuie sur R pour retourner les cartes</p>
+    @if (filmVoteSummary().hasEveryoneVoted) {
+      <p class="vote-status__hint vote-status__hint--ready">
+        Tout le monde a voté : l'onglet Vote est ouvert
+      </p>
+    } @else if (filmVoteSummary().votedCount > 0) {
+      <p class="vote-status__hint">R pour forcer le vote sans les retardataires</p>
     }
   }
 </aside>

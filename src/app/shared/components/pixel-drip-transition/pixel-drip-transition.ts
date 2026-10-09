@@ -9,21 +9,24 @@ import {
   Signal,
   viewChild,
 } from '@angular/core';
-import { prefersReducedMotion } from '../../../shared/utils/prefers-reduced-motion';
+import { prefersReducedMotion } from '../../utils/prefers-reduced-motion';
 import { createDripFront, Drip, DripFront } from './drip-front';
 import {
   PixelDripTransitionPlayer,
   PixelDripTransitionService,
 } from './pixel-drip-transition.service';
 
-/** Gros pixels : 64×36 sur tout l'écran (16:9). */
+/**
+ * Gros pixels : 64 colonnes sur toute la largeur. Le nombre de lignes suit le format de l'écran
+ * (36 sur une TV 16:9, environ 140 sur un téléphone en portrait) pour garder des pixels carrés.
+ */
 const GRID_WIDTH: number = 64;
-const GRID_HEIGHT: number = 36;
+const DEFAULT_GRID_HEIGHT: number = 36;
+const LAG_TO_HEIGHT_RATIO: number = 0.65;
 /** 1,2 s au total : 600 ms pour couvrir, 600 ms pour découvrir. */
 const HALF_DURATION_IN_MILLISECONDS: number = 600;
 /** ~30 images/s : un rendu volontairement saccadé, plus « jeu rétro ». */
 const FRAME_INTERVAL_IN_MILLISECONDS: number = 33;
-const MAXIMUM_LAG: number = GRID_HEIGHT * 0.65;
 const DITHER_BAND_HEIGHT: number = 3;
 
 /** Matrice de Bayer 4×4 : seuils de tramage ordonné, entre 0 et 1. */
@@ -64,7 +67,11 @@ export class PixelDripTransition implements PixelDripTransitionPlayer {
   );
 
   protected readonly gridWidth: number = GRID_WIDTH;
-  protected readonly gridHeight: number = GRID_HEIGHT;
+  protected readonly defaultGridHeight: number = DEFAULT_GRID_HEIGHT;
+
+  /** Recalculés à chaque transition, selon le format de l'écran à cet instant. */
+  private gridHeight: number = DEFAULT_GRID_HEIGHT;
+  private maximumLag: number = DEFAULT_GRID_HEIGHT * LAG_TO_HEIGHT_RATIO;
 
   private readonly dripCanvas: Signal<ElementRef<HTMLCanvasElement>> =
     viewChild.required<ElementRef<HTMLCanvasElement>>('dripCanvas');
@@ -77,16 +84,21 @@ export class PixelDripTransition implements PixelDripTransitionPlayer {
   }
 
   playDripTransition(swapContent: () => void): Promise<void> {
-    const context: CanvasRenderingContext2D | null =
-      this.dripCanvas().nativeElement.getContext('2d');
+    const dripCanvasElement: HTMLCanvasElement = this.dripCanvas().nativeElement;
+    this.fitGridToViewport(dripCanvasElement);
+    const context: CanvasRenderingContext2D | null = dripCanvasElement.getContext('2d');
     if (context === null || prefersReducedMotion()) {
       swapContent();
       return Promise.resolve();
     }
 
     const dripColors: DripColors = this.readDripColors();
-    const fallingFront: DripFront = createDripFront(GRID_WIDTH, MAXIMUM_LAG, GRID_WIDTH / 6);
-    const drainingFront: DripFront = createDripFront(GRID_WIDTH, MAXIMUM_LAG * 0.8, GRID_WIDTH / 8);
+    const fallingFront: DripFront = createDripFront(GRID_WIDTH, this.maximumLag, GRID_WIDTH / 6);
+    const drainingFront: DripFront = createDripFront(
+      GRID_WIDTH,
+      this.maximumLag * 0.8,
+      GRID_WIDTH / 8,
+    );
 
     return new Promise<void>((resolve: () => void) => {
       let isCovering: boolean = true;
@@ -104,7 +116,7 @@ export class PixelDripTransition implements PixelDripTransitionPlayer {
           1,
         );
 
-        context.clearRect(0, 0, GRID_WIDTH, GRID_HEIGHT);
+        context.clearRect(0, 0, GRID_WIDTH, this.gridHeight);
         if (isCovering) {
           this.paintFallingGoo(context, dripColors, fallingFront, easeInOutCubic(phaseProgress));
         } else {
@@ -120,12 +132,21 @@ export class PixelDripTransition implements PixelDripTransitionPlayer {
           phaseStartTime = performance.now();
           requestAnimationFrame(animateFrame);
         } else {
-          context.clearRect(0, 0, GRID_WIDTH, GRID_HEIGHT);
+          context.clearRect(0, 0, GRID_WIDTH, this.gridHeight);
           resolve();
         }
       };
       requestAnimationFrame(animateFrame);
     });
+  }
+
+  /** Des pixels carrés quel que soit l'écran : la hauteur de grille suit le ratio de la fenêtre. */
+  private fitGridToViewport(dripCanvasElement: HTMLCanvasElement): void {
+    const viewportRatio: number = window.innerHeight / window.innerWidth;
+    this.gridHeight = Math.max(1, Math.round(GRID_WIDTH * viewportRatio));
+    this.maximumLag = this.gridHeight * LAG_TO_HEIGHT_RATIO;
+    dripCanvasElement.width = GRID_WIDTH;
+    dripCanvasElement.height = this.gridHeight;
   }
 
   /** Phase 1 : la nappe descend du haut, ses coulures en avance. */
@@ -136,11 +157,11 @@ export class PixelDripTransition implements PixelDripTransitionPlayer {
     easedProgress: number,
   ): void {
     const reachedDepth: number =
-      easedProgress * (GRID_HEIGHT + MAXIMUM_LAG + DITHER_BAND_HEIGHT + 2);
+      easedProgress * (this.gridHeight + this.maximumLag + DITHER_BAND_HEIGHT + 2);
 
     for (let columnX: number = 0; columnX < GRID_WIDTH; columnX++) {
       const frontY: number = Math.round(reachedDepth - fallingFront.columnLags[columnX]);
-      for (let rowY: number = 0; rowY < Math.min(GRID_HEIGHT, frontY); rowY++) {
+      for (let rowY: number = 0; rowY < Math.min(this.gridHeight, frontY); rowY++) {
         this.paintGooPixel(context, dripColors, columnX, rowY, frontY - rowY);
       }
     }
@@ -158,14 +179,14 @@ export class PixelDripTransition implements PixelDripTransitionPlayer {
     easedProgress: number,
   ): void {
     const drainedDepth: number =
-      easedProgress * (GRID_HEIGHT + MAXIMUM_LAG * 0.8 + DITHER_BAND_HEIGHT + 2);
+      easedProgress * (this.gridHeight + this.maximumLag * 0.8 + DITHER_BAND_HEIGHT + 2);
 
     for (let columnX: number = 0; columnX < GRID_WIDTH; columnX++) {
       // Décalé d'une bande de tramage : au tout début, l'écran reste entièrement couvert.
       const tailY: number = Math.round(
         drainedDepth - drainingFront.columnLags[columnX] - DITHER_BAND_HEIGHT - 1,
       );
-      for (let rowY: number = Math.max(0, tailY); rowY < GRID_HEIGHT; rowY++) {
+      for (let rowY: number = Math.max(0, tailY); rowY < this.gridHeight; rowY++) {
         this.paintGooPixel(context, dripColors, columnX, rowY, rowY - tailY);
       }
     }
@@ -211,7 +232,7 @@ export class PixelDripTransition implements PixelDripTransitionPlayer {
       return;
     }
     const tipY: number = Math.round(reachedDepth - fallingFront.columnLags[centerX]);
-    if (tipY < 2 || tipY > GRID_HEIGHT + 2) {
+    if (tipY < 2 || tipY > this.gridHeight + 2) {
       return;
     }
     const bulbRadius: number = Math.max(1, Math.round(drip.halfWidth * 0.8));

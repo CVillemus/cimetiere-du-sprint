@@ -11,6 +11,7 @@ import {
 import { FilmId } from '../films/film.model';
 import { FILMS } from '../films/films.data';
 import { FilmRanking, rankFilms } from './film-ranking';
+import { buildFilmVoteSummary, FilmVoteSummary } from './film-vote-summary';
 import { TvNavigationStore } from '../navigation/tv-navigation.store';
 import { TvSection } from '../navigation/tv-section.model';
 import { VotingApi } from './voting-api';
@@ -61,6 +62,19 @@ export class TvVotingSessionStore {
   readonly revealedFilmIds: Signal<readonly FilmId[]> = computed(
     (): readonly FilmId[] => this.votingSessionState()?.revealedFilmIds ?? [],
   );
+
+  /**
+   * Résumé du vote d'un film. Appelé dans un `computed()`, il se recalcule
+   * à chaque inscription, accusé de vote ou révélation.
+   */
+  filmVoteSummary(filmId: FilmId): FilmVoteSummary {
+    return buildFilmVoteSummary(filmId, {
+      participants: this.participantsState(),
+      voteReceipts: this.voteReceiptsState(),
+      visibleFilmVotes: this.visibleFilmVotesState(),
+      revealedFilmIds: this.revealedFilmIds(),
+    });
+  }
 
   /** Classement de la Sprint Review, recalculé à chaque vote visible. */
   readonly filmRankings: Signal<readonly FilmRanking[]> = computed((): readonly FilmRanking[] =>
@@ -156,11 +170,14 @@ export class TvVotingSessionStore {
     ) {
       return;
     }
+    const revealedFilmIds: readonly FilmId[] = [...votingSession.revealedFilmIds, currentFilmId];
     try {
-      await this.votingApi.updateRevealedFilmIds(votingSession.id, [
-        ...votingSession.revealedFilmIds,
-        currentFilmId,
-      ]);
+      await this.votingApi.updateRevealedFilmIds(votingSession.id, revealedFilmIds);
+      // Sans attendre l'écho temps réel : on retourne les cartes tout de suite à l'écran.
+      this.votingSessionState.update((knownVotingSession: VotingSession | null) =>
+        knownVotingSession === null ? null : { ...knownVotingSession, revealedFilmIds },
+      );
+      this.visibleFilmVotesState.set(await this.votingApi.getVisibleFilmVotes(votingSession.id));
     } catch (revealError: unknown) {
       console.error(revealError);
     }

@@ -14,11 +14,14 @@ import {
   FilmSlideKind,
 } from '../../../core/navigation/tv-section.model';
 import { TvNavigationStore } from '../../../core/navigation/tv-navigation.store';
+import { FilmVoteSummary } from '../../../core/voting/film-vote-summary';
+import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
 import { TvNavigator } from '../tv-navigator/tv-navigator';
 import { VoteStatus } from '../vote-status/vote-status';
 import { PressSlide } from './press-slide/press-slide';
 import { SummarySlide } from './summary-slide/summary-slide';
 import { TrailerSlide } from './trailer-slide/trailer-slide';
+import { VoteSlide } from './vote-slide/vote-slide';
 
 interface FilmSlideTab {
   readonly slideKind: FilmSlideKind;
@@ -26,18 +29,19 @@ interface FilmSlideTab {
 }
 
 /**
- * Une section verticale « film » : le carrousel horizontal Résumé → Trailer → Presse.
+ * Une section verticale « film » : le carrousel horizontal Résumé → Presse → Trailer → Vote.
  * La piste des slides est translatée selon la slide active du store.
  */
 @Component({
   selector: 'app-film-section',
-  imports: [SummarySlide, TrailerSlide, PressSlide, VoteStatus],
+  imports: [SummarySlide, PressSlide, TrailerSlide, VoteSlide, VoteStatus],
   templateUrl: './film-section.html',
   styleUrl: './film-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilmSection {
   private readonly tvNavigationStore: TvNavigationStore = inject(TvNavigationStore);
+  private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
   private readonly tvNavigator: TvNavigator = inject(TvNavigator);
 
   readonly film: InputSignal<Film> = input.required<Film>();
@@ -58,10 +62,24 @@ export class FilmSection {
     this.isCurrentSection() ? this.tvNavigationStore.currentSlideIndex() : 0,
   );
 
-  protected readonly isTrailerSlideActive: Signal<boolean> = computed(
-    (): boolean =>
-      this.isCurrentSection() && FILM_SLIDE_ORDER[this.activeSlideIndex()] === 'trailer',
+  /** `null` quand le film n'est pas à l'écran : aucune slide n'y est « active ». */
+  protected readonly activeSlideKind: Signal<FilmSlideKind | null> = computed(
+    (): FilmSlideKind | null =>
+      this.isCurrentSection() ? FILM_SLIDE_ORDER[this.activeSlideIndex()] : null,
   );
+
+  /** L'encart de progression gênerait la vidéo et ferait doublon avec la slide Vote. */
+  protected readonly isVoteStatusVisible: Signal<boolean> = computed((): boolean => {
+    const activeSlideKind: FilmSlideKind | null = this.activeSlideKind();
+    return activeSlideKind !== 'trailer' && activeSlideKind !== 'vote';
+  });
+
+  protected readonly isVoteSlideUnlocked: Signal<boolean> = computed((): boolean => {
+    const filmVoteSummary: FilmVoteSummary = this.tvVotingSessionStore.filmVoteSummary(
+      this.film().id,
+    );
+    return filmVoteSummary.hasEveryoneVoted || filmVoteSummary.isRevealed;
+  });
 
   protected readonly slideTrackTransform: Signal<string> = computed(
     (): string => `translateX(${-100 * this.activeSlideIndex()}%)`,

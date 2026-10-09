@@ -1,0 +1,34 @@
+<header class="vote-slide__header">
+  <p class="vote-slide__eyebrow">Les votes</p>
+  <h2 class="vote-slide__title">{{ film().frenchTitle }}</h2>
+</header>
+
+@if (filmVoteSummary().isRevealed) {
+  <p class="vote-slide__average">
+    Moyenne <strong>{{ formattedAverageScore() }}</strong> / 5
+  </p>
+  @if (filmVoteSummary().revealedVoteCards.length > 0) {
+    <ul class="vote-slide__cards">
+      @for (
+        revealedVoteCard of filmVoteSummary().revealedVoteCards;
+        track revealedVoteCard.pseudo
+      ) {
+        <li class="vote-slide__card" [style.animation-delay.ms]="$index * 120">
+          <app-pixel-icon
+            class="vote-slide__card-icon"
+            [iconGrid]="revealedVoteCard.voteCard.iconGrid"
+          />
+          <span class="vote-slide__card-pseudo">{{ revealedVoteCard.pseudo }}</span>
+          <span class="vote-slide__card-label">{{ revealedVoteCard.voteCard.label }}</span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="vote-slide__message">Personne n'a osé voter pour ce film.</p>
+  }
+} @else if (isActive()) {
+  <p class="vote-slide__message">Les cartes se retournent dans…</p>
+  <p class="vote-slide__countdown" aria-live="assertive">{{ countdownSecondsLeft() }}</p>
+} @else {
+  <p class="vote-slide__message">Les cartes attendent, face cachée…</p>
+}

@@ -22,7 +22,8 @@ export class VoteCardPicker {
   readonly selectedScore: InputSignal<VoteScore | null> = input.required<VoteScore | null>();
   readonly scoreSelected: OutputEmitterRef<VoteScore> = output<VoteScore>();
 
-  protected readonly voteCards: readonly VoteCard[] = VOTE_CARDS;
+  /** De la meilleure à la pire : « OHHHHH OUI ! » en haut, sous le pouce. */
+  protected readonly voteCards: readonly VoteCard[] = [...VOTE_CARDS].reverse();
 
   protected selectVoteCard(voteCard: VoteCard): void {
     this.scoreSelected.emit(voteCard.score);

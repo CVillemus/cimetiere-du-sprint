@@ -27,3 +27,20 @@
     }
   }
 </div>
+
+<footer class="trailer-slide__streaming">
+  @if (film().streamingAvailability.subscriptionPlatforms.length > 0) {
+    <span class="trailer-slide__streaming-label">À voir sur</span>
+    @for (platform of film().streamingAvailability.subscriptionPlatforms; track platform) {
+      <span class="trailer-slide__platform">{{ platform }}</span>
+    }
+  } @else if (film().streamingAvailability.rentalPlatforms.length > 0) {
+    <span class="trailer-slide__streaming-label">En location</span>
+    @for (platform of film().streamingAvailability.rentalPlatforms; track platform) {
+      <span class="trailer-slide__platform">{{ platform }}</span>
+    }
+  } @else {
+    <span class="trailer-slide__streaming-label">Introuvable en streaming</span>
+  }
+  <span class="trailer-slide__streaming-source">JustWatch · {{ streamingCheckedOn }}</span>
+</footer>

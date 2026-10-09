@@ -198,27 +198,27 @@
 /* ---------- Révélation : 3e, puis 2e, puis 1er, puis le film de la soirée ---------- */
 
 .sprint-review--revealing .sprint-review__step {
-  animation: sprint-review-rise 900ms steps(6) both;
+  animation: sprint-review-rise 600ms steps(5) both;
 }
 
 .sprint-review--revealing .sprint-review__step--rank-3 {
-  animation-delay: 1s;
+  animation-delay: 0.7s;
 }
 
 .sprint-review--revealing .sprint-review__step--rank-2 {
-  animation-delay: 2.2s;
+  animation-delay: 1.3s;
 }
 
 .sprint-review--revealing .sprint-review__step--rank-1 {
-  animation-delay: 3.6s;
+  animation-delay: 1.9s;
 }
 
 .sprint-review--revealing .sprint-review__winner {
-  animation: sprint-review-appear 600ms steps(4) 4.8s both;
+  animation: sprint-review-appear 400ms steps(4) 2.5s both;
 }
 
 .sprint-review--revealing .sprint-review__others {
-  animation: sprint-review-appear 600ms steps(4) 5.6s both;
+  animation: sprint-review-appear 400ms steps(4) 2.8s both;
 }
 
 @keyframes sprint-review-rise {
@@ -247,4 +247,17 @@
   .sprint-review__others {
     opacity: 1;
   }
+}
+
+/* L'araignée se promène en fond : le contenu reste au-dessus. */
+.sprint-review {
+  position: relative;
+}
+
+.sprint-review__header,
+.sprint-review__stage,
+.sprint-review__others,
+.sprint-review__hint,
+.sprint-review__rules {
+  position: relative;
 }

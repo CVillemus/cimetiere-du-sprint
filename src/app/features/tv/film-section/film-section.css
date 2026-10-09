@@ -46,3 +46,9 @@
   right: 1.5vw;
   bottom: 1.5vw;
 }
+
+/* Onglet Vote verrouillé : tant que tout le monde n'a pas voté. */
+.film-section__tab--locked {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

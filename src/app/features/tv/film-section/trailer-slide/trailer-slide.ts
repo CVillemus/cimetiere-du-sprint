@@ -11,7 +11,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Film } from '../../../../core/films/film.model';
+import { Film, STREAMING_CHECKED_ON } from '../../../../core/films/film.model';
 import { TriggerWarningList } from '../../../../shared/components/trigger-warning-list/trigger-warning-list';
 
 const WARNING_SCREEN_DURATION_IN_SECONDS: number = 3;
@@ -39,6 +39,8 @@ export class TrailerSlide {
     WARNING_SCREEN_DURATION_IN_SECONDS,
   );
   protected readonly warningSecondsLeft: Signal<number> = this.warningSecondsLeftState.asReadonly();
+
+  protected readonly streamingCheckedOn: string = STREAMING_CHECKED_ON;
   protected readonly isWarningScreenVisible: Signal<boolean> = computed(
     (): boolean => this.warningSecondsLeftState() > 0,
   );
@@ -51,7 +53,9 @@ export class TrailerSlide {
         return null;
       }
       return this.domSanitizer.bypassSecurityTrustResourceUrl(
-        `https://www.youtube-nocookie.com/embed/${youtubeVideoId}?autoplay=1&mute=1&rel=0`,
+        // Avec le son : la touche ou le clic de navigation compte comme une action de
+        // l'utilisateur, et `allow="autoplay"` transmet ce droit à l'iframe YouTube.
+        `https://www.youtube-nocookie.com/embed/${youtubeVideoId}?autoplay=1&mute=0&rel=0`,
       );
     },
   );

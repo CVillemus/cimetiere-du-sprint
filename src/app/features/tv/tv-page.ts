@@ -12,8 +12,8 @@ import { TvVotingSessionStore } from '../../core/voting/tv-voting-session.store'
 import { TvSection } from '../../core/navigation/tv-section.model';
 import { FilmSection } from './film-section/film-section';
 import { IntroSection } from './intro-section/intro-section';
-import { PixelDripTransition } from './pixel-drip-transition/pixel-drip-transition';
-import { PixelDripTransitionService } from './pixel-drip-transition/pixel-drip-transition.service';
+import { PixelDripTransition } from '../../shared/components/pixel-drip-transition/pixel-drip-transition';
+import { PixelDripTransitionService } from '../../shared/components/pixel-drip-transition/pixel-drip-transition.service';
 import { SectionProgress } from './section-progress/section-progress';
 import { SprintReviewSection } from './sprint-review-section/sprint-review-section';
 import { TvNavigator } from './tv-navigator/tv-navigator';
@@ -82,7 +82,7 @@ export class TvPage {
         break;
       case 'r':
       case 'R':
-        void this.tvVotingSessionStore.revealCurrentFilmVotes();
+        this.tvNavigator.forceNavigationToVoteSlide();
         break;
       default:
         return;
