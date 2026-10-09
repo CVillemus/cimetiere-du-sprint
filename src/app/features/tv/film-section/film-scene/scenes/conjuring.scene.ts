@@ -25,6 +25,27 @@ function paintBathshebaApparition(apparitionPainter: PixelPainter): void {
  * Conjuring : « tape, tape ». Deux mains sortent de l'armoire, la boîte à musique veille…
  * et de temps en temps, un œil de Bathsheba se devine dans l'entrebâillement.
  */
+type HandPixel = readonly [x: number, y: number, color: string];
+
+const HAND_SKIN: string = '#d9cfc0';
+const HAND_SHADOW: string = '#a89d8b';
+
+/** Main gauche (doigts vers la gauche) et main droite (doigts vers la droite), de part et d'autre de la fente. */
+const CLAPPING_HAND_PIXELS: readonly HandPixel[] = [
+  [47, 45, HAND_SKIN],
+  [47, 46, HAND_SHADOW],
+  [46, 44, HAND_SKIN],
+  [45, 45, HAND_SKIN],
+  [45, 46, HAND_SKIN],
+  [46, 47, HAND_SHADOW],
+  [52, 45, HAND_SKIN],
+  [52, 46, HAND_SHADOW],
+  [53, 44, HAND_SKIN],
+  [54, 45, HAND_SKIN],
+  [54, 46, HAND_SKIN],
+  [53, 47, HAND_SHADOW],
+];
+
 export function paintConjuringScene(
   scenePainter: PixelPainter,
   lightPainter: PixelPainter,
@@ -69,15 +90,9 @@ export function paintConjuringScene(
   scenePainter.fillPixel(46, 49, '#b8742a');
   scenePainter.fillPixel(54, 49, '#b8742a');
 
-  // Les deux mains qui tapent
-  scenePainter.fillRect(45, 44, 5, 4, '#d9cfc0');
-  scenePainter.fillRect(44, 45, 1, 2, '#d9cfc0');
-  scenePainter.fillRect(46, 43, 3, 1, '#cfc4b2');
-  scenePainter.fillRect(46, 48, 3, 1, '#b8ad9b');
-  scenePainter.fillRect(52, 44, 5, 4, '#d9cfc0');
-  scenePainter.fillRect(57, 45, 1, 2, '#d9cfc0');
-  scenePainter.fillRect(53, 43, 3, 1, '#cfc4b2');
-  scenePainter.fillRect(53, 48, 3, 1, '#b8ad9b');
+  // Les deux mains qui tapent, sorties de l'entrebâillement : petites, doigts écartés
+  // (le jeu de cache-cache du film). Paume de 2 pixels, trois doigts fins, pouce vers le haut.
+  CLAPPING_HAND_PIXELS.forEach(([x, y, color]: HandPixel) => scenePainter.fillPixel(x, y, color));
 
   // Commode
   scenePainter.fillRect(84, 60, 34, 4, '#4a372d');

@@ -2,11 +2,11 @@ import { PixelPainter, PixelPoint } from '../../../../../shared/pixel-art/pixel-
 
 type PineTree = readonly [x: number, baseY: number, height: number];
 
-/** Vitre éclairée de la cabane : c'est derrière elle que passe la silhouette. */
-const LIT_WINDOW_LEFT: number = 74;
-const LIT_WINDOW_TOP: number = 58;
-const LIT_WINDOW_WIDTH: number = 8;
-const LIT_WINDOW_HEIGHT: number = 7;
+/** Fenêtre de la cabane, éclairée par la lune : c'est derrière elle que passe la silhouette. */
+const MOONLIT_WINDOW_LEFT: number = 74;
+const MOONLIT_WINDOW_TOP: number = 58;
+const MOONLIT_WINDOW_WIDTH: number = 8;
+const MOONLIT_WINDOW_HEIGHT: number = 7;
 
 /** Toit affaissé : le faîte a glissé de deux pixels et penche vers la droite. */
 const SAGGING_ROOF: readonly PixelPoint[] = [
@@ -62,8 +62,8 @@ const IVY_PIXELS: readonly PixelPoint[] = [
   [45, 52],
 ];
 
-/** Mama : la cabane en ruine au fond des bois. Une seule fenêtre est encore éclairée… */
-export function paintMamaScene(scenePainter: PixelPainter, lightPainter: PixelPainter): void {
+/** Mama : la cabane en ruine au fond des bois, abandonnée… en apparence. */
+export function paintMamaScene(scenePainter: PixelPainter): void {
   scenePainter.paintNightSky();
   scenePainter.paintStars(30, 50);
   scenePainter.paintMoon(104, 16, 7);
@@ -147,21 +147,22 @@ export function paintMamaScene(scenePainter: PixelPainter, lightPainter: PixelPa
   scenePainter.drawLine(57, 64, 58, 76, '#2a1f1c');
   scenePainter.fillPixel(60, 62, '#8d86a3');
 
-  // Fenêtre encore éclairée, vitre fendue
+  // Fenêtre sans lumière : à travers le toit troué, la lune éclaire faiblement la pièce,
+  // juste assez pour qu'une silhouette s'y découpe en noir. Vitre fendue, un carreau manquant.
   scenePainter.fillRect(73, 57, 10, 9, '#2a1f1c');
-  lightPainter.fillRect(
-    LIT_WINDOW_LEFT,
-    LIT_WINDOW_TOP,
-    LIT_WINDOW_WIDTH,
-    LIT_WINDOW_HEIGHT,
-    '#e8a33d',
+  scenePainter.fillRect(
+    MOONLIT_WINDOW_LEFT,
+    MOONLIT_WINDOW_TOP,
+    MOONLIT_WINDOW_WIDTH,
+    MOONLIT_WINDOW_HEIGHT,
+    '#34394f',
   );
-  lightPainter.fillRect(77, 58, 1, 7, '#2a1f1c');
-  lightPainter.fillRect(74, 61, 8, 1, '#2a1f1c');
-  lightPainter.fillRect(75, 59, 2, 2, '#f5c26b');
-  lightPainter.drawLine(79, 58, 81, 64, '#b8742a');
-  lightPainter.fillPixel(81, 58, '#1a1210');
-  lightPainter.paintGlow(78, 61, 16, '#e8a33d', 0.12);
+  scenePainter.fillRect(74, 58, 3, 1, '#4a5068');
+  scenePainter.fillRect(78, 62, 4, 3, '#2a2e42');
+  scenePainter.fillRect(77, 58, 1, 7, '#2a1f1c');
+  scenePainter.fillRect(74, 61, 8, 1, '#2a1f1c');
+  scenePainter.drawLine(79, 58, 81, 61, '#5a6080');
+  scenePainter.fillRect(74, 62, 3, 3, '#0e0a0a');
 
   // Lierre sur les murs et le bord du toit
   IVY_PIXELS.forEach(([x, y]: PixelPoint, ivyIndex: number) =>
@@ -174,18 +175,6 @@ export function paintMamaScene(scenePainter: PixelPainter, lightPainter: PixelPa
   scenePainter.fillRect(60, 77, 6, 2, '#3a3448');
   scenePainter.fillRect(63, 78, 2, 1, '#16201a');
   scenePainter.fillRect(62, 82, 6, 2, '#2c2838');
-
-  // Papillons de nuit attirés par la seule lumière
-  const moths: readonly PixelPoint[] = [
-    [84, 52],
-    [89, 57],
-    [71, 52],
-  ];
-  moths.forEach(([x, y]: PixelPoint) => {
-    lightPainter.fillPixel(x, y, '#e9e2cf');
-    lightPainter.fillPixel(x - 1, y - 1, '#cfc6ae');
-    lightPainter.fillPixel(x + 1, y - 1, '#cfc6ae');
-  });
 
   const foregroundPines: readonly PineTree[] = [
     [0, 76, 40],
@@ -207,9 +196,9 @@ const SILHOUETTE_START_IN_MILLISECONDS: number = 4_000;
 const SILHOUETTE_CROSSING_DURATION_IN_MILLISECONDS: number = 2_600;
 const SILHOUETTE_PAUSE_START_RATIO: number = 0.4;
 const SILHOUETTE_PAUSE_END_RATIO: number = 0.62;
-const SILHOUETTE_START_X: number = LIT_WINDOW_LEFT - 5;
-const SILHOUETTE_END_X: number = LIT_WINDOW_LEFT + LIT_WINDOW_WIDTH + 5;
-const SILHOUETTE_COLOR: string = '#1a0e0b';
+const SILHOUETTE_START_X: number = MOONLIT_WINDOW_LEFT - 5;
+const SILHOUETTE_END_X: number = MOONLIT_WINDOW_LEFT + MOONLIT_WINDOW_WIDTH + 5;
+const SILHOUETTE_COLOR: string = '#07050a';
 
 /** Position horizontale de la tête, ou `null` quand rien ne passe. */
 function silhouetteCenterXAt(elapsedMilliseconds: number): number | null {
@@ -283,7 +272,7 @@ const SILHOUETTE_PIXELS: readonly PixelPoint[] = [
   [3, 4],
 ];
 
-/** Mama : une silhouette décharnée passe lentement derrière la fenêtre éclairée. */
+/** Mama : une silhouette décharnée passe lentement derrière la fenêtre, à contre-jour de la lune. */
 export function animateMamaScene(
   animationPainter: PixelPainter,
   elapsedMilliseconds: number,
@@ -294,15 +283,15 @@ export function animateMamaScene(
   }
   // La tête oscille d'un pixel, comme une démarche saccadée.
   const headBob: number = Math.floor(elapsedMilliseconds / 250) % 2;
-  const centerY: number = LIT_WINDOW_TOP + 3 + headBob;
+  const centerY: number = MOONLIT_WINDOW_TOP + 3 + headBob;
   SILHOUETTE_PIXELS.forEach(([offsetX, offsetY]: PixelPoint) => {
     const x: number = silhouetteCenterX + offsetX;
     const y: number = centerY + offsetY;
     const isBehindGlass: boolean =
-      x >= LIT_WINDOW_LEFT &&
-      x < LIT_WINDOW_LEFT + LIT_WINDOW_WIDTH &&
-      y >= LIT_WINDOW_TOP &&
-      y < LIT_WINDOW_TOP + LIT_WINDOW_HEIGHT;
+      x >= MOONLIT_WINDOW_LEFT &&
+      x < MOONLIT_WINDOW_LEFT + MOONLIT_WINDOW_WIDTH &&
+      y >= MOONLIT_WINDOW_TOP &&
+      y < MOONLIT_WINDOW_TOP + MOONLIT_WINDOW_HEIGHT;
     if (isBehindGlass) {
       animationPainter.fillPixel(x, y, SILHOUETTE_COLOR);
     }

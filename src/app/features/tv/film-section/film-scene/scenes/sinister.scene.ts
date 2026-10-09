@@ -115,8 +115,8 @@ export function paintSinisterScene(scenePainter: PixelPainter, lightPainter: Pix
   scenePainter.fillCircle(94, 87, 1, '#8d86a3');
 }
 
-/** Un tour de bobine toutes les 1,6 s : le rythme lent d'un vieux projecteur. */
-const REEL_TURN_DURATION_IN_MILLISECONDS: number = 1_600;
+/** Un tour de bobine toutes les 3,2 s : le rythme lent d'un vieux projecteur. */
+const REEL_TURN_DURATION_IN_MILLISECONDS: number = 3_200;
 const REEL_SPOKE_COUNT: number = 3;
 /** Une image sur deux environ, une rayure claire traverse l'écran. */
 const FILM_SCRATCH_CHANCE: number = 0.55;

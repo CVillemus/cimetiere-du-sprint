@@ -1,7 +1,5 @@
-import { PixelPainter, PixelPoint } from '../../../../../shared/pixel-art/pixel-painter';
+import { PixelPainter } from '../../../../../shared/pixel-art/pixel-painter';
 import { paintChimney } from './chimney.painter';
-
-const RAINDROP_COUNT: number = 70;
 
 /** Pan droit du toit : du faîte (64, 6) jusqu'au bord (116, 27). */
 function roofHeightAt(x: number): number {
@@ -133,67 +131,51 @@ export function paintHereticScene(scenePainter: PixelPainter, lightPainter: Pixe
   MISSIONARIES.forEach((missionary: Missionary) => paintMissionary(scenePainter, missionary));
   paintBicycle(scenePainter, 8, 86);
   paintBicycle(scenePainter, 98, 86);
-
-  // Pluie battante (sur le calque des lumières, pour qu'elle scintille)
-  lightPainter.setOpacity(0.35);
-  for (let raindropIndex: number = 0; raindropIndex < RAINDROP_COUNT; raindropIndex++) {
-    const raindropX: number = Math.floor(lightPainter.random() * 132);
-    const raindropY: number = Math.floor(lightPainter.random() * 92);
-    lightPainter.drawLine(raindropX, raindropY, raindropX - 1, raindropY + 3, '#9fb0d9');
-  }
-  lightPainter.setOpacity(1);
 }
 
-/** Toutes les 13 s, M. Reed sourit, lentement : un rictus de travers, plus haut d'un côté. */
-const REED_SMILE_CYCLE_IN_MILLISECONDS: number = 13_000;
-const REED_SMILE_START_IN_MILLISECONDS: number = 7_000;
-const REED_SMILE_FADE_IN_MILLISECONDS: number = 700;
-const REED_SMILE_HOLD_IN_MILLISECONDS: number = 1_800;
-/** Le coin gauche remonte vers la pommette, le droit reste bas : un sourire en coin, vicieux. */
-const REED_SMILE_PIXELS: readonly PixelPoint[] = [
-  [62, 61],
-  [63, 62],
-  [66, 63],
-];
-/** Au milieu du rictus, les dents accrochent la lumière de la porte. */
-const REED_TEETH_PIXELS: readonly PixelPoint[] = [
-  [64, 62],
-  [65, 62],
-];
+const RAINDROP_COUNT: number = 60;
+/** Vitesse de chute, en pixels par milliseconde : une averse lourde, pas une bruine. */
+const RAINDROP_MINIMUM_SPEED: number = 0.09;
+const RAINDROP_SPEED_RANGE: number = 0.05;
+/** Le vent pousse la pluie : elle glisse d'un pixel vers la gauche tous les trois pixels de chute. */
+const RAIN_WIND_SLANT: number = 0.33;
+const RAINDROP_LENGTH: number = 3;
+const RAIN_GROUND_Y: number = 90;
+const RAIN_FALL_HEIGHT: number = 100;
 
-/** Opacité du sourire selon le moment du cycle : fondu en paliers, maintien, fondu de sortie. */
-function reedSmileOpacityAt(elapsedMilliseconds: number): number {
-  const timeInCycle: number =
-    (elapsedMilliseconds + REED_SMILE_CYCLE_IN_MILLISECONDS - REED_SMILE_START_IN_MILLISECONDS) %
-    REED_SMILE_CYCLE_IN_MILLISECONDS;
-  const fullyVisibleUntil: number =
-    REED_SMILE_FADE_IN_MILLISECONDS + REED_SMILE_HOLD_IN_MILLISECONDS;
-  let opacity: number = 0;
-  if (timeInCycle < REED_SMILE_FADE_IN_MILLISECONDS) {
-    opacity = timeInCycle / REED_SMILE_FADE_IN_MILLISECONDS;
-  } else if (timeInCycle < fullyVisibleUntil) {
-    opacity = 1;
-  } else if (timeInCycle < fullyVisibleUntil + REED_SMILE_FADE_IN_MILLISECONDS) {
-    opacity = 1 - (timeInCycle - fullyVisibleUntil) / REED_SMILE_FADE_IN_MILLISECONDS;
-  }
-  // Quatre paliers d'opacité : un fondu « pixel », pas un dégradé lisse.
-  return Math.round(opacity * 4) / 4;
+/** Petit bruit déterministe : chaque goutte garde sa colonne et sa vitesse d'une image à l'autre. */
+function raindropNoise(raindropIndex: number, salt: number): number {
+  const sine: number = Math.sin((raindropIndex + 1) * salt) * 43_758.5453;
+  return sine - Math.floor(sine);
 }
 
-/** Heretic : de temps en temps, un sourire pâle se dessine sur la silhouette de M. Reed. */
+/** Heretic : l'averse tombe en biais devant la maison, et rebondit en éclaboussures sur le sol. */
 export function animateHereticScene(
   animationPainter: PixelPainter,
   elapsedMilliseconds: number,
 ): void {
-  const smileOpacity: number = reedSmileOpacityAt(elapsedMilliseconds);
-  if (smileOpacity === 0) {
-    return;
+  animationPainter.setOpacity(0.4);
+  for (let raindropIndex: number = 0; raindropIndex < RAINDROP_COUNT; raindropIndex++) {
+    const startX: number = raindropNoise(raindropIndex, 12.9898) * 160;
+    const speed: number =
+      RAINDROP_MINIMUM_SPEED + raindropNoise(raindropIndex, 78.233) * RAINDROP_SPEED_RANGE;
+    const fallOffset: number = raindropNoise(raindropIndex, 37.719) * RAIN_FALL_HEIGHT;
+    const raindropY: number =
+      ((fallOffset + elapsedMilliseconds * speed) % RAIN_FALL_HEIGHT) - RAINDROP_LENGTH;
+    const raindropX: number = startX - raindropY * RAIN_WIND_SLANT;
+    if (raindropY + RAINDROP_LENGTH < RAIN_GROUND_Y) {
+      animationPainter.drawLine(
+        Math.round(raindropX),
+        Math.round(raindropY),
+        Math.round(raindropX - 1),
+        Math.round(raindropY + RAINDROP_LENGTH),
+        '#9fb0d9',
+      );
+    } else if (raindropY < RAIN_GROUND_Y + 2) {
+      // La goutte touche le sol : deux pixels qui rejaillissent de chaque côté.
+      animationPainter.fillPixel(Math.round(raindropX) - 1, RAIN_GROUND_Y - 1, '#9fb0d9');
+      animationPainter.fillPixel(Math.round(raindropX) + 1, RAIN_GROUND_Y - 1, '#9fb0d9');
+    }
   }
-  animationPainter.setOpacity(smileOpacity * 0.9);
-  REED_SMILE_PIXELS.forEach(([x, y]: PixelPoint) => animationPainter.fillPixel(x, y, '#d8cfb8'));
-  REED_TEETH_PIXELS.forEach(([x, y]: PixelPoint) => animationPainter.fillPixel(x, y, '#f2ecdf'));
-  // Ses lunettes s'allument un peu plus pendant qu'il sourit.
-  animationPainter.fillPixel(63, 60, '#ffffff');
-  animationPainter.fillPixel(65, 60, '#ffffff');
   animationPainter.setOpacity(1);
 }
