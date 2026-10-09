@@ -18,8 +18,8 @@ import {
 import { FILM_SCENE_PAINTERS } from './scenes/film-scene-painters';
 
 /**
- * Décor pixel art d'un film, dessiné sur deux canvas superposés :
- * le décor fixe, et un calque de lumières qui vacille en CSS.
+ * Décor pixel art d'un film, dessiné sur trois canvas superposés :
+ * le décor fixe, un calque de lumières qui vacille, et un calque d'apparition qui surgit par flashs.
  */
 @Component({
   selector: 'app-film-scene',
@@ -37,6 +37,8 @@ export class FilmScene {
     viewChild.required<ElementRef<HTMLCanvasElement>>('sceneCanvas');
   private readonly lightCanvas: Signal<ElementRef<HTMLCanvasElement>> =
     viewChild.required<ElementRef<HTMLCanvasElement>>('lightCanvas');
+  private readonly apparitionCanvas: Signal<ElementRef<HTMLCanvasElement>> =
+    viewChild.required<ElementRef<HTMLCanvasElement>>('apparitionCanvas');
 
   constructor() {
     // Redessine uniquement quand le film change (seul signal lu ici).
@@ -48,12 +50,16 @@ export class FilmScene {
       const lightPainter: PixelPainter | null = PixelPainter.fromCanvas(
         this.lightCanvas().nativeElement,
       );
-      if (scenePainter === null || lightPainter === null) {
+      const apparitionPainter: PixelPainter | null = PixelPainter.fromCanvas(
+        this.apparitionCanvas().nativeElement,
+      );
+      if (scenePainter === null || lightPainter === null || apparitionPainter === null) {
         return;
       }
       scenePainter.clear();
       lightPainter.clear();
-      paintFilmScene(scenePainter, lightPainter);
+      apparitionPainter.clear();
+      paintFilmScene(scenePainter, lightPainter, apparitionPainter);
     });
   }
 }

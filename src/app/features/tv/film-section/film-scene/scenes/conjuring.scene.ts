@@ -1,7 +1,58 @@
 import { PixelPainter } from '../../../../../shared/pixel-art/pixel-painter';
 
-/** Conjuring : « tape, tape ». Deux mains sortent de l'armoire, la boîte à musique veille. */
-export function paintConjuringScene(scenePainter: PixelPainter, lightPainter: PixelPainter): void {
+/**
+ * L'apparition de Bathsheba, qui surgit par flashs dans l'entrebâillement de l'armoire :
+ * visage livide aux orbites noires, longs cheveux, et une main grise agrippée au bord de la porte.
+ */
+function paintBathshebaApparition(apparitionPainter: PixelPainter): void {
+  // Longs cheveux noirs qui encadrent le visage et tombent jusqu'aux épaules
+  apparitionPainter.fillRect(44, 22, 13, 4, '#0a0812');
+  apparitionPainter.fillRect(43, 26, 3, 20, '#0a0812');
+  apparitionPainter.fillRect(55, 26, 3, 22, '#0a0812');
+
+  // Visage livide, ombré sur la droite
+  apparitionPainter.fillEllipse(50, 31, 5, 6, '#d7dbe6');
+  apparitionPainter.fillRect(52, 27, 3, 10, '#a9b0c4');
+  apparitionPainter.fillRect(46, 25, 9, 2, '#0a0812');
+
+  // Orbites noires, bouche béante
+  apparitionPainter.fillRect(47, 29, 2, 3, '#07060c');
+  apparitionPainter.fillRect(51, 29, 2, 3, '#07060c');
+  apparitionPainter.fillRect(49, 34, 2, 3, '#07060c');
+  apparitionPainter.fillPixel(48, 30, '#c0392b');
+  apparitionPainter.fillPixel(52, 30, '#c0392b');
+
+  // Robe sombre qui se perd dans l'obscurité de l'armoire
+  apparitionPainter.fillPolygon(
+    [
+      [45, 38],
+      [55, 38],
+      [58, 62],
+      [42, 62],
+    ],
+    '#1d1a2e',
+  );
+
+  // Main décharnée agrippée au bord de la porte gauche, ongles noirs
+  apparitionPainter.fillRect(40, 52, 7, 3, '#c3c9d8');
+  [40, 42, 44].forEach((fingerX: number) => {
+    apparitionPainter.fillRect(fingerX, 55, 1, 4, '#c3c9d8');
+    apparitionPainter.fillPixel(fingerX, 59, '#07060c');
+  });
+  apparitionPainter.fillRect(46, 51, 2, 2, '#a9b0c4');
+}
+
+/**
+ * Conjuring : « tape, tape ». Deux mains sortent de l'armoire, la boîte à musique veille…
+ * et de temps en temps, Bathsheba surgit dans l'armoire.
+ */
+export function paintConjuringScene(
+  scenePainter: PixelPainter,
+  lightPainter: PixelPainter,
+  apparitionPainter: PixelPainter,
+): void {
+  paintBathshebaApparition(apparitionPainter);
+
   scenePainter.fillVerticalGradient(0, 0, 128, 78, ['#14111f', '#181428', '#1c1830']);
   for (let stripeX: number = 4; stripeX < 128; stripeX += 10) {
     scenePainter.fillRect(stripeX, 0, 1, 78, '#201b36');
