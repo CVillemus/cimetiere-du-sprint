@@ -9,7 +9,8 @@
 import { writeFileSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
 
-// b = os, s = os ombré, e = œil de bougie, n = nez et dents, . = transparent.
+// b = os, s = os ombré, e = braise au fond de l'orbite, n = orbites, nez et dents, . = transparent.
+// Orbites noires et braise orange : sur l'os clair, un œil tout orange se perdait (luminosités trop proches).
 // Le contour sombre (k) est calculé automatiquement autour du crâne.
 const SKULL_GRID = [
   '................',
@@ -17,9 +18,9 @@ const SKULL_GRID = [
   '...bbbbbbbbbb...',
   '..bbbbbbbbbbbs..',
   '..bbbbbbbbbbbs..',
-  '..bbeeebbeeebs..',
-  '..bbeeebbeeebs..',
-  '..bbeeebbeeebs..',
+  '..bbnnnbbnnnbs..',
+  '..bbnenbbnenbs..',
+  '..bbnnnbbnnnbs..',
   '..bbbbbnnbbbbs..',
   '...bbbbnnbbbs...',
   '....bbbbbbbs....',
@@ -33,7 +34,7 @@ const SKULL_GRID = [
 const PALETTE = {
   b: [233, 226, 207, 255],
   s: [184, 176, 201, 255],
-  e: [232, 163, 61, 255],
+  e: [245, 194, 107, 255],
   n: [20, 18, 31, 255],
   k: [13, 11, 20, 255],
 };
