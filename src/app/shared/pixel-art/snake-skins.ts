@@ -49,11 +49,11 @@ export const SNAKE_SKINS: readonly SnakeSkin[] = [
 
 /**
  * La mascotte des jeux (salle d'attente, spinner du téléphone) : un serpent corail
- * aux anneaux rouges, noirs et orange. Tête rouge sang, pour ne pas se perdre sur les fonds sombres.
+ * aux anneaux rouges, gris pierre et orange. Tête rouge sang, pour ne pas se perdre sur les fonds sombres.
  */
 export const MASCOT_SNAKE_SKIN: SnakeSkin = {
   ...SNAKE_SKINS[0],
-  ringColors: ['#c0392b', '#0a0707', '#e8732a', '#0a0707'],
+  ringColors: ['#c0392b', '#6b6577', '#e8732a', '#6b6577'],
   headColor: '#8e2a2a',
 };
 
