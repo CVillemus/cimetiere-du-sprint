@@ -38,7 +38,7 @@ const ANIMATION_FRAME_INTERVAL_IN_MILLISECONDS: number = 100;
  * la date et un compte à rebours jusqu'à samedi 18h, dans une carte opaque bien lisible.
  *
  * Le décor est empilé en cinq canvas : ciel, ciel animé (étoiles, nuages), paysage,
- * lumières (bougies qui vacillent en CSS) et créatures (arbre, corbeau, serpent).
+ * lumières (bougies qui vacillent en CSS) et créatures (fillette à la lanterne, serpent).
  */
 @Component({
   selector: 'app-teaser-page',

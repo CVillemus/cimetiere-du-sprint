@@ -1,5 +1,3 @@
-import { PIXEL_BACKDROP_DEFINITIONS } from '../../shared/components/pixel-backdrop/pixel-backdrop.definitions';
-import { PixelGrid } from '../../shared/pixel-art/pixel-grid';
 import { PixelPainter } from '../../shared/pixel-art/pixel-painter';
 import { TEASER_GROUND_Y, TEASER_SCENE_WIDTH } from './teaser-graveyard.scene';
 
@@ -7,8 +5,8 @@ import { TEASER_GROUND_Y, TEASER_SCENE_WIDTH } from './teaser-graveyard.scene';
  * Tout ce qui bouge sur la page teaser, dessiné image par image en fonction du temps écoulé :
  * - calque « ciel animé » : quelques étoiles qui scintillent doucement, une rare étoile filante,
  *   deux couches de nuages en parallaxe très lente ;
- * - calque « créatures » : l'arbre mort qui se balance, le corbeau qui tourne la tête,
- *   et le serpent qui pointe le bout du nez derrière une stèle de temps en temps.
+ * - calque « créatures » : la silhouette d'une fillette immobile dont la lanterne vacille
+ *   et s'éteint par moments, et le serpent qui pointe le bout du nez derrière une stèle.
  * Tout est volontairement lent et discret : le décor accompagne le texte, il ne doit pas le concurrencer.
  * Fichier d'illustration pixel art : la palette vit avec le dessin.
  */
@@ -22,6 +20,8 @@ interface TwinklingStar {
   /** Seule une petite partie des étoiles scintille ; les autres restent fixes. */
   readonly isTwinkling: boolean;
 }
+
+type LanternState = 'lit' | 'dim' | 'off';
 
 interface DriftingCloud {
   readonly startX: number;
@@ -41,16 +41,32 @@ const SHOOTING_STAR_PERIOD_IN_MILLISECONDS: number = 45_000;
 const SHOOTING_STAR_DURATION_IN_MILLISECONDS: number = 700;
 const SHOOTING_STAR_TRAIL_LENGTH: number = 10;
 
-const TREE_SCALE: number = 3;
-const TREE_X: number = 2;
-const TREE_FRAME_DURATION_IN_MILLISECONDS: number = 1_600;
-/** Image de base, penché à droite, base, penché à gauche : un balancement doux. */
-const TREE_SWAY_SEQUENCE: readonly number[] = [0, 1, 0, 2];
-const RAVEN_X: number = 42;
-const RAVEN_Y: number = 83;
-const RAVEN_CYCLE_IN_MILLISECONDS: number = 11_000;
-const RAVEN_LOOKING_LEFT_DURATION_IN_MILLISECONDS: number = 8_500;
+/** La fillette se tient à gauche du cimetière, les pieds sur la ligne du sol. */
+const GIRL_X: number = 30;
 const SILHOUETTE_COLOR: string = '#0c0a16';
+/** Liseré à peine plus clair là où la lanterne éclaire la silhouette. */
+const LANTERN_RIM_LIGHT_COLOR: string = '#2a2238';
+const LANTERN_FRAME_COLOR: string = '#1a1210';
+const LANTERN_LIT_GLASS_COLOR: string = '#e8a33d';
+const LANTERN_FLAME_COLOR: string = '#f5c26b';
+const LANTERN_DIM_GLASS_COLOR: string = '#5a3a22';
+const LANTERN_OFF_GLASS_COLOR: string = '#2a1f1c';
+/**
+ * La lanterne brille presque tout le temps. Toutes les 7 s, elle vacille puis s'éteint
+ * deux fois très brièvement, de façon irrégulière : c'est inquiétant sans être agaçant.
+ */
+const LANTERN_CYCLE_IN_MILLISECONDS: number = 7_000;
+const LANTERN_FLICKER_STEPS: readonly (readonly [
+  start: number,
+  end: number,
+  state: LanternState,
+])[] = [
+  [5_100, 5_250, 'dim'],
+  [5_250, 5_400, 'off'],
+  [5_400, 5_550, 'lit'],
+  [5_550, 5_650, 'off'],
+  [5_650, 5_900, 'dim'],
+];
 
 /** Robe rayée volontairement sourde : sang séché, os sale, rouille. */
 const SNAKE_RING_COLORS: readonly string[] = ['#6e3530', '#a89c84', '#7a5030', '#a89c84'];
@@ -159,7 +175,7 @@ export class TeaserNightAnimator {
 
   paintCreatures(creaturesPainter: PixelPainter, elapsedMilliseconds: number): void {
     creaturesPainter.clear();
-    this.paintSwayingTree(creaturesPainter, elapsedMilliseconds);
+    this.paintGirlWithLantern(creaturesPainter, elapsedMilliseconds);
     this.paintPeekingSnake(creaturesPainter, elapsedMilliseconds);
   }
 
@@ -230,26 +246,99 @@ export class TeaserNightAnimator {
     painter.setOpacity(1);
   }
 
-  private paintSwayingTree(painter: PixelPainter, elapsedMilliseconds: number): void {
-    const treeFrames: readonly PixelGrid[] = PIXEL_BACKDROP_DEFINITIONS['dead-tree'].frames;
-    const swayStep: number =
-      Math.floor(elapsedMilliseconds / TREE_FRAME_DURATION_IN_MILLISECONDS) %
-      TREE_SWAY_SEQUENCE.length;
-    const treeFrame: PixelGrid = treeFrames[TREE_SWAY_SEQUENCE[swayStep]];
-    const treeTopY: number = TEASER_GROUND_Y - treeFrame.length * TREE_SCALE + TREE_SCALE;
-    painter.paintPixelGrid(treeFrame, TREE_X, treeTopY, TREE_SCALE, SILHOUETTE_COLOR);
+  /**
+   * Silhouette sombre d'une fillette, de face, longs cheveux tombant sur le visage.
+   * Elle ne bouge pas : seule sa lanterne, tenue à bout de bras, vacille de temps en temps.
+   */
+  private paintGirlWithLantern(painter: PixelPainter, elapsedMilliseconds: number): void {
+    const groundY: number = TEASER_GROUND_Y;
+    const lanternState: LanternState = this.lanternStateAt(elapsedMilliseconds);
+    const isLanternLit: boolean = lanternState === 'lit';
 
-    const ravenFrames: readonly PixelGrid[] = PIXEL_BACKDROP_DEFINITIONS.raven.frames;
-    const isLookingLeft: boolean =
-      elapsedMilliseconds % RAVEN_CYCLE_IN_MILLISECONDS <
-      RAVEN_LOOKING_LEFT_DURATION_IN_MILLISECONDS;
-    painter.paintPixelGrid(
-      ravenFrames[isLookingLeft ? 0 : 1],
-      RAVEN_X,
-      RAVEN_Y,
-      1,
+    // Halo et reflet au sol, dessinés d'abord pour passer derrière la silhouette
+    if (lanternState !== 'off') {
+      const glowIntensity: number = isLanternLit ? 0.18 : 0.08;
+      painter.paintGlow(GIRL_X + 12, groundY - 10, 16, LANTERN_LIT_GLASS_COLOR, glowIntensity);
+      painter.setOpacity(isLanternLit ? 0.2 : 0.1);
+      painter.fillEllipse(GIRL_X + 11, groundY + 1, 9, 1, LANTERN_LIT_GLASS_COLOR);
+      painter.setOpacity(1);
+    }
+
+    // Tête ronde, un peu penchée, entièrement couverte par les cheveux
+    painter.fillRect(GIRL_X - 1, groundY - 35, 4, 1, SILHOUETTE_COLOR);
+    painter.fillRect(GIRL_X - 2, groundY - 34, 6, 1, SILHOUETTE_COLOR);
+    painter.fillRect(GIRL_X - 3, groundY - 33, 7, 6, SILHOUETTE_COLOR);
+
+    // Épaules étroites, puis robe qui s'évase jusqu'aux genoux, ourlet irrégulier
+    painter.fillRect(GIRL_X - 4, groundY - 26, 9, 2, SILHOUETTE_COLOR);
+    painter.fillPolygon(
+      [
+        [GIRL_X - 4, groundY - 24],
+        [GIRL_X + 5, groundY - 24],
+        [GIRL_X + 8, groundY - 7],
+        [GIRL_X - 7, groundY - 7],
+      ],
       SILHOUETTE_COLOR,
     );
+    [-6, -3, 1, 5].forEach((hemOffset: number) =>
+      painter.fillRect(GIRL_X + hemOffset, groundY - 7, 2, 1, SILHOUETTE_COLOR),
+    );
+
+    // Mèches qui tombent devant les épaules, jusqu'à la poitrine
+    painter.fillRect(GIRL_X - 3, groundY - 27, 2, 8, SILHOUETTE_COLOR);
+    painter.fillRect(GIRL_X + 2, groundY - 27, 2, 7, SILHOUETTE_COLOR);
+    painter.fillPixel(GIRL_X - 3, groundY - 19, SILHOUETTE_COLOR);
+
+    // Bras gauche fin, le long de la robe, sans toucher le corps
+    painter.drawLine(GIRL_X - 5, groundY - 25, GIRL_X - 7, groundY - 15, SILHOUETTE_COLOR);
+    painter.fillPixel(GIRL_X - 7, groundY - 14, SILHOUETTE_COLOR);
+
+    // Jambes fines sous l'ourlet
+    painter.fillRect(GIRL_X - 2, groundY - 6, 1, 6, SILHOUETTE_COLOR);
+    painter.fillRect(GIRL_X + 2, groundY - 6, 1, 6, SILHOUETTE_COLOR);
+
+    // Bras droit écarté du corps, qui tient la lanterne à bout de bras
+    painter.drawLine(GIRL_X + 5, groundY - 25, GIRL_X + 11, groundY - 16, SILHOUETTE_COLOR);
+    painter.fillRect(GIRL_X + 11, groundY - 16, 1, 2, SILHOUETTE_COLOR);
+
+    // Lanterne : anse, cadre, vitre (allumée, faible ou éteinte)
+    const lanternX: number = GIRL_X + 10;
+    const lanternY: number = groundY - 14;
+    painter.fillRect(lanternX, lanternY, 4, 1, LANTERN_FRAME_COLOR);
+    painter.fillRect(lanternX, lanternY + 1, 4, 5, LANTERN_FRAME_COLOR);
+    const glassColor: string =
+      lanternState === 'lit'
+        ? LANTERN_LIT_GLASS_COLOR
+        : lanternState === 'dim'
+          ? LANTERN_DIM_GLASS_COLOR
+          : LANTERN_OFF_GLASS_COLOR;
+    painter.fillRect(lanternX + 1, lanternY + 2, 2, 3, glassColor);
+    if (isLanternLit) {
+      painter.fillPixel(lanternX + 1, lanternY + 3, LANTERN_FLAME_COLOR);
+    }
+    painter.fillRect(lanternX, lanternY + 6, 4, 1, LANTERN_FRAME_COLOR);
+
+    // Liseré de lumière sur le bord de la robe et du bras, côté lanterne
+    if (isLanternLit) {
+      painter.drawLine(GIRL_X + 6, groundY - 20, GIRL_X + 8, groundY - 8, LANTERN_RIM_LIGHT_COLOR);
+      painter.drawLine(
+        GIRL_X + 7,
+        groundY - 22,
+        GIRL_X + 10,
+        groundY - 17,
+        LANTERN_RIM_LIGHT_COLOR,
+      );
+      painter.fillPixel(GIRL_X + 3, groundY - 2, LANTERN_RIM_LIGHT_COLOR);
+    }
+  }
+
+  private lanternStateAt(elapsedMilliseconds: number): LanternState {
+    const timeInCycle: number = elapsedMilliseconds % LANTERN_CYCLE_IN_MILLISECONDS;
+    const flickerStep = LANTERN_FLICKER_STEPS.find(
+      ([stepStart, stepEnd]: readonly [number, number, LanternState]): boolean =>
+        timeInCycle >= stepStart && timeInCycle < stepEnd,
+    );
+    return flickerStep?.[2] ?? 'lit';
   }
 
   /**

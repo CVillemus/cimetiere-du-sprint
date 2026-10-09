@@ -3,7 +3,7 @@ import { PixelPainter } from '../../shared/pixel-art/pixel-painter';
 /**
  * Décor fixe de la page teaser, en 320×180 : assez fin pour un grand écran.
  * Le texte est dans une carte opaque au centre ; tout ce qui compte est placé autour.
- * Les éléments animés (étoiles, nuages, arbre, corbeau, serpent) sont dans teaser-night-animator.ts.
+ * Les éléments animés (étoiles, nuages, fillette à la lanterne, serpent) sont dans teaser-night-animator.ts.
  * Fichier d'illustration pixel art : la palette vit avec le dessin.
  */
 export const TEASER_SCENE_WIDTH: number = 320;
@@ -19,7 +19,7 @@ interface Tombstone {
   readonly hasCandle: boolean;
 }
 
-/** Dix tombes, une par film, alignées sous la carte (l'arbre occupe la gauche). */
+/** Dix tombes, une par film, alignées sous la carte (la fillette se tient à gauche). */
 const TOMBSTONES: readonly Tombstone[] = [
   { x: 76, height: 18, shape: 'rounded', hasCandle: false },
   { x: 99, height: 23, shape: 'cross', hasCandle: true },
