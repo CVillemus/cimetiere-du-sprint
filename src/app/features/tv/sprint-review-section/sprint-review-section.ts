@@ -1,3 +1,4 @@
+import { describeStreamingOffers, StreamingOffer } from '../../../core/films/streaming-offers';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,11 +20,6 @@ import { ReviewSpider } from './review-spider/review-spider';
 interface RankedFilm {
   readonly rank: number;
   readonly filmRanking: FilmRanking;
-}
-
-interface WinnerStreaming {
-  readonly label: string;
-  readonly platforms: readonly string[];
 }
 
 /** Les 2e et 3e sont mis en avant dans le reste du classement. */
@@ -79,21 +75,15 @@ export class SprintReviewSection {
   protected readonly runnerUpMaximumRank: number = RUNNER_UP_MAXIMUM_RANK;
   protected readonly streamingCheckedOn: string = STREAMING_CHECKED_ON;
 
-  /** Comme sous la bande-annonce : l'abonnement d'abord, la location sinon. */
-  protected readonly winnerStreaming: Signal<WinnerStreaming> = computed((): WinnerStreaming => {
-    const winningFilm: Film | undefined = this.winningFilm()?.film;
-    if (winningFilm === undefined) {
-      return { label: '', platforms: [] };
-    }
-    const { subscriptionPlatforms, rentalPlatforms } = winningFilm.streamingAvailability;
-    if (subscriptionPlatforms.length > 0) {
-      return { label: 'À voir sur', platforms: subscriptionPlatforms };
-    }
-    if (rentalPlatforms.length > 0) {
-      return { label: 'En location', platforms: rentalPlatforms };
-    }
-    return { label: 'Introuvable en streaming', platforms: [] };
-  });
+  /** Comme sous la bande-annonce : l'abonnement d'abord, puis la location et son prix. */
+  protected readonly winnerStreamingOffers: Signal<readonly StreamingOffer[]> = computed(
+    (): readonly StreamingOffer[] => {
+      const winningFilm: Film | undefined = this.winningFilm()?.film;
+      return winningFilm === undefined
+        ? []
+        : describeStreamingOffers(winningFilm.streamingAvailability);
+    },
+  );
 
   /** Le classement est recalculé à chaque vote rechargé : on ne joue l'orgue qu'une fois par visite. */
   private hasPlayedWinnerSoundThisVisit: boolean = false;

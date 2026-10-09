@@ -22,15 +22,15 @@
             OHHHHH OUI ! ·
             {{ formatDuration(winner.film.durationInMinutes) }}
           </span>
-          <p class="sprint-review__streaming">
-            <span class="sprint-review__streaming-label">{{ winnerStreaming().label }}</span>
-            @for (platform of winnerStreaming().platforms; track platform) {
-              <span class="sprint-review__platform">{{ platform }}</span>
-            }
-            <span class="sprint-review__streaming-source"
-              >JustWatch · {{ streamingCheckedOn }}</span
-            >
-          </p>
+          @for (streamingOffer of winnerStreamingOffers(); track streamingOffer.label) {
+            <p class="sprint-review__streaming">
+              <span class="sprint-review__streaming-label">{{ streamingOffer.label }}</span>
+              @for (platform of streamingOffer.platforms; track platform) {
+                <span class="sprint-review__platform">{{ platform }}</span>
+              }
+            </p>
+          }
+          <span class="sprint-review__streaming-source">JustWatch · {{ streamingCheckedOn }}</span>
         </div>
       </div>
     </div>

@@ -49,8 +49,10 @@ export interface StreamingAvailability {
   readonly justWatchSlug: string;
   /** Inclus dans un abonnement. */
   readonly subscriptionPlatforms: readonly string[];
-  /** Location ou achat à l'unité, quand aucun abonnement ne le propose. */
+  /** Location à l'unité (VOD), en plus de l'abonnement : les trois plateformes les plus connues. */
   readonly rentalPlatforms: readonly string[];
+  /** Prix de location le plus bas parmi ces plateformes, ou `null` si le film ne se loue pas. */
+  readonly rentalStartingPriceInEuros: number | null;
 }
 
 export interface Film {

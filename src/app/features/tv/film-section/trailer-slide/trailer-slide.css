@@ -85,6 +85,14 @@
   font-size: 1.1vw;
 }
 
+.trailer-slide__streaming-offer {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6vw;
+  margin-right: 1.2vw;
+}
+
 .trailer-slide__streaming-label {
   font-family: var(--font-pixel-label);
   font-size: 0.9vw;

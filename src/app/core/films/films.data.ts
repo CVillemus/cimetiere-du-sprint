@@ -38,6 +38,7 @@ export const FILMS: readonly Film[] = [
       justWatchSlug: 'heretic',
       subscriptionPlatforms: [],
       rentalPlatforms: ['Canal VOD', 'Apple TV', 'Amazon Video'],
+      rentalStartingPriceInEuros: 2.99,
     },
   },
   {
@@ -67,7 +68,8 @@ export const FILMS: readonly Film[] = [
     streamingAvailability: {
       justWatchSlug: 'get-out',
       subscriptionPlatforms: ['Prime Video', 'Disney+', 'HBO Max'],
-      rentalPlatforms: [],
+      rentalPlatforms: ['Canal VOD', 'Apple TV', 'Amazon Video'],
+      rentalStartingPriceInEuros: 2.99,
     },
   },
   {
@@ -98,7 +100,8 @@ export const FILMS: readonly Film[] = [
     streamingAvailability: {
       justWatchSlug: 'conjuring-les-dossiers-warren',
       subscriptionPlatforms: ['Netflix', 'Prime Video', 'HBO Max'],
-      rentalPlatforms: [],
+      rentalPlatforms: ['Apple TV', 'Amazon Video', 'Rakuten TV'],
+      rentalStartingPriceInEuros: 2.99,
     },
   },
   {
@@ -129,6 +132,7 @@ export const FILMS: readonly Film[] = [
       justWatchSlug: 'mama',
       subscriptionPlatforms: [],
       rentalPlatforms: ['Canal VOD', 'Apple TV', 'Amazon Video'],
+      rentalStartingPriceInEuros: 2.99,
     },
   },
   {
@@ -158,7 +162,8 @@ export const FILMS: readonly Film[] = [
     streamingAvailability: {
       justWatchSlug: 'sinister',
       subscriptionPlatforms: ['Shadowz', 'Molotov TV'],
-      rentalPlatforms: [],
+      rentalPlatforms: ['Canal VOD', 'Apple TV', 'Amazon Video'],
+      rentalStartingPriceInEuros: 2.99,
     },
   },
   {
@@ -188,7 +193,8 @@ export const FILMS: readonly Film[] = [
     streamingAvailability: {
       justWatchSlug: 'heredite',
       subscriptionPlatforms: ['Prime Video'],
-      rentalPlatforms: [],
+      rentalPlatforms: ['Canal VOD', 'Apple TV', 'Amazon Video'],
+      rentalStartingPriceInEuros: 2.99,
     },
   },
   {
@@ -218,7 +224,8 @@ export const FILMS: readonly Film[] = [
     streamingAvailability: {
       justWatchSlug: 'incident-in-a-ghost-land',
       subscriptionPlatforms: ['Shadowz', 'Molotov TV'],
-      rentalPlatforms: [],
+      rentalPlatforms: ['Canal VOD', 'Apple TV', 'Amazon Video'],
+      rentalStartingPriceInEuros: 2.99,
     },
   },
   {
@@ -244,7 +251,8 @@ export const FILMS: readonly Film[] = [
     streamingAvailability: {
       justWatchSlug: 'lorphelinat',
       subscriptionPlatforms: ['Paramount+'],
-      rentalPlatforms: [],
+      rentalPlatforms: ['Canal VOD', 'Apple TV', 'Amazon Video'],
+      rentalStartingPriceInEuros: 2.99,
     },
   },
   {
@@ -274,7 +282,8 @@ export const FILMS: readonly Film[] = [
     streamingAvailability: {
       justWatchSlug: 'late-night-with-the-devil',
       subscriptionPlatforms: ['Shadowz', 'Molotov TV'],
-      rentalPlatforms: [],
+      rentalPlatforms: ['Canal VOD', 'Apple TV', 'Amazon Video'],
+      rentalStartingPriceInEuros: 2.99,
     },
   },
   {
@@ -301,6 +310,7 @@ export const FILMS: readonly Film[] = [
       justWatchSlug: 'his-house',
       subscriptionPlatforms: ['Netflix'],
       rentalPlatforms: [],
+      rentalStartingPriceInEuros: null,
     },
   },
 ];

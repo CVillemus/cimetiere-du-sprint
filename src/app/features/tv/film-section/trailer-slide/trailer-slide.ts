@@ -1,3 +1,4 @@
+import { describeStreamingOffers, StreamingOffer } from '../../../../core/films/streaming-offers';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -41,6 +42,11 @@ export class TrailerSlide {
   protected readonly warningSecondsLeft: Signal<number> = this.warningSecondsLeftState.asReadonly();
 
   protected readonly streamingCheckedOn: string = STREAMING_CHECKED_ON;
+
+  /** L'abonnement d'abord, puis la location et son prix. */
+  protected readonly streamingOffers: Signal<readonly StreamingOffer[]> = computed(
+    (): readonly StreamingOffer[] => describeStreamingOffers(this.film().streamingAvailability),
+  );
   protected readonly isWarningScreenVisible: Signal<boolean> = computed(
     (): boolean => this.warningSecondsLeftState() > 0,
   );
