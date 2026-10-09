@@ -64,3 +64,13 @@
   font-size: 2vw;
   color: var(--color-violet-muted);
 }
+
+.trailer-slide__language {
+  margin-left: 0.6vw;
+  padding: 0.1vw 0.5vw;
+  border: 0.15vw solid var(--color-violet);
+  font-family: var(--font-pixel-label);
+  font-size: 0.9vw;
+  color: var(--color-violet-muted);
+  vertical-align: middle;
+}

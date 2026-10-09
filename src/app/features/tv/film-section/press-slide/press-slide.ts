@@ -6,7 +6,7 @@ import {
   InputSignal,
   Signal,
 } from '@angular/core';
-import { Film } from '../../../../core/films/film.model';
+import { Film, IMDB_RATINGS_CHECKED_ON } from '../../../../core/films/film.model';
 import { FilmPanelLayout } from '../film-panel-layout/film-panel-layout';
 
 const SPOILER_TRIGGER_WARNING: string = 'Spoilers légers';
@@ -23,6 +23,8 @@ export class PressSlide {
   readonly film: InputSignal<Film> = input.required<Film>();
   readonly tombNumber: InputSignal<number> = input.required<number>();
   readonly filmCount: InputSignal<number> = input.required<number>();
+
+  protected readonly imdbRatingsCheckedOn: string = IMDB_RATINGS_CHECKED_ON;
 
   protected readonly pressTriggerWarnings: Signal<readonly string[]> = computed(
     (): readonly string[] =>

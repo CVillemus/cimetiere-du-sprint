@@ -1,5 +1,8 @@
 <header class="trailer-slide__header">
-  <h2 class="trailer-slide__title">{{ film().frenchTitle }} · Bande-annonce</h2>
+  <h2 class="trailer-slide__title">
+    {{ film().frenchTitle }} · Bande-annonce
+    <span class="trailer-slide__language">{{ film().trailer.language }}</span>
+  </h2>
   <app-trigger-warning-list [triggerWarnings]="film().trailer.triggerWarnings" />
 </header>
 

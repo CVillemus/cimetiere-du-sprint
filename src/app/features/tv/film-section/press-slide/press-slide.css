@@ -28,3 +28,10 @@
 .press-review {
   margin: 1.5vw 0 0;
 }
+
+.press-rating__source {
+  margin: 0.6vw 0 0;
+  font-family: var(--font-pixel-label);
+  font-size: 0.8vw;
+  color: var(--color-violet-muted);
+}

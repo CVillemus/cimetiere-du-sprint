@@ -14,14 +14,26 @@ export type FilmId =
   | 'late-night-with-the-devil'
   | 'his-house';
 
+/** VF : doublée ; VOST : sous-titrée en français ; VO : version originale sans sous-titres. */
+export type TrailerLanguage = 'VF' | 'VOST' | 'VO';
+
+/** Date du relevé des notes IMDb, affichée sur la slide Presse. */
+export const IMDB_RATINGS_CHECKED_ON: string = 'octobre 2026';
+
 export interface FilmTrailer {
-  /** `null` tant que l'identifiant de la bande-annonce officielle n'a pas été vérifié. */
+  /**
+   * Identifiant YouTube vérifié (titre, chaîne et intégration) via l'API oEmbed.
+   * `null` si aucune bande-annonce intégrable n'a été trouvée.
+   */
   readonly youtubeVideoId: string | null;
+  readonly language: TrailerLanguage;
   readonly triggerWarnings: readonly string[];
 }
 
 export interface FilmPressReception {
-  /** Note IMDb approximative, sur 10. */
+  /** Identifiant IMDb du film (ex. `tt0230600`) : la source de la note. */
+  readonly imdbTitleId: string;
+  /** Note IMDb sur 10, relevée à la date `IMDB_RATINGS_CHECKED_ON`. */
   readonly imdbRating: number;
   /** Résumé de la critique écrit par nos soins (pas de citation d'article). */
   readonly reviewSummary: string;

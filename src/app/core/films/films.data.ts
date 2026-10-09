@@ -11,14 +11,19 @@ export const FILMS: readonly Film[] = [
     originalTitle: 'The Others',
     releaseYear: 2001,
     directors: ['Alejandro Amenábar'],
-    durationInMinutes: 104,
+    durationInMinutes: 101,
     fearLevel: 3,
     goreLevel: 1,
     summary:
       "1945, île de Jersey. Grace vit seule avec ses deux enfants, malades de la lumière, dans un manoir aux rideaux toujours tirés. L'arrivée de trois domestiques coïncide avec d'étranges présences.",
     triggerWarnings: ['Enfants en danger', 'Deuil', 'Ambiance oppressante'],
-    trailer: { youtubeVideoId: null, triggerWarnings: ['Ambiance oppressante'] },
+    trailer: {
+      youtubeVideoId: 'zWxCQs7qQT4',
+      language: 'VF',
+      triggerWarnings: ['Ambiance oppressante'],
+    },
     pressReception: {
+      imdbTitleId: 'tt0230600',
       imdbRating: 7.6,
       reviewSummary:
         'Un huis clos gothique tout en suggestion, porté par Nicole Kidman. La critique salue une mise en scène élégante et un final resté culte.',
@@ -37,8 +42,13 @@ export const FILMS: readonly Film[] = [
     summary:
       "Chris part passer le week-end chez les parents de sa petite amie. L'accueil est chaleureux, presque trop. Les domestiques ont des sourires figés, et les invités le regardent d'un drôle d'air.",
     triggerWarnings: ['Racisme', 'Hypnose et manipulation', 'Violence (final)'],
-    trailer: { youtubeVideoId: null, triggerWarnings: ['Tension', 'Images de violence brèves'] },
+    trailer: {
+      youtubeVideoId: 'XzmeT5rEPDg',
+      language: 'VF',
+      triggerWarnings: ['Tension', 'Images de violence brèves'],
+    },
     pressReception: {
+      imdbTitleId: 'tt5052448',
       imdbRating: 7.8,
       reviewSummary:
         "Thriller satirique devenu une référence, récompensé par l'Oscar du meilleur scénario original. On rit jaune autant qu'on frissonne.",
@@ -62,8 +72,9 @@ export const FILMS: readonly Film[] = [
       'Violence envers des enfants',
       "Mort d'un animal",
     ],
-    trailer: { youtubeVideoId: null, triggerWarnings: ['Jump scares'] },
+    trailer: { youtubeVideoId: 'VRIgnMz_gBs', language: 'VF', triggerWarnings: ['Jump scares'] },
     pressReception: {
+      imdbTitleId: 'tt1457767',
       imdbRating: 7.5,
       reviewSummary:
         "Une maison hantée à l'ancienne, d'une efficacité redoutable. Souvent cité parmi les films d'horreur grand public les plus réussis de sa décennie.",
@@ -82,8 +93,13 @@ export const FILMS: readonly Film[] = [
     summary:
       'Deux fillettes disparues sont retrouvées après cinq ans seules dans une cabane au fond des bois. Leur oncle les recueille... mais quelque chose les a suivies.',
     triggerWarnings: ['Enfants en danger', 'Violence familiale', 'Jump scares'],
-    trailer: { youtubeVideoId: null, triggerWarnings: ['Jump scares', 'Créature'] },
+    trailer: {
+      youtubeVideoId: 'Z68IqurkFVE',
+      language: 'VF',
+      triggerWarnings: ['Jump scares', 'Créature'],
+    },
     pressReception: {
+      imdbTitleId: 'tt2023587',
       imdbRating: 6.2,
       reviewSummary:
         'Une ambiance de conte noir très réussie, produite par Guillermo del Toro. Sa dernière partie divise.',
@@ -102,8 +118,13 @@ export const FILMS: readonly Film[] = [
     summary:
       "Ellison, auteur de faits divers en panne d'inspiration, s'installe avec sa famille dans une maison où un crime a eu lieu. Au grenier, il trouve une boîte de bobines Super 8.",
     triggerWarnings: ['Meurtres filmés (suggérés)', 'Enfants impliqués', 'Jump scares'],
-    trailer: { youtubeVideoId: null, triggerWarnings: ['Images dérangeantes', 'Jump scares'] },
+    trailer: {
+      youtubeVideoId: 'bXfw4ZFbK5Y',
+      language: 'VF',
+      triggerWarnings: ['Images dérangeantes', 'Jump scares'],
+    },
     pressReception: {
+      imdbTitleId: 'tt1922777',
       imdbRating: 6.8,
       reviewSummary:
         "Régulièrement cité comme l'un des films les plus effrayants des années 2010, grâce à ses images d'archives glaçantes et sa bande-son.",
@@ -122,8 +143,13 @@ export const FILMS: readonly Film[] = [
     summary:
       'Après la mort de sa mère, une femme secrète et distante, Annie voit sa famille se fissurer. Des secrets remontent, et le deuil prend une tournure de plus en plus inquiétante.',
     triggerWarnings: ['Deuil', 'Mort accidentelle choquante', 'Automutilation', 'Images choc'],
-    trailer: { youtubeVideoId: null, triggerWarnings: ['Images dérangeantes'] },
+    trailer: {
+      youtubeVideoId: 'AIWvsE_TxNA',
+      language: 'VF',
+      triggerWarnings: ['Images dérangeantes'],
+    },
     pressReception: {
+      imdbTitleId: 'tt7784604',
       imdbRating: 7.3,
       reviewSummary:
         'Un premier film acclamé, porté par une Toni Collette impressionnante. Lent, étouffant, et très éprouvant pour les nerfs.',
@@ -142,9 +168,14 @@ export const FILMS: readonly Film[] = [
     summary:
       "Une mère et ses deux filles s'installent dans la maison héritée d'une tante. Dès la première nuit, des intrus font irruption. Seize ans plus tard, l'une des sœurs reçoit un appel au secours.",
     triggerWarnings: ['Violence physique brutale', 'Séquestration', "Agression d'adolescentes"],
-    trailer: { youtubeVideoId: null, triggerWarnings: ['Violence', 'Poupées inquiétantes'] },
+    trailer: {
+      youtubeVideoId: 'RafSudsP_aU',
+      language: 'VF',
+      triggerWarnings: ['Violence', 'Poupées inquiétantes'],
+    },
     pressReception: {
-      imdbRating: 6.6,
+      imdbTitleId: 'tt6195094',
+      imdbRating: 6.4,
       reviewSummary:
         'Un film français radical et maîtrisé, qui divise par sa violence. Ses défenseurs saluent une mise en scène virtuose.',
       containsSpoilers: false,
@@ -162,8 +193,9 @@ export const FILMS: readonly Film[] = [
     summary:
       "Laura rachète l'orphelinat où elle a grandi pour en faire un foyer. Son fils Simón s'invente de nouveaux amis invisibles... jusqu'au jour où il disparaît.",
     triggerWarnings: ["Disparition d'enfant", 'Deuil', 'Une scène choc (accident)'],
-    trailer: { youtubeVideoId: null, triggerWarnings: ['Jump scares'] },
+    trailer: { youtubeVideoId: 'uf-Scp6HRXY', language: 'VF', triggerWarnings: ['Jump scares'] },
     pressReception: {
+      imdbTitleId: 'tt0464141',
       imdbRating: 7.4,
       reviewSummary:
         'Un conte macabre et bouleversant, produit par Guillermo del Toro. La critique le place parmi les grands films de fantômes espagnols.',
@@ -182,8 +214,13 @@ export const FILMS: readonly Film[] = [
     summary:
       "Nuit d'Halloween 1977. Jack Delroy, animateur de talk-show en chute d'audience, mise tout sur une émission spéciale occulte en direct. Rien ne va se passer comme prévu.",
     triggerWarnings: ['Possession', 'Deuil', 'Gore ponctuel (final)'],
-    trailer: { youtubeVideoId: null, triggerWarnings: ['Images de possession'] },
+    trailer: {
+      youtubeVideoId: 'ElGDnV4pkEc',
+      language: 'VOST',
+      triggerWarnings: ['Images de possession'],
+    },
     pressReception: {
+      imdbTitleId: 'tt14966898',
       imdbRating: 7.0,
       reviewSummary:
         'Un found footage façon émission TV des années 70, très bien reçu. On salue surtout son format original et la performance de David Dastmalchian.',
@@ -202,9 +239,10 @@ export const FILMS: readonly Film[] = [
     summary:
       'Bol et Rial ont fui la guerre au Soudan du Sud. En Angleterre, on leur attribue enfin une maison. Mais quelque chose a fait le voyage avec eux, et cette chose vit dans les murs.',
     triggerWarnings: ["Mort d'enfant", 'Traumatisme de guerre', 'Racisme'],
-    trailer: { youtubeVideoId: null, triggerWarnings: ['Jump scares'] },
+    trailer: { youtubeVideoId: '9Bfl1mKdpKg', language: 'VF', triggerWarnings: ['Jump scares'] },
     pressReception: {
-      imdbRating: 6.5,
+      imdbTitleId: 'tt8508734',
+      imdbRating: 6.4,
       reviewSummary:
         "Un premier film unanimement salué par la critique, qui mêle maison hantée et drame de l'exil avec une grande finesse.",
       containsSpoilers: false,

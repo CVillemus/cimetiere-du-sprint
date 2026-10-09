@@ -5,11 +5,12 @@
   [triggerWarnings]="pressTriggerWarnings()"
 >
   <div class="press-rating">
-    <span class="press-rating__label">IMDb ≈</span>
+    <span class="press-rating__label">IMDb</span>
     <span class="press-rating__gauge" aria-hidden="true">
       <span class="press-rating__gauge-fill" [style.width.%]="imdbGaugeWidthPercentage()"></span>
     </span>
     <span class="press-rating__value">{{ formattedImdbRating() }} / 10</span>
   </div>
+  <p class="press-rating__source">Note relevée en {{ imdbRatingsCheckedOn }}</p>
   <p class="press-review">{{ film().pressReception.reviewSummary }}</p>
 </app-film-panel-layout>
