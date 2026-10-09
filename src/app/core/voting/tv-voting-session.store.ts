@@ -9,6 +9,8 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { FilmId } from '../films/film.model';
+import { FILMS } from '../films/films.data';
+import { FilmRanking, rankFilms } from './film-ranking';
 import { TvNavigationStore } from '../navigation/tv-navigation.store';
 import { TvSection } from '../navigation/tv-section.model';
 import { VotingApi } from './voting-api';
@@ -58,6 +60,11 @@ export class TvVotingSessionStore {
 
   readonly revealedFilmIds: Signal<readonly FilmId[]> = computed(
     (): readonly FilmId[] => this.votingSessionState()?.revealedFilmIds ?? [],
+  );
+
+  /** Classement de la Sprint Review, recalculé à chaque vote visible. */
+  readonly filmRankings: Signal<readonly FilmRanking[]> = computed((): readonly FilmRanking[] =>
+    rankFilms(FILMS, this.visibleFilmVotesState()),
   );
 
   private hasStartedHosting: boolean = false;
@@ -171,6 +178,10 @@ export class TvVotingSessionStore {
         votingStageTarget.stage,
         votingStageTarget.currentFilmId,
       );
+      // En Sprint Review, plus aucun film n'est « en cours » : la RLS rend tous les votes lisibles.
+      if (votingStageTarget.stage === 'sprint-review') {
+        this.visibleFilmVotesState.set(await this.votingApi.getVisibleFilmVotes(votingSession.id));
+      }
     } catch (publishError: unknown) {
       console.error(publishError);
     }

@@ -4,7 +4,7 @@
       <section class="tv-page__section" [attr.aria-hidden]="sectionIndex !== currentSectionIndex()">
         @switch (section.kind) {
           @case ('intro') {
-            <app-intro-section />
+            <app-intro-section [isCurrentSection]="sectionIndex === currentSectionIndex()" />
           }
           @case ('film') {
             <app-film-section
@@ -14,7 +14,9 @@
             />
           }
           @case ('sprint-review') {
-            <app-sprint-review-section />
+            <app-sprint-review-section
+              [isCurrentSection]="sectionIndex === currentSectionIndex()"
+            />
           }
         }
       </section>

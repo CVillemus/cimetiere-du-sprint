@@ -4,6 +4,8 @@ import {
   Component,
   computed,
   inject,
+  input,
+  InputSignal,
   resource,
   ResourceRef,
   Signal,
@@ -14,6 +16,7 @@ import {
   TvVotingSessionStore,
 } from '../../../core/voting/tv-voting-session.store';
 import { Participant } from '../../../core/voting/voting.model';
+import { IntroSnake } from './intro-snake/intro-snake';
 
 /**
  * Section 0 : l'accroche et le QR code qui mène vers /vote.
@@ -21,12 +24,15 @@ import { Participant } from '../../../core/voting/voting.model';
  */
 @Component({
   selector: 'app-intro-section',
+  imports: [IntroSnake],
   templateUrl: './intro-section.html',
   styleUrl: './intro-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IntroSection {
   private readonly document: Document = inject(DOCUMENT);
+
+  readonly isCurrentSection: InputSignal<boolean> = input.required<boolean>();
   private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
 
   protected readonly participants: Signal<readonly Participant[]> =

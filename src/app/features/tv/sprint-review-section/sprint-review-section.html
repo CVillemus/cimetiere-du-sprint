@@ -1,18 +1,68 @@
-<div class="sprint-review">
-  <p class="sprint-review__eyebrow">Fin du sprint</p>
-  <h2 class="sprint-review__title">Sprint Review</h2>
+<div class="sprint-review" [class.sprint-review--revealing]="isCurrentSection()">
+  <header class="sprint-review__header">
+    <p class="sprint-review__eyebrow">Fin du sprint</p>
+    <h2 class="sprint-review__title">Sprint Review</h2>
+  </header>
 
-  <ol class="sprint-review__podium" aria-label="Podium">
-    <li class="sprint-review__step sprint-review__step--second">
-      <span class="sprint-review__rank">2</span>
-    </li>
-    <li class="sprint-review__step sprint-review__step--first">
-      <span class="sprint-review__rank">1</span>
-    </li>
-    <li class="sprint-review__step sprint-review__step--third">
-      <span class="sprint-review__rank">3</span>
-    </li>
-  </ol>
+  @if (winningFilm(); as winner) {
+    <div class="sprint-review__stage">
+      <ol class="sprint-review__podium" aria-label="Podium">
+        @for (podiumStep of podiumSteps(); track podiumStep.rank) {
+          <li [class]="'sprint-review__step sprint-review__step--rank-' + podiumStep.rank">
+            <span class="sprint-review__step-title">{{
+              podiumStep.filmRanking.film.frenchTitle
+            }}</span>
+            <span class="sprint-review__step-score">
+              {{ formatAverageScore(podiumStep.filmRanking.averageScore) }} / 5
+            </span>
+            <span class="sprint-review__step-rank">{{ podiumStep.rank }}</span>
+          </li>
+        }
+      </ol>
 
-  <p class="sprint-review__hint">Les tombes s'ouvriront après le dernier vote…</p>
+      <figure class="sprint-review__winner">
+        <div class="sprint-review__winner-scene">
+          <app-film-scene [filmId]="winner.film.id" />
+        </div>
+        <figcaption class="sprint-review__winner-caption">
+          <span class="sprint-review__winner-eyebrow">Le film de la soirée</span>
+          <span class="sprint-review__winner-title">{{ winner.film.frenchTitle }}</span>
+          <span class="sprint-review__winner-details">
+            {{ formatAverageScore(winner.averageScore) }} / 5 · {{ winner.enthusiasticVoteCount }} ×
+            OHHHHH OUI ! ·
+            {{ formatDuration(winner.film.durationInMinutes) }}
+          </span>
+        </figcaption>
+      </figure>
+    </div>
+
+    @if (remainingRankedFilms().length > 0) {
+      <ol class="sprint-review__others" aria-label="Reste du classement">
+        @for (rankedFilm of remainingRankedFilms(); track rankedFilm.filmRanking.film.id) {
+          <li
+            class="sprint-review__other"
+            [class.sprint-review__other--vetoed]="rankedFilm.filmRanking.isVetoed"
+          >
+            <span class="sprint-review__other-rank">{{ rankedFilm.rank }}.</span>
+            {{ rankedFilm.filmRanking.film.frenchTitle }}
+            @if (rankedFilm.filmRanking.isVetoed) {
+              <span class="sprint-review__other-score"
+                >☠ veto ({{ rankedFilm.filmRanking.vetoCount }} × Hors de question)</span
+              >
+            } @else {
+              <span class="sprint-review__other-score">{{
+                formatAverageScore(rankedFilm.filmRanking.averageScore)
+              }}</span>
+            }
+          </li>
+        }
+      </ol>
+    }
+  } @else {
+    <p class="sprint-review__hint">Les tombes s'ouvriront après le dernier vote…</p>
+    <p class="sprint-review__rules">
+      Moyenne des votes, puis le plus de « OHHHHH OUI ! », puis le film le plus court. À partir de
+      {{ vetoThreshold }} « Hors de question », un film est éliminé.
+    </p>
+  }
 </div>

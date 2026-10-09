@@ -1,0 +1,12 @@
+:host {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.intro-snake {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  opacity: var(--snake-opacity);
+}

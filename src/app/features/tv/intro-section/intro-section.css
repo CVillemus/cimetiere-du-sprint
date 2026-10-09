@@ -113,3 +113,12 @@
     opacity: 1;
   }
 }
+
+.intro-section {
+  position: relative;
+}
+
+.intro-section__pitch,
+.intro-section__qr-frame {
+  position: relative;
+}

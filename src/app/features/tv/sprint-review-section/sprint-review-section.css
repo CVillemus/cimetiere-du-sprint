@@ -10,7 +10,11 @@
   justify-content: center;
   gap: 2vw;
   height: 100%;
-  padding: 4vw;
+  padding: 3vw 4vw;
+}
+
+.sprint-review__header {
+  text-align: center;
 }
 
 .sprint-review__eyebrow {
@@ -22,9 +26,17 @@
 
 .sprint-review__title {
   margin: 0;
-  font-size: 5vw;
+  font-size: 4.5vw;
   font-weight: 500;
 }
+
+.sprint-review__stage {
+  display: flex;
+  align-items: flex-end;
+  gap: 4vw;
+}
+
+/* ---------- Podium : trois pierres tombales ---------- */
 
 .sprint-review__podium {
   display: flex;
@@ -37,32 +49,202 @@
 
 .sprint-review__step {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6vw;
   width: 14vw;
-  padding-top: 1vw;
+  padding: 1.6vw 0.8vw 0;
   background: var(--color-tombstone);
+  text-align: center;
+  /* Haut arrondi « en escalier », façon pixel art. */
+  clip-path: polygon(
+    0 1.2vw,
+    0.6vw 1.2vw,
+    0.6vw 0.6vw,
+    1.2vw 0.6vw,
+    1.2vw 0,
+    calc(100% - 1.2vw) 0,
+    calc(100% - 1.2vw) 0.6vw,
+    calc(100% - 0.6vw) 0.6vw,
+    calc(100% - 0.6vw) 1.2vw,
+    100% 1.2vw,
+    100% 100%,
+    0 100%
+  );
+  opacity: 0;
 }
 
-.sprint-review__step--first {
-  height: 18vw;
+.sprint-review__step--rank-1 {
+  height: 21vw;
 }
 
-.sprint-review__step--second {
-  height: 13vw;
+.sprint-review__step--rank-2 {
+  height: 16vw;
 }
 
-.sprint-review__step--third {
-  height: 9vw;
+.sprint-review__step--rank-3 {
+  height: 12vw;
 }
 
-.sprint-review__rank {
+.sprint-review__step-title {
+  font-size: 1.4vw;
+  line-height: 1.1;
+  color: var(--color-night-deep);
+}
+
+.sprint-review__step-score {
+  font-family: var(--font-pixel-label);
+  font-size: 1vw;
+  color: var(--color-tombstone-engraving);
+}
+
+.sprint-review__step-rank {
+  margin-top: auto;
+  padding-bottom: 0.8vw;
   font-family: var(--font-pixel-label);
   font-size: 3vw;
   color: var(--color-tombstone-engraving);
 }
 
+/* ---------- Le film de la soirée ---------- */
+
+.sprint-review__winner {
+  display: flex;
+  flex-direction: column;
+  gap: 1vw;
+  width: 26vw;
+  margin: 0;
+  opacity: 0;
+}
+
+.sprint-review__winner-scene {
+  aspect-ratio: 4 / 3;
+  border: 0.4vw solid var(--color-candle);
+  overflow: hidden;
+}
+
+.sprint-review__winner-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4vw;
+}
+
+.sprint-review__winner-eyebrow {
+  font-family: var(--font-pixel-label);
+  font-size: 1vw;
+  color: var(--color-candle);
+}
+
+.sprint-review__winner-title {
+  font-size: 2.6vw;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.sprint-review__winner-details {
+  font-size: 1.1vw;
+  color: var(--color-bone-muted);
+}
+
+/* ---------- Le reste du classement ---------- */
+
+.sprint-review__others {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6vw 1.2vw;
+  max-width: 80vw;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1vw;
+  color: var(--color-bone-muted);
+  opacity: 0;
+}
+
+.sprint-review__other-rank,
+.sprint-review__other-score {
+  font-family: var(--font-pixel-label);
+  color: var(--color-violet-muted);
+}
+
+.sprint-review__other--vetoed {
+  color: var(--color-gore-text);
+  text-decoration: line-through;
+}
+
+.sprint-review__other--vetoed .sprint-review__other-score {
+  color: var(--color-gore-text);
+}
+
+/* ---------- Avant les votes ---------- */
+
 .sprint-review__hint {
   margin: 0;
-  font-size: 1.6vw;
+  font-size: 1.8vw;
   color: var(--color-candle);
+}
+
+.sprint-review__rules {
+  max-width: 50vw;
+  margin: 0;
+  font-size: 1.2vw;
+  line-height: 1.5;
+  color: var(--color-violet-muted);
+  text-align: center;
+}
+
+/* ---------- Révélation : 3e, puis 2e, puis 1er, puis le film de la soirée ---------- */
+
+.sprint-review--revealing .sprint-review__step {
+  animation: sprint-review-rise 900ms steps(6) both;
+}
+
+.sprint-review--revealing .sprint-review__step--rank-3 {
+  animation-delay: 1s;
+}
+
+.sprint-review--revealing .sprint-review__step--rank-2 {
+  animation-delay: 2.2s;
+}
+
+.sprint-review--revealing .sprint-review__step--rank-1 {
+  animation-delay: 3.6s;
+}
+
+.sprint-review--revealing .sprint-review__winner {
+  animation: sprint-review-appear 600ms steps(4) 4.8s both;
+}
+
+.sprint-review--revealing .sprint-review__others {
+  animation: sprint-review-appear 600ms steps(4) 5.6s both;
+}
+
+@keyframes sprint-review-rise {
+  from {
+    opacity: 1;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sprint-review-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sprint-review__step,
+  .sprint-review__winner,
+  .sprint-review__others {
+    opacity: 1;
+  }
 }
