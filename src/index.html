@@ -15,6 +15,8 @@
       Aperçu des liens (Messenger, Facebook, WhatsApp…). Ces robots n'exécutent pas le JavaScript :
       tout doit être écrit ici, avec des URL absolues. L'image est générée par
       `npm run generer:image-partage`.
+      Pas de og:url exprès : chaque adresse partagée est lue séparément par Facebook,
+      ce qui permet de contourner son cache avec un paramètre (ex. /teaser/?v=2).
     -->
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
@@ -24,7 +26,6 @@
       property="og:description"
       content="Soirée horreur : 10 films, 10 âmes, 1 seul survivra. Viens avec ton téléphone, c'est toi qui votes."
     />
-    <meta property="og:url" content="https://cvillemus.github.io/cimetiere-du-sprint/teaser/" />
     <meta
       property="og:image"
       content="https://cvillemus.github.io/cimetiere-du-sprint/og-teaser.png"
