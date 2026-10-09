@@ -115,10 +115,14 @@ const REVEAL_MOOD_SETTINGS: Readonly<Record<RevealMood, RevealMoodSettings>> = {
   },
 };
 
-const BAT_WING_FLAP_COUNT: number = 15;
-const BAT_WING_FLAP_SPACING_IN_SECONDS: number = 0.042;
-const BAT_FLIGHT_DURATION_IN_SECONDS: number = 0.65;
-const BAT_SQUEAK_DELAYS_IN_SECONDS: readonly number[] = [0.12, 0.31, 0.47];
+/** Nuée serrée : une quarantaine de petits claquements d'ailes désordonnés, le temps du vol. */
+const BAT_WING_COUNT: number = 45;
+const BAT_SQUEAK_COUNT: number = 3;
+const BAT_FLIGHT_DURATION_IN_SECONDS: number = 0.7;
+/** Largeur stéréo du passage : de -0,9 (gauche) à 0,9 (droite). */
+const BAT_FLIGHT_STEREO_SPREAD: number = 0.9;
+/** Un peu en retrait des autres sons : on change d'onglet une trentaine de fois dans la soirée. */
+const BAT_SWARM_VOLUME_FACTOR: number = 0.7;
 
 /** Orgue de la crypte : La mineur → Fa majeur → Mi majeur. */
 const CRYPT_ORGAN_CHORDS: readonly (readonly number[])[] = [
@@ -325,45 +329,108 @@ export class SpookySynth {
   }
 
   /**
-   * Changement d'onglet : une nuée de chauves-souris passe d'un haut-parleur à l'autre,
-   * battements d'ailes serrés qui enflent puis s'éloignent, avec quelques petits cris aigus.
+   * Changement d'onglet : une nuée serrée de chauves-souris passe d'une enceinte à l'autre.
+   * Des dizaines de petits « fwap » de tissu, à des moments et des places aléatoires,
+   * qui gonflent au milieu du passage, avec quelques cris aigus très discrets.
    */
   playBatSwarm(direction: StereoFlightDirection): void {
-    const startTime: number = this.audioContext.currentTime;
-    const stereoPanner: StereoPannerNode = this.audioContext.createStereoPanner();
-    const panStart: number = direction === 'to-right' ? -0.8 : 0.8;
-    stereoPanner.pan.setValueAtTime(panStart, startTime);
-    stereoPanner.pan.linearRampToValueAtTime(-panStart, startTime + BAT_FLIGHT_DURATION_IN_SECONDS);
-    stereoPanner.connect(this.soundBus);
-
-    for (let flapIndex: number = 0; flapIndex < BAT_WING_FLAP_COUNT; flapIndex++) {
-      const flightProgress: number = flapIndex / (BAT_WING_FLAP_COUNT - 1);
-      // Les ailes enflent quand la nuée passe au milieu, puis s'éloignent.
-      const swellVolume: number = 0.05 + Math.sin(flightProgress * Math.PI) * 0.13;
-      this.playNoise({
-        startDelayInSeconds: flapIndex * BAT_WING_FLAP_SPACING_IN_SECONDS + Math.random() * 0.015,
-        durationInSeconds: 0.04,
-        volume: swellVolume,
-        filterType: 'bandpass',
-        filterFrequency: 650 + Math.random() * 500,
-        filterQuality: 1.4,
-        attackInSeconds: 0.004,
-        outputNode: stereoPanner,
-      });
+    const flightSign: number = direction === 'to-right' ? 1 : -1;
+    for (let wingIndex: number = 0; wingIndex < BAT_WING_COUNT; wingIndex++) {
+      const flightProgress: number = Math.random();
+      const stereoPosition: number =
+        flightSign *
+        (-BAT_FLIGHT_STEREO_SPREAD +
+          flightProgress * 2 * BAT_FLIGHT_STEREO_SPREAD +
+          (Math.random() - 0.5) * 0.6);
+      const passingSwell: number = 0.35 + Math.sin(flightProgress * Math.PI);
+      this.playWingFlap(
+        flightProgress * BAT_FLIGHT_DURATION_IN_SECONDS,
+        this.createMovingPanner(
+          flightProgress * BAT_FLIGHT_DURATION_IN_SECONDS,
+          stereoPosition,
+          flightSign,
+        ),
+        0.5 + Math.random() * 0.7,
+        (0.06 + Math.random() * 0.08) * passingSwell * BAT_SWARM_VOLUME_FACTOR,
+      );
     }
-    BAT_SQUEAK_DELAYS_IN_SECONDS.forEach((startDelayInSeconds: number) => {
-      const squeakFrequency: number = 3800 + Math.random() * 1200;
+    for (let squeakIndex: number = 0; squeakIndex < BAT_SQUEAK_COUNT; squeakIndex++) {
+      const flightProgress: number = Math.random();
+      const squeakFrequency: number = 3600 + Math.random() * 2400;
       this.playTone({
         waveform: 'sine',
         frequency: squeakFrequency,
-        endFrequency: squeakFrequency * 1.25,
-        startDelayInSeconds,
-        durationInSeconds: 0.05,
-        volume: 0.025,
-        attackInSeconds: 0.003,
-        outputNode: stereoPanner,
+        endFrequency: squeakFrequency * (Math.random() < 0.5 ? 1.3 : 0.7),
+        startDelayInSeconds: flightProgress * BAT_FLIGHT_DURATION_IN_SECONDS,
+        durationInSeconds: 0.045 + Math.random() * 0.03,
+        volume: (0.008 + Math.random() * 0.014) * BAT_SWARM_VOLUME_FACTOR,
+        attackInSeconds: 0.004,
+        outputNode: this.createMovingPanner(
+          flightProgress * BAT_FLIGHT_DURATION_IN_SECONDS,
+          flightSign * (-BAT_FLIGHT_STEREO_SPREAD + flightProgress * 2 * BAT_FLIGHT_STEREO_SPREAD),
+          flightSign,
+        ),
       });
+    }
+  }
+
+  /** Un battement d'aile façon bruitage de cinéma : claquement du tissu, « fwap », puis retombée. */
+  private playWingFlap(
+    startDelayInSeconds: number,
+    outputNode: AudioNode,
+    wingSize: number,
+    volume: number,
+  ): void {
+    this.playNoise({
+      startDelayInSeconds,
+      durationInSeconds: 0.025,
+      volume: volume * 0.5,
+      filterType: 'highpass',
+      filterFrequency: 1600 + Math.random() * 800,
+      filterQuality: 0.9,
+      attackInSeconds: 0.003,
+      outputNode,
     });
+    this.playNoise({
+      startDelayInSeconds,
+      durationInSeconds: 0.06 * wingSize,
+      volume,
+      filterType: 'bandpass',
+      filterFrequency: 500 + Math.random() * 500,
+      endFilterFrequency: 260,
+      filterQuality: 1.1,
+      attackInSeconds: 0.003,
+      outputNode,
+    });
+    this.playNoise({
+      startDelayInSeconds: startDelayInSeconds + 0.01,
+      durationInSeconds: 0.14 * wingSize,
+      volume: volume * 0.4,
+      filterType: 'lowpass',
+      filterFrequency: 1100,
+      endFilterFrequency: 250,
+      filterQuality: 0.9,
+      attackInSeconds: 0.01,
+      outputNode,
+    });
+  }
+
+  /** Panoramique qui glisse un peu dans le sens du vol, pour que chaque aile « passe ». */
+  private createMovingPanner(
+    startDelayInSeconds: number,
+    stereoPosition: number,
+    flightSign: number,
+  ): StereoPannerNode {
+    const startTime: number = this.audioContext.currentTime + startDelayInSeconds;
+    const clampPan = (pan: number): number => Math.max(-1, Math.min(1, pan));
+    const movingPanner: StereoPannerNode = this.audioContext.createStereoPanner();
+    movingPanner.pan.setValueAtTime(clampPan(stereoPosition - flightSign * 0.15), startTime);
+    movingPanner.pan.linearRampToValueAtTime(
+      clampPan(stereoPosition + flightSign * 0.15),
+      startTime + 0.2,
+    );
+    movingPanner.connect(this.soundBus);
+    return movingPanner;
   }
 
   /**
