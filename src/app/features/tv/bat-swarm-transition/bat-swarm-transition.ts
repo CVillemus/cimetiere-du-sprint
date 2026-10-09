@@ -226,7 +226,7 @@ export class BatSwarmTransition implements BatSwarmTransitionPlayer {
     const readColor = (variableName: string): string =>
       rootStyles.getPropertyValue(variableName).trim();
     return {
-      veil: readColor('--color-dusk'),
+      veil: readColor('--color-night-deep'),
       veilTexture: readColor('--color-night'),
       batBody: readColor('--color-void'),
       batWingEdge: readColor('--color-violet'),
