@@ -70,10 +70,6 @@ export class VotePage {
 
   protected readonly myParticipant: Signal<Participant | null> =
     this.phoneVotingSessionStore.myParticipant;
-  protected readonly myScoreForCurrentFilm: Signal<VoteScore | null> =
-    this.phoneVotingSessionStore.myScoreForCurrentFilm;
-  protected readonly revealedVotesForCurrentFilm: Signal<readonly RevealedFilmVote[]> =
-    this.phoneVotingSessionStore.revealedVotesForCurrentFilm;
 
   /**
    * L'écran réellement affiché. Il suit l'écran demandé par la TV, mais avec un temps de retard :
@@ -87,6 +83,21 @@ export class VotePage {
     this.displayedPhoneScreenState.asReadonly();
 
   protected readonly filmCount: number = FILMS.length;
+
+  /**
+   * Ma carte et les cartes retournées du film *affiché* (pas celui de la TV) :
+   * pendant la coulure, l'ancien écran garde ses propres données jusqu'à être recouvert.
+   */
+  protected readonly myScoreForDisplayedFilm: Signal<VoteScore | null> = computed(
+    (): VoteScore | null =>
+      this.phoneVotingSessionStore.myScoreForFilm(this.displayedPhoneScreen().film?.id ?? null),
+  );
+  protected readonly revealedVotesForDisplayedFilm: Signal<readonly RevealedFilmVote[]> = computed(
+    (): readonly RevealedFilmVote[] =>
+      this.phoneVotingSessionStore.revealedVotesForFilm(
+        this.displayedPhoneScreen().film?.id ?? null,
+      ),
+  );
 
   protected readonly displayedTombNumber: Signal<number> = computed(
     (): number =>
@@ -132,6 +143,9 @@ export class VotePage {
   }
 
   protected castFilmVote(score: VoteScore): void {
-    void this.phoneVotingSessionStore.castFilmVote(score);
+    const displayedFilm: Film | null = this.displayedPhoneScreen().film;
+    if (displayedFilm !== null) {
+      void this.phoneVotingSessionStore.castFilmVote(score, displayedFilm.id);
+    }
   }
 }

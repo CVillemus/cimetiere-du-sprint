@@ -59,11 +59,11 @@
           [triggerWarnings]="film.triggerWarnings"
         />
         <app-vote-card-picker
-          [selectedScore]="myScoreForCurrentFilm()"
+          [selectedScore]="myScoreForDisplayedFilm()"
           (scoreSelected)="castFilmVote($event)"
         />
         <p class="vote-page__hint">
-          @if (myScoreForCurrentFilm() === null) {
+          @if (myScoreForDisplayedFilm() === null) {
             Ton vote reste secret jusqu'à la révélation.
           } @else {
             Vote scellé · modifiable jusqu'à la révélation.
@@ -75,7 +75,7 @@
       @if (displayedPhoneScreen().film; as film) {
         <p class="vote-page__tomb-label">Cartes retournées</p>
         <h1 class="vote-page__title">{{ film.frenchTitle }}</h1>
-        <app-revealed-votes [revealedVotes]="revealedVotesForCurrentFilm()" />
+        <app-revealed-votes [revealedVotes]="revealedVotesForDisplayedFilm()" />
       }
     }
     @case ('sprint-review') {

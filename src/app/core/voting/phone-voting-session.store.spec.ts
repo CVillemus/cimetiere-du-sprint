@@ -83,7 +83,7 @@ describe('PhoneVotingSessionStore', () => {
     });
     expect(phoneVotingSessionStore.phoneVotingStep()).toBe('voting');
 
-    await phoneVotingSessionStore.castFilmVote(5);
+    await phoneVotingSessionStore.castFilmVote(5, 'mama');
     expect(phoneVotingSessionStore.myScoreForCurrentFilm()).toBe(5);
     expect(fakeVotingApi.castFilmVotes[0]).toEqual({
       sessionId: 'session-1',
@@ -99,5 +99,29 @@ describe('PhoneVotingSessionStore', () => {
       revealedFilmIds: ['mama'],
     });
     expect(phoneVotingSessionStore.phoneVotingStep()).toBe('revealed');
+  });
+
+  it('should keep the vote of each film apart, and ignore a card tapped on an outdated film', async () => {
+    await phoneVotingSessionStore.startVoting(null);
+    await phoneVotingSessionStore.joinVotingSession('Morticia');
+    fakeVotingApi.votingSessionChangeHandlers?.onVotingSessionUpdated({
+      ...LOBBY_VOTING_SESSION,
+      stage: 'film',
+      currentFilmId: 'mama',
+    });
+    await phoneVotingSessionStore.castFilmVote(5, 'mama');
+
+    // La TV revient au film précédent : le téléphone affiche encore Mama pendant la coulure.
+    fakeVotingApi.votingSessionChangeHandlers?.onVotingSessionUpdated({
+      ...LOBBY_VOTING_SESSION,
+      stage: 'film',
+      currentFilmId: 'conjuring',
+    });
+
+    expect(phoneVotingSessionStore.myScoreForFilm('mama')).toBe(5);
+    expect(phoneVotingSessionStore.myScoreForFilm('conjuring')).toBeNull();
+
+    await phoneVotingSessionStore.castFilmVote(1, 'mama');
+    expect(fakeVotingApi.castFilmVotes.length).toBe(1);
   });
 });

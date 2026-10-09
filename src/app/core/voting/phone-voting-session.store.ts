@@ -58,42 +58,53 @@ export class PhoneVotingSessionStore {
     );
   });
 
-  readonly myScoreForCurrentFilm: Signal<VoteScore | null> = computed((): VoteScore | null => {
+  readonly myScoreForCurrentFilm: Signal<VoteScore | null> = computed((): VoteScore | null =>
+    this.myScoreForFilm(this.currentFilm()?.id ?? null),
+  );
+
+  readonly revealedVotesForCurrentFilm: Signal<readonly RevealedFilmVote[]> = computed(
+    (): readonly RevealedFilmVote[] => this.revealedVotesForFilm(this.currentFilm()?.id ?? null),
+  );
+
+  /**
+   * Ma carte pour un film donné. Le téléphone l'appelle avec le film *affiché*, qui peut
+   * encore être l'ancien pendant la coulure de pixels : la note ne change pas avant la transition.
+   */
+  myScoreForFilm(filmId: FilmId | null): VoteScore | null {
     const myParticipant: Participant | null = this.myParticipant();
-    const currentFilm: Film | null = this.currentFilm();
-    if (myParticipant === null || currentFilm === null) {
+    if (myParticipant === null || filmId === null) {
       return null;
     }
     return (
       this.visibleFilmVotesState().find(
         (filmVote: FilmVote): boolean =>
-          filmVote.participantId === myParticipant.id && filmVote.filmId === currentFilm.id,
+          filmVote.participantId === myParticipant.id && filmVote.filmId === filmId,
       )?.score ?? null
     );
-  });
+  }
 
-  readonly revealedVotesForCurrentFilm: Signal<readonly RevealedFilmVote[]> = computed(
-    (): readonly RevealedFilmVote[] => {
-      const currentFilm: Film | null = this.currentFilm();
-      if (currentFilm === null || !this.isCurrentFilmRevealed()) {
-        return [];
-      }
-      return this.visibleFilmVotesState()
-        .filter((filmVote: FilmVote): boolean => filmVote.filmId === currentFilm.id)
-        .map((filmVote: FilmVote): RevealedFilmVote => ({
-          pseudo:
-            this.participantsState().find(
-              (participant: Participant): boolean => participant.id === filmVote.participantId,
-            )?.pseudo ?? '???',
-          score: filmVote.score,
-          isMine: filmVote.participantId === this.myParticipant()?.id,
-        }))
-        .sort(
-          (firstVote: RevealedFilmVote, secondVote: RevealedFilmVote): number =>
-            secondVote.score - firstVote.score,
-        );
-    },
-  );
+  /** Les cartes retournées d'un film donné (vide tant qu'il n'est pas révélé). */
+  revealedVotesForFilm(filmId: FilmId | null): readonly RevealedFilmVote[] {
+    const isRevealed: boolean =
+      filmId !== null && (this.votingSessionState()?.revealedFilmIds.includes(filmId) ?? false);
+    if (!isRevealed) {
+      return [];
+    }
+    return this.visibleFilmVotesState()
+      .filter((filmVote: FilmVote): boolean => filmVote.filmId === filmId)
+      .map((filmVote: FilmVote): RevealedFilmVote => ({
+        pseudo:
+          this.participantsState().find(
+            (participant: Participant): boolean => participant.id === filmVote.participantId,
+          )?.pseudo ?? '???',
+        score: filmVote.score,
+        isMine: filmVote.participantId === this.myParticipant()?.id,
+      }))
+      .sort(
+        (firstVote: RevealedFilmVote, secondVote: RevealedFilmVote): number =>
+          secondVote.score - firstVote.score,
+      );
+  }
 
   readonly phoneVotingStep: Signal<PhoneVotingStep> = computed((): PhoneVotingStep => {
     const votingSession: VotingSession | null = this.votingSessionState();
@@ -182,12 +193,20 @@ export class PhoneVotingSessionStore {
     this.storeParticipant(participant);
   }
 
-  /** Vote (ou change d'avis) pour le film affiché sur la TV. */
-  async castFilmVote(score: VoteScore): Promise<void> {
+  /**
+   * Vote (ou change d'avis) pour un film. On vérifie que c'est bien le film en cours sur la TV :
+   * une carte touchée pendant la coulure, sur l'ancien film, est ignorée.
+   */
+  async castFilmVote(score: VoteScore, filmId: FilmId): Promise<void> {
     const votingSession: VotingSession | null = this.votingSessionState();
     const myParticipant: Participant | null = this.myParticipant();
     const currentFilm: Film | null = this.currentFilm();
-    if (votingSession === null || myParticipant === null || currentFilm === null) {
+    if (
+      votingSession === null ||
+      myParticipant === null ||
+      currentFilm === null ||
+      currentFilm.id !== filmId
+    ) {
       return;
     }
     const previousScore: VoteScore | null = this.myScoreForCurrentFilm();
