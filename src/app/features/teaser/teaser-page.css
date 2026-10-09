@@ -8,7 +8,7 @@
   background: var(--color-night);
 }
 
-.teaser-page__graveyard {
+.teaser-page__layer {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -18,7 +18,7 @@
   image-rendering: pixelated;
 }
 
-.teaser-page__graveyard--lights {
+.teaser-page__layer--lights {
   animation: teaser-page-flicker 3s infinite;
 }
 

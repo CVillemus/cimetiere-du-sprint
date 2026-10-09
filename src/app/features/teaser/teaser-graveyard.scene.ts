@@ -1,22 +1,16 @@
-import {
-  DEAD_TREE,
-  RAVEN_LOOKING_LEFT,
-} from '../../shared/components/pixel-backdrop/pixel-backdrop.definitions';
 import { PixelPainter } from '../../shared/pixel-art/pixel-painter';
-import { SNAKE_SKINS, SnakeSkin } from '../../shared/pixel-art/snake-skins';
 
 /**
- * Décor de la page teaser. Le texte est dans une carte opaque au centre :
- * tout ce qui compte est donc placé autour, là où on le voit.
- * - à gauche, l'arbre mort des fonds animés, en grande silhouette, avec le corbeau ;
- * - en haut à droite, la lune ;
- * - en bas, sous la carte, les dix tombes et le serpent mascotte en robe corail.
+ * Décor fixe de la page teaser, en 320×180 : assez fin pour un grand écran.
+ * Le texte est dans une carte opaque au centre ; tout ce qui compte est placé autour.
+ * Les éléments animés (étoiles, nuages, arbre, corbeau, serpent) sont dans teaser-night-animator.ts.
  * Fichier d'illustration pixel art : la palette vit avec le dessin.
  */
-export const TEASER_GRAVEYARD_WIDTH: number = 192;
-export const TEASER_GRAVEYARD_HEIGHT: number = 108;
+export const TEASER_SCENE_WIDTH: number = 320;
+export const TEASER_SCENE_HEIGHT: number = 180;
+export const TEASER_GROUND_Y: number = 150;
 
-type TombstoneShape = 'rounded' | 'cross' | 'obelisk';
+type TombstoneShape = 'rounded' | 'cross' | 'obelisk' | 'slab';
 
 interface Tombstone {
   readonly x: number;
@@ -25,111 +19,98 @@ interface Tombstone {
   readonly hasCandle: boolean;
 }
 
-const GROUND_Y: number = 92;
-const TREE_SCALE: number = 3;
-const SILHOUETTE_COLOR: string = '#0c0a16';
-
-/** Le serpent corail, la robe préférée de la mascotte. */
-const MASCOT_SNAKE_SKIN: SnakeSkin = SNAKE_SKINS[0];
-const SNAKE_TAIL_X: number = 80;
-const SNAKE_HEAD_X: number = 118;
-const SNAKE_BASE_Y: number = 100;
-
-/** Dix tombes, une par film, alignées sous la carte. */
+/** Dix tombes, une par film, alignées sous la carte (l'arbre occupe la gauche). */
 const TOMBSTONES: readonly Tombstone[] = [
-  { x: 66, height: 13, shape: 'rounded', hasCandle: false },
-  { x: 78, height: 17, shape: 'cross', hasCandle: true },
-  { x: 90, height: 11, shape: 'rounded', hasCandle: false },
-  { x: 102, height: 19, shape: 'obelisk', hasCandle: false },
-  { x: 114, height: 13, shape: 'rounded', hasCandle: true },
-  { x: 126, height: 16, shape: 'cross', hasCandle: false },
-  { x: 138, height: 12, shape: 'rounded', hasCandle: false },
-  { x: 150, height: 20, shape: 'obelisk', hasCandle: true },
-  { x: 163, height: 14, shape: 'rounded', hasCandle: false },
-  { x: 176, height: 18, shape: 'cross', hasCandle: false },
+  { x: 76, height: 18, shape: 'rounded', hasCandle: false },
+  { x: 99, height: 23, shape: 'cross', hasCandle: true },
+  { x: 121, height: 14, shape: 'slab', hasCandle: false },
+  { x: 143, height: 26, shape: 'obelisk', hasCandle: false },
+  { x: 166, height: 17, shape: 'rounded', hasCandle: true },
+  { x: 188, height: 21, shape: 'cross', hasCandle: false },
+  { x: 210, height: 15, shape: 'slab', hasCandle: false },
+  { x: 232, height: 27, shape: 'obelisk', hasCandle: true },
+  { x: 255, height: 19, shape: 'rounded', hasCandle: false },
+  { x: 278, height: 22, shape: 'cross', hasCandle: false },
 ];
 
+const STONE_LIGHT: string = '#7d778a';
+const STONE: string = '#6b6577';
+const STONE_SHADE: string = '#4a4556';
+const ENGRAVING: string = '#3f3a4a';
+
 function paintTombstone(
-  scenePainter: PixelPainter,
+  landscapePainter: PixelPainter,
   lightPainter: PixelPainter,
   tombstone: Tombstone,
 ): void {
   const { x, height, shape, hasCandle }: Tombstone = tombstone;
-  const topY: number = GROUND_Y - height;
+  const topY: number = TEASER_GROUND_Y - height;
 
   switch (shape) {
     case 'rounded':
-      scenePainter.fillRect(x, topY + 2, 9, height - 2, '#6b6577');
-      scenePainter.fillRect(x + 1, topY + 1, 7, 1, '#6b6577');
-      scenePainter.fillRect(x + 2, topY, 5, 1, '#6b6577');
-      scenePainter.fillRect(x + 7, topY + 2, 2, height - 2, '#4a4556');
-      scenePainter.writePixelText('RIP', x - 1, topY + 4, '#3f3a4a');
+      // Sommet arrondi en escalier, arête éclairée à gauche, flanc ombré à droite
+      landscapePainter.fillRect(x, topY + 3, 11, height - 3, STONE);
+      landscapePainter.fillRect(x + 1, topY + 1, 9, 2, STONE);
+      landscapePainter.fillRect(x + 3, topY, 5, 1, STONE);
+      landscapePainter.fillRect(x, topY + 3, 1, height - 3, STONE_LIGHT);
+      landscapePainter.fillRect(x + 9, topY + 2, 2, height - 2, STONE_SHADE);
+      // Croix gravée et lignes d'épitaphe
+      landscapePainter.fillRect(x + 5, topY + 3, 1, 5, ENGRAVING);
+      landscapePainter.fillRect(x + 3, topY + 4, 5, 1, ENGRAVING);
+      landscapePainter.fillRect(x + 2, topY + 10, 7, 1, ENGRAVING);
+      landscapePainter.fillRect(x + 3, topY + 12, 5, 1, ENGRAVING);
+      break;
+    case 'slab':
+      // Stèle rectangulaire penchée par les années
+      landscapePainter.fillPolygon(
+        [
+          [x + 1, topY],
+          [x + 11, topY + 1],
+          [x + 11, TEASER_GROUND_Y],
+          [x, TEASER_GROUND_Y],
+        ],
+        STONE,
+      );
+      landscapePainter.fillRect(x + 9, topY + 2, 2, height - 2, STONE_SHADE);
+      landscapePainter.fillRect(x + 2, topY + 4, 6, 1, ENGRAVING);
+      landscapePainter.fillRect(x + 2, topY + 6, 5, 1, ENGRAVING);
+      landscapePainter.sprinkle(x, topY, 11, height, '#575166', 0.12);
       break;
     case 'cross':
-      scenePainter.fillRect(x + 3, topY, 3, height, '#6b6577');
-      scenePainter.fillRect(x, topY + 4, 9, 3, '#6b6577');
-      scenePainter.fillRect(x + 5, topY, 1, height, '#4a4556');
+      landscapePainter.fillRect(x + 4, topY, 3, height, STONE);
+      landscapePainter.fillRect(x, topY + 5, 11, 3, STONE);
+      landscapePainter.fillRect(x + 6, topY, 1, height, STONE_SHADE);
+      landscapePainter.fillRect(x, topY + 7, 11, 1, STONE_SHADE);
+      landscapePainter.fillRect(x + 4, topY, 1, height, STONE_LIGHT);
+      landscapePainter.fillRect(x + 2, TEASER_GROUND_Y - 3, 7, 3, '#575166');
       break;
     case 'obelisk':
-      scenePainter.fillRect(x + 2, topY + 3, 5, height - 5, '#7d778a');
-      scenePainter.fillRect(x + 3, topY + 1, 3, 2, '#7d778a');
-      scenePainter.fillPixel(x + 4, topY, '#7d778a');
-      scenePainter.fillRect(x, GROUND_Y - 3, 9, 3, '#575166');
-      scenePainter.fillRect(x + 5, topY + 3, 2, height - 5, '#575166');
+      landscapePainter.fillRect(x + 3, topY + 4, 5, height - 7, STONE_LIGHT);
+      landscapePainter.fillRect(x + 4, topY + 1, 3, 3, STONE_LIGHT);
+      landscapePainter.fillPixel(x + 5, topY, STONE_LIGHT);
+      landscapePainter.fillRect(x + 6, topY + 2, 2, height - 5, '#575166');
+      landscapePainter.fillRect(x, TEASER_GROUND_Y - 3, 11, 3, '#575166');
+      landscapePainter.fillRect(x + 1, TEASER_GROUND_Y - 4, 9, 1, STONE);
       break;
   }
-  scenePainter.sprinkle(x, GROUND_Y - 2, 9, 2, '#4f6b3a', 0.35);
+
+  // Mousse et lichen au pied de la tombe
+  landscapePainter.sprinkle(x - 1, TEASER_GROUND_Y - 3, 13, 3, '#4f6b3a', 0.3);
+  landscapePainter.sprinkle(x, topY + 2, 11, 4, '#3d5230', 0.08);
 
   if (hasCandle) {
-    scenePainter.fillRect(x + 10, GROUND_Y - 3, 1, 3, '#e9e2cf');
-    lightPainter.fillPixel(x + 10, GROUND_Y - 4, '#f5c26b');
-    lightPainter.paintGlow(x + 10, GROUND_Y - 4, 7, '#e8a33d', 0.16);
+    landscapePainter.fillRect(x + 13, TEASER_GROUND_Y - 4, 2, 4, '#e9e2cf');
+    landscapePainter.fillRect(x + 13, TEASER_GROUND_Y - 4, 1, 4, '#cfc6ae');
+    lightPainter.fillPixel(x + 13, TEASER_GROUND_Y - 5, '#f5c26b');
+    lightPainter.fillPixel(x + 13, TEASER_GROUND_Y - 6, '#e8a33d');
+    lightPainter.paintGlow(x + 13, TEASER_GROUND_Y - 5, 10, '#e8a33d', 0.16);
   }
 }
 
-/** L'arbre mort des fonds animés, trois fois plus grand, et le corbeau sur sa branche. */
-function paintDeadTreeWithRaven(scenePainter: PixelPainter): void {
-  const treeHeight: number = DEAD_TREE.length * TREE_SCALE;
-  scenePainter.paintPixelGrid(
-    DEAD_TREE,
-    0,
-    GROUND_Y - treeHeight + 2,
-    TREE_SCALE,
-    SILHOUETTE_COLOR,
-  );
-  scenePainter.paintPixelGrid(RAVEN_LOOKING_LEFT, 44, 20, 1, SILHOUETTE_COLOR);
-}
-
-/** Le serpent mascotte qui ondule au pied des tombes, tête dressée, langue sortie. */
-function paintMascotSnake(scenePainter: PixelPainter, lightPainter: PixelPainter): void {
-  const ringColors: readonly string[] = MASCOT_SNAKE_SKIN.ringColors;
-  let ringIndex: number = 0;
-  for (let bodyX: number = SNAKE_HEAD_X - 2; bodyX >= SNAKE_TAIL_X; bodyX -= 2) {
-    const bodyY: number = SNAKE_BASE_Y + Math.round(2 * Math.sin((bodyX - SNAKE_TAIL_X) / 4));
-    const isTailTip: boolean = bodyX < SNAKE_TAIL_X + 4;
-    scenePainter.fillRect(
-      bodyX,
-      bodyY,
-      2,
-      isTailTip ? 1 : 2,
-      ringColors[ringIndex % ringColors.length],
-    );
-    ringIndex++;
-  }
-
-  // Cou dressé et tête noire, œil clair
-  scenePainter.fillRect(SNAKE_HEAD_X, 97, 2, 4, ringColors[0]);
-  scenePainter.fillRect(SNAKE_HEAD_X, 94, 4, 3, MASCOT_SNAKE_SKIN.headColor);
-  scenePainter.fillPixel(SNAKE_HEAD_X + 2, 95, MASCOT_SNAKE_SKIN.eyeColor);
-
-  // Langue fourchue sur le calque des lumières : elle vacille comme si elle goûtait l'air
-  lightPainter.fillPixel(SNAKE_HEAD_X + 4, 95, MASCOT_SNAKE_SKIN.tongueColor);
-  lightPainter.fillPixel(SNAKE_HEAD_X + 5, 94, MASCOT_SNAKE_SKIN.tongueColor);
-  lightPainter.fillPixel(SNAKE_HEAD_X + 5, 96, MASCOT_SNAKE_SKIN.tongueColor);
-}
-
-export function paintTeaserGraveyard(scenePainter: PixelPainter, lightPainter: PixelPainter): void {
-  scenePainter.fillVerticalGradient(0, 0, TEASER_GRAVEYARD_WIDTH, 72, [
+/** Fond du ciel : dégradé et lune. Les étoiles et les nuages, eux, sont animés. */
+export function paintTeaserSky(skyPainter: PixelPainter): void {
+  skyPainter.fillVerticalGradient(0, 0, TEASER_SCENE_WIDTH, 130, [
+    '#08070f',
     '#0b0916',
     '#100d22',
     '#15122b',
@@ -137,36 +118,53 @@ export function paintTeaserGraveyard(scenePainter: PixelPainter, lightPainter: P
     '#221c3c',
     '#2a2245',
   ]);
-  scenePainter.fillRect(0, 72, TEASER_GRAVEYARD_WIDTH, 36, '#2a2245');
-  scenePainter.paintStars(50, 60);
-  scenePainter.paintMoon(168, 16, 9);
+  skyPainter.fillRect(0, 130, TEASER_SCENE_WIDTH, 50, '#2a2245');
+  skyPainter.paintGlow(270, 30, 26, '#e9e2cf', 0.08);
+  skyPainter.fillCircle(270, 30, 12, '#e9e2cf');
+  skyPainter.fillCircle(273, 32, 10, '#d9d0bb');
+  [
+    [265, 27, 2],
+    [272, 37, 1],
+    [276, 26, 1],
+  ].forEach(([craterX, craterY, craterRadius]: number[]) =>
+    skyPainter.fillCircle(craterX, craterY, craterRadius, '#c8bfa9'),
+  );
+}
 
-  // Collines et sapins au loin, à droite (l'arbre mort occupe la gauche)
-  scenePainter.fillPolygon(
+/** Paysage fixe : collines, sapins, sol, tombes et brume. Les bougies vont sur le calque des lumières. */
+export function paintTeaserLandscape(
+  landscapePainter: PixelPainter,
+  lightPainter: PixelPainter,
+): void {
+  landscapePainter.fillPolygon(
     [
-      [0, 80],
-      [40, 72],
-      [96, 78],
-      [150, 70],
-      [192, 76],
-      [192, 94],
-      [0, 94],
+      [0, 138],
+      [60, 128],
+      [140, 136],
+      [230, 124],
+      [320, 132],
+      [320, 152],
+      [0, 152],
     ],
     '#1c1733',
   );
-  [172, 182, 190].forEach((pineX: number, pineIndex: number) =>
-    scenePainter.paintPine(pineX, 88, 22 + pineIndex * 6, '#110f1f'),
+  [292, 304, 316, 300].forEach((pineX: number, pineIndex: number) =>
+    landscapePainter.paintPine(pineX, 146, 26 + (pineIndex % 2) * 10, '#110f1f'),
   );
 
-  // Sol du cimetière
-  scenePainter.fillRect(0, GROUND_Y, TEASER_GRAVEYARD_WIDTH, 16, '#16201a');
-  scenePainter.sprinkle(0, GROUND_Y, TEASER_GRAVEYARD_WIDTH, 16, '#1f2a1a', 0.25);
-  scenePainter.sprinkle(0, GROUND_Y, TEASER_GRAVEYARD_WIDTH, 16, '#2b3a22', 0.06);
+  // Sol herbeux, avec quelques touffes
+  landscapePainter.fillRect(0, TEASER_GROUND_Y, TEASER_SCENE_WIDTH, 30, '#16201a');
+  landscapePainter.sprinkle(0, TEASER_GROUND_Y, TEASER_SCENE_WIDTH, 30, '#1f2a1a', 0.25);
+  landscapePainter.sprinkle(0, TEASER_GROUND_Y, TEASER_SCENE_WIDTH, 30, '#2b3a22', 0.05);
+  for (let tuftIndex: number = 0; tuftIndex < 60; tuftIndex++) {
+    const tuftX: number = Math.floor(landscapePainter.random() * TEASER_SCENE_WIDTH);
+    const tuftY: number = TEASER_GROUND_Y + Math.floor(landscapePainter.random() * 28);
+    landscapePainter.fillRect(tuftX, tuftY, 1, 2, '#3d5230');
+  }
 
-  paintDeadTreeWithRaven(scenePainter);
   TOMBSTONES.forEach((tombstone: Tombstone) =>
-    paintTombstone(scenePainter, lightPainter, tombstone),
+    paintTombstone(landscapePainter, lightPainter, tombstone),
   );
-  scenePainter.paintFog(GROUND_Y - 1, 0.08);
-  paintMascotSnake(scenePainter, lightPainter);
+  landscapePainter.paintFog(TEASER_GROUND_Y - 1, 0.07);
+  landscapePainter.paintFog(TEASER_GROUND_Y + 10, 0.05);
 }

@@ -1,17 +1,38 @@
 <main class="teaser-page">
   <canvas
-    #graveyardCanvas
-    class="teaser-page__graveyard"
-    [width]="graveyardWidth"
-    [height]="graveyardHeight"
+    #skyCanvas
+    class="teaser-page__layer"
+    [width]="sceneWidth"
+    [height]="sceneHeight"
     role="img"
-    aria-label="Cimetière pixel au clair de lune, dix tombes"
+    aria-label="Cimetière pixel au clair de lune : dix tombes, un arbre mort, un corbeau et un serpent qui rampe"
   ></canvas>
   <canvas
-    #graveyardLightCanvas
-    class="teaser-page__graveyard teaser-page__graveyard--lights"
-    [width]="graveyardWidth"
-    [height]="graveyardHeight"
+    #skyAnimationCanvas
+    class="teaser-page__layer"
+    [width]="sceneWidth"
+    [height]="sceneHeight"
+    aria-hidden="true"
+  ></canvas>
+  <canvas
+    #landscapeCanvas
+    class="teaser-page__layer"
+    [width]="sceneWidth"
+    [height]="sceneHeight"
+    aria-hidden="true"
+  ></canvas>
+  <canvas
+    #lightCanvas
+    class="teaser-page__layer teaser-page__layer--lights"
+    [width]="sceneWidth"
+    [height]="sceneHeight"
+    aria-hidden="true"
+  ></canvas>
+  <canvas
+    #creaturesCanvas
+    class="teaser-page__layer"
+    [width]="sceneWidth"
+    [height]="sceneHeight"
     aria-hidden="true"
   ></canvas>
 
