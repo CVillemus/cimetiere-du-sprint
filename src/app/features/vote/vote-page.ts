@@ -5,6 +5,8 @@ import {
   computed,
   DestroyRef,
   inject,
+  input,
+  InputSignal,
   Signal,
 } from '@angular/core';
 import { Film } from '../../core/films/film.model';
@@ -51,8 +53,11 @@ export class VotePage {
     (): number => FILMS.findIndex((film: Film): boolean => film === this.currentFilm()) + 1,
   );
 
+  /** Paramètre d'URL `?sessionId=…` porté par le QR code de la TV (lié par le routeur). */
+  readonly sessionId: InputSignal<string | undefined> = input<string>();
+
   constructor() {
-    afterNextRender(() => void this.phoneVotingSessionStore.startVoting());
+    afterNextRender(() => void this.phoneVotingSessionStore.startVoting(this.sessionId() ?? null));
     inject(DestroyRef).onDestroy(() => this.phoneVotingSessionStore.stopVoting());
   }
 

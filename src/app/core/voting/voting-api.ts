@@ -105,6 +105,16 @@ export class VotingApi {
     return signInData.user.id;
   }
 
+  async getVotingSessionById(sessionId: string): Promise<VotingSession | null> {
+    const { data: votingSessionRow, error } = await this.supabase
+      .from('voting_session')
+      .select('*')
+      .eq('id', sessionId)
+      .maybeSingle();
+    throwIfPostgrestError(error, 'Lecture de la session demandée');
+    return votingSessionRow === null ? null : toVotingSession(votingSessionRow);
+  }
+
   async getLatestVotingSession(): Promise<VotingSession | null> {
     const { data: votingSessionRow, error } = await this.supabase
       .from('voting_session')

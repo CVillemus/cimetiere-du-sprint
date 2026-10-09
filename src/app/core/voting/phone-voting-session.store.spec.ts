@@ -57,13 +57,13 @@ describe('PhoneVotingSessionStore', () => {
   it('should wait for the TV when no session exists yet', async () => {
     fakeVotingApi.latestVotingSession = null;
 
-    await phoneVotingSessionStore.startVoting();
+    await phoneVotingSessionStore.startVoting(null);
 
     expect(phoneVotingSessionStore.phoneVotingStep()).toBe('waiting-for-tv');
   });
 
   it('should ask for a pseudo, then wait in the lobby', async () => {
-    await phoneVotingSessionStore.startVoting();
+    await phoneVotingSessionStore.startVoting(null);
     expect(phoneVotingSessionStore.phoneVotingStep()).toBe('pseudo');
 
     await phoneVotingSessionStore.joinVotingSession('  Morticia ');
@@ -73,7 +73,7 @@ describe('PhoneVotingSessionStore', () => {
   });
 
   it('should follow the TV to a film, vote, then show the revealed cards', async () => {
-    await phoneVotingSessionStore.startVoting();
+    await phoneVotingSessionStore.startVoting(null);
     await phoneVotingSessionStore.joinVotingSession('Morticia');
 
     fakeVotingApi.votingSessionChangeHandlers?.onVotingSessionUpdated({

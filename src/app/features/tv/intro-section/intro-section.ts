@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   resource,
   ResourceRef,
@@ -33,16 +34,29 @@ export class IntroSection {
   protected readonly connectionStatus: Signal<TvConnectionStatus> =
     this.tvVotingSessionStore.connectionStatus;
 
-  protected readonly voteUrl: string = new URL('vote', this.document.baseURI).href;
+  /** L'URL de vote porte l'identifiant de la séance : les téléphones rejoignent exactement celle-ci. */
+  protected readonly voteUrl: Signal<string | null> = computed((): string | null => {
+    const votingSessionId: string | undefined = this.tvVotingSessionStore.votingSession()?.id;
+    const voteUrl: URL = new URL('vote', this.document.baseURI);
+    if (votingSessionId !== undefined) {
+      voteUrl.searchParams.set('sessionId', votingSessionId);
+      return voteUrl.href;
+    }
+    // Sans séance (Supabase injoignable), on affiche quand même l'adresse simple.
+    return this.connectionStatus() === 'failed' ? voteUrl.href : null;
+  });
 
+  /** Se régénère dès que l'URL change (séance créée ou reprise). */
   protected readonly voteQrCodeImage: ResourceRef<string | undefined> = resource({
-    loader: (): Promise<string> => this.generateVoteQrCodeImage(),
+    params: (): string | undefined => this.voteUrl() ?? undefined,
+    loader: ({ params: voteUrl }: { params: string }): Promise<string> =>
+      this.generateVoteQrCodeImage(voteUrl),
   });
 
   /** Le QR code est une image PNG en data URL : chaque module reste un gros pixel net. */
-  private generateVoteQrCodeImage(): Promise<string> {
+  private generateVoteQrCodeImage(voteUrl: string): Promise<string> {
     const rootStyles: CSSStyleDeclaration = getComputedStyle(this.document.documentElement);
-    return QRCode.toDataURL(this.voteUrl, {
+    return QRCode.toDataURL(voteUrl, {
       margin: 2,
       scale: 12,
       errorCorrectionLevel: 'M',

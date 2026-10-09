@@ -44,6 +44,8 @@
     } @else {
       <p class="intro-section__qr-loading">Invocation du QR code…</p>
     }
-    <figcaption class="intro-section__vote-url">{{ voteUrl }}</figcaption>
+    @if (voteUrl(); as url) {
+      <figcaption class="intro-section__vote-url">{{ url }}</figcaption>
+    }
   </figure>
 </div>

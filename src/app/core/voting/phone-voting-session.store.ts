@@ -123,15 +123,28 @@ export class PhoneVotingSessionStore {
   private unsubscribeFromVotingSessionChanges: (() => void) | null = null;
   private unsubscribeFromNewVotingSessions: (() => void) | null = null;
 
-  /** Appelé une fois par la VotePage. */
-  async startVoting(): Promise<void> {
+  /**
+   * Appelé une fois par la VotePage.
+   * `requestedSessionId` vient du QR code de la TV : on rejoint exactement sa séance.
+   * Sans identifiant (adresse tapée à la main), on se rabat sur la séance la plus récente.
+   */
+  async startVoting(requestedSessionId: string | null): Promise<void> {
     if (this.hasStartedVoting) {
       return;
     }
     this.hasStartedVoting = true;
     try {
       this.userIdState.set(await this.votingApi.signInAnonymously());
-      // Si la TV crée une nouvelle session plus tard, on la rejoint automatiquement.
+      const requestedVotingSession: VotingSession | null =
+        requestedSessionId === null
+          ? null
+          : await this.votingApi.getVotingSessionById(requestedSessionId);
+      if (requestedVotingSession !== null) {
+        await this.followVotingSession(requestedVotingSession);
+        return;
+      }
+
+      // Si la TV crée sa séance plus tard, on la rejoint automatiquement.
       this.unsubscribeFromNewVotingSessions = this.votingApi.subscribeToNewVotingSessions(
         (votingSession: VotingSession) => void this.followVotingSession(votingSession),
       );
