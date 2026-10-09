@@ -18,3 +18,13 @@ export type FilmScenePainter = (
   lightPainter: PixelPainter,
   apparitionPainter: PixelPainter,
 ) => void;
+
+/**
+ * Anime un décor image par image, sur un quatrième calque posé au-dessus des lumières.
+ * Appelé environ 12 fois par seconde tant que le décor est à l'écran, sur un calque effacé à chaque image.
+ * `elapsedMilliseconds` part de 0 quand le décor apparaît : les cycles se calent dessus.
+ */
+export type FilmSceneAnimator = (
+  animationPainter: PixelPainter,
+  elapsedMilliseconds: number,
+) => void;

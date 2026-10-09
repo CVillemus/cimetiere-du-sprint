@@ -9,6 +9,7 @@
   @switch (displayedPhoneScreen().step) {
     @case ('loading') {
       <p class="vote-page__message">Ouverture du caveau…</p>
+      <app-ghost-spinner />
     }
     @case ('connection-failed') {
       <h1 class="vote-page__title">Le cimetière ne répond pas</h1>
@@ -17,6 +18,7 @@
     @case ('waiting-for-tv') {
       <h1 class="vote-page__title">Les urnes ne sont pas encore ouvertes</h1>
       <p class="vote-page__message">La TV n'a pas encore lancé la séance. Ne bouge pas…</p>
+      <app-ghost-spinner />
     }
     @case ('pseudo') {
       <h1 class="vote-page__title">Bienvenue au cimetière</h1>
@@ -25,6 +27,7 @@
     @case ('lobby') {
       <h1 class="vote-page__title">Ta tombe est prête</h1>
       <p class="vote-page__message">Regarde la TV : le premier film va sortir de terre.</p>
+      <app-ghost-spinner />
     }
     @case ('voting') {
       @if (displayedPhoneScreen().film; as film) {
@@ -57,6 +60,7 @@
     @case ('sprint-review') {
       <h1 class="vote-page__title">Sprint Review</h1>
       <p class="vote-page__message">Les tombes s'ouvrent… Regarde la TV pour le podium.</p>
+      <app-ghost-spinner />
     }
   }
 </main>

@@ -22,6 +22,7 @@ import {
 } from '../../core/voting/phone-voting-session.store';
 import { Participant, VoteScore } from '../../core/voting/voting.model';
 import { TriggerWarningList } from '../../shared/components/trigger-warning-list/trigger-warning-list';
+import { GhostSpinner } from '../../shared/components/ghost-spinner/ghost-spinner';
 import { PixelDripTransition } from '../../shared/components/pixel-drip-transition/pixel-drip-transition';
 import { PixelDripTransitionService } from '../../shared/components/pixel-drip-transition/pixel-drip-transition.service';
 import { PseudoForm } from './pseudo-form/pseudo-form';
@@ -41,7 +42,14 @@ interface PhoneScreen {
  */
 @Component({
   selector: 'app-vote-page',
-  imports: [PseudoForm, VoteCardPicker, RevealedVotes, TriggerWarningList, PixelDripTransition],
+  imports: [
+    PseudoForm,
+    VoteCardPicker,
+    RevealedVotes,
+    TriggerWarningList,
+    PixelDripTransition,
+    GhostSpinner,
+  ],
   templateUrl: './vote-page.html',
   styleUrl: './vote-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,4 +1,4 @@
-import { PixelPainter } from '../../../../../shared/pixel-art/pixel-painter';
+import { PixelPainter, PixelPoint } from '../../../../../shared/pixel-art/pixel-painter';
 import { paintChimney } from './chimney.painter';
 
 const RAINDROP_COUNT: number = 70;
@@ -142,4 +142,58 @@ export function paintHereticScene(scenePainter: PixelPainter, lightPainter: Pixe
     lightPainter.drawLine(raindropX, raindropY, raindropX - 1, raindropY + 3, '#9fb0d9');
   }
   lightPainter.setOpacity(1);
+}
+
+/** Toutes les 13 s, M. Reed sourit, lentement : un rictus de travers, plus haut d'un côté. */
+const REED_SMILE_CYCLE_IN_MILLISECONDS: number = 13_000;
+const REED_SMILE_START_IN_MILLISECONDS: number = 7_000;
+const REED_SMILE_FADE_IN_MILLISECONDS: number = 700;
+const REED_SMILE_HOLD_IN_MILLISECONDS: number = 1_800;
+/** Le coin gauche remonte vers la pommette, le droit reste bas : un sourire en coin, vicieux. */
+const REED_SMILE_PIXELS: readonly PixelPoint[] = [
+  [62, 61],
+  [63, 62],
+  [66, 63],
+];
+/** Au milieu du rictus, les dents accrochent la lumière de la porte. */
+const REED_TEETH_PIXELS: readonly PixelPoint[] = [
+  [64, 62],
+  [65, 62],
+];
+
+/** Opacité du sourire selon le moment du cycle : fondu en paliers, maintien, fondu de sortie. */
+function reedSmileOpacityAt(elapsedMilliseconds: number): number {
+  const timeInCycle: number =
+    (elapsedMilliseconds + REED_SMILE_CYCLE_IN_MILLISECONDS - REED_SMILE_START_IN_MILLISECONDS) %
+    REED_SMILE_CYCLE_IN_MILLISECONDS;
+  const fullyVisibleUntil: number =
+    REED_SMILE_FADE_IN_MILLISECONDS + REED_SMILE_HOLD_IN_MILLISECONDS;
+  let opacity: number = 0;
+  if (timeInCycle < REED_SMILE_FADE_IN_MILLISECONDS) {
+    opacity = timeInCycle / REED_SMILE_FADE_IN_MILLISECONDS;
+  } else if (timeInCycle < fullyVisibleUntil) {
+    opacity = 1;
+  } else if (timeInCycle < fullyVisibleUntil + REED_SMILE_FADE_IN_MILLISECONDS) {
+    opacity = 1 - (timeInCycle - fullyVisibleUntil) / REED_SMILE_FADE_IN_MILLISECONDS;
+  }
+  // Quatre paliers d'opacité : un fondu « pixel », pas un dégradé lisse.
+  return Math.round(opacity * 4) / 4;
+}
+
+/** Heretic : de temps en temps, un sourire pâle se dessine sur la silhouette de M. Reed. */
+export function animateHereticScene(
+  animationPainter: PixelPainter,
+  elapsedMilliseconds: number,
+): void {
+  const smileOpacity: number = reedSmileOpacityAt(elapsedMilliseconds);
+  if (smileOpacity === 0) {
+    return;
+  }
+  animationPainter.setOpacity(smileOpacity * 0.9);
+  REED_SMILE_PIXELS.forEach(([x, y]: PixelPoint) => animationPainter.fillPixel(x, y, '#d8cfb8'));
+  REED_TEETH_PIXELS.forEach(([x, y]: PixelPoint) => animationPainter.fillPixel(x, y, '#f2ecdf'));
+  // Ses lunettes s'allument un peu plus pendant qu'il sourit.
+  animationPainter.fillPixel(63, 60, '#ffffff');
+  animationPainter.fillPixel(65, 60, '#ffffff');
+  animationPainter.setOpacity(1);
 }

@@ -1,0 +1,11 @@
+:host {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.ghost-spinner {
+  width: 10rem;
+  height: 7.5rem;
+  image-rendering: pixelated;
+}
