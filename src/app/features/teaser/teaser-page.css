@@ -18,8 +18,9 @@
   image-rendering: pixelated;
 }
 
+/* Les bougies vacillent à peine : présentes, sans attirer l'œil. */
 .teaser-page__layer--lights {
-  animation: teaser-page-flicker 3s infinite;
+  animation: teaser-page-flicker 6s ease-in-out infinite;
 }
 
 /* L'araignée qui monte et descend, en haut à droite. */
@@ -140,13 +141,7 @@
   100% {
     opacity: 1;
   }
-  45% {
-    opacity: 0.75;
-  }
   50% {
-    opacity: 0.4;
-  }
-  55% {
     opacity: 0.85;
   }
 }

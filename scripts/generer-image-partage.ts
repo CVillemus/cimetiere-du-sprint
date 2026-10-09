@@ -25,8 +25,8 @@ const OUTPUT_WIDTH: number = 1200;
 const OUTPUT_HEIGHT: number = 630;
 /** Chaque pixel « art » devient un carré de 4×4 : 320×180 → 1280×720, recadré au centre. */
 const SCALE: number = 4;
-/** Instant figé des animations : le serpent est au milieu, une étoile filante passe. */
-const FROZEN_ELAPSED_MILLISECONDS: number = 26_300;
+/** Instant figé des animations : le serpent pointe le nez derrière la stèle, langue sortie. */
+const FROZEN_ELAPSED_MILLISECONDS: number = 8_200;
 
 // ---------------------------------------------------------------------------
 // Faux canvas : juste ce dont PixelPainter a besoin (fillRect, clearRect, fillStyle, globalAlpha)
