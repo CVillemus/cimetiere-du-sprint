@@ -1,0 +1,57 @@
+/*
+ * Design tokens du Cimetière du Sprint.
+ * Toutes les couleurs passent par ces variables : on ne met jamais d'hexadécimal dans un composant.
+ */
+:root {
+  --color-night-deep: #0d0b14;
+  --color-night: #14121f;
+  --color-night-panel: #1d1a2e;
+  --color-dusk: #1b1730;
+  --color-violet: #3a3352;
+  --color-violet-muted: #8d86a3;
+  --color-moss: #4f6b3a;
+  --color-candle: #e8a33d;
+  --color-candle-warning: #e6c27a;
+  --color-bone: #e9e2cf;
+  --color-bone-muted: #d6cfbd;
+  --color-blood: #8e2a2a;
+
+  /* Crâne en fond des panneaux texte : à recalibrer sur la TV le soir même. */
+  --skull-opacity: 0.14;
+
+  --font-pixel-text: 'Pixelify Sans', monospace;
+  --font-pixel-label: 'Silkscreen', monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--color-night);
+  color: var(--color-bone);
+  font-family: var(--font-pixel-text);
+  -webkit-font-smoothing: none;
+}
+
+img,
+svg {
+  image-rendering: pixelated;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

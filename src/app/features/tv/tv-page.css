@@ -1,0 +1,30 @@
+.tv-page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.tv-page__eyebrow {
+  margin: 0;
+  font-family: var(--font-pixel-label);
+  font-size: 1rem;
+  color: var(--color-violet-muted);
+}
+
+.tv-page__title {
+  margin: 0;
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.tv-page__tagline {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.5vw, 2rem);
+  color: var(--color-candle);
+}
