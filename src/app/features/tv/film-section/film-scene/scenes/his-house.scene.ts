@@ -2,6 +2,64 @@ import { PixelPainter } from '../../../../../shared/pixel-art/pixel-painter';
 
 const FLOATING_DEBRIS_COUNT: number = 10;
 
+/** Taches de moisissure et déchirures du canapé, en pixels relatifs à son coin haut gauche (26, 66). */
+const COUCH_MOLD_PIXELS: readonly (readonly [x: number, y: number])[] = [
+  [5, 1],
+  [6, 1],
+  [6, 2],
+  [18, 3],
+  [19, 3],
+  [19, 4],
+  [24, 2],
+  [11, 9],
+  [12, 9],
+  [12, 10],
+];
+const COUCH_STUFFING_PIXELS: readonly (readonly [x: number, y: number])[] = [
+  [9, 3],
+  [10, 2],
+  [10, 3],
+  [21, 8],
+  [22, 7],
+  [22, 8],
+  [23, 8],
+];
+
+/**
+ * Le canapé abandonné : tissu délavé, moisissures, rembourrage qui sort des déchirures,
+ * coussin de droite affaissé, accoudoir cassé et trace d'eau sur le bas.
+ */
+function paintRuinedCouch(scenePainter: PixelPainter): void {
+  const left: number = 26;
+  const top: number = 66;
+  // Dossier, assise et accoudoirs
+  scenePainter.fillRect(left + 2, top, 26, 6, '#46523f');
+  scenePainter.fillRect(left + 2, top, 26, 1, '#55624c');
+  scenePainter.fillRect(left + 2, top + 6, 12, 8, '#3a4535');
+  // Coussin de droite affaissé : il penche vers le bas
+  scenePainter.fillRect(left + 15, top + 7, 13, 7, '#34402f');
+  scenePainter.fillRect(left + 15, top + 7, 13, 1, '#2a3327');
+  scenePainter.fillRect(left, top + 2, 4, 13, '#3a4535');
+  // Accoudoir droit cassé : plus bas, de travers
+  scenePainter.fillRect(left + 26, top + 5, 4, 10, '#34402f');
+  scenePainter.fillPixel(left + 29, top + 4, '#34402f');
+  // Moisissures, déchirures et rembourrage
+  COUCH_MOLD_PIXELS.forEach(([x, y]: readonly [number, number]) =>
+    scenePainter.fillPixel(left + x, top + y, '#5a5a2e'),
+  );
+  scenePainter.fillRect(left + 9, top + 2, 3, 2, '#1a1f17');
+  scenePainter.fillRect(left + 21, top + 7, 3, 2, '#1a1f17');
+  COUCH_STUFFING_PIXELS.forEach(([x, y]: readonly [number, number]) =>
+    scenePainter.fillPixel(left + x, top + y, '#cfc6ae'),
+  );
+  // Le bas a bu l'eau : une bande plus sombre et irrégulière
+  scenePainter.setOpacity(0.6);
+  scenePainter.fillRect(left, top + 11, 30, 3, '#1c2620');
+  scenePainter.fillRect(left + 4, top + 10, 6, 1, '#1c2620');
+  scenePainter.fillRect(left + 17, top + 10, 8, 1, '#1c2620');
+  scenePainter.setOpacity(1);
+}
+
 /**
  * Le monstre tapi dans le trou du mur : un visage creusé, à peine plus clair que le noir,
  * et deux yeux pâles qui fixent la pièce.
@@ -109,13 +167,7 @@ export function paintHisHouseScene(
   lightPainter.paintGlow(40, 24, 24, '#e8a33d', 0.12);
 
   // Vieux canapé posé sous l'ampoule, les pieds dans l'eau (dans la zone visible de la TV)
-  scenePainter.fillRect(28, 72, 26, 8, '#3d4a3a');
-  scenePainter.fillRect(28, 66, 26, 6, '#4a5a48');
-  scenePainter.fillRect(28, 66, 26, 1, '#5a6a56');
-  scenePainter.fillRect(26, 68, 4, 13, '#3d4a3a');
-  scenePainter.fillRect(52, 68, 4, 13, '#3d4a3a');
-  scenePainter.fillRect(30, 73, 10, 1, '#4a5a48');
-  scenePainter.fillRect(42, 73, 10, 1, '#4a5a48');
+  paintRuinedCouch(scenePainter);
   scenePainter.setOpacity(0.85);
   scenePainter.fillRect(0, 80, 64, 4, '#121a2c');
   scenePainter.setOpacity(1);

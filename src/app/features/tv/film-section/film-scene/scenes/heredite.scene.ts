@@ -43,53 +43,27 @@ function paintWallpaper(
   scenePainter.fillRect(left, top, width, 1, '#1a1210');
 }
 
-/**
- * Escalier du salon, vu en coupe : six marches qui montent vers la droite jusqu'au plancher de l'étage,
- * la masse pleine sous les marches, et une rampe à barreaux.
- */
-const STAIR_STEP_COUNT: number = 6;
-const STAIR_LEFT: number = 33;
-const STAIR_FLOOR_Y: number = 80;
-const STAIR_RUN: number = 2;
-const STAIR_RISE: number = 3;
-
-function paintStaircase(scenePainter: PixelPainter): void {
-  const stairRight: number = STAIR_LEFT + STAIR_STEP_COUNT * STAIR_RUN;
-  for (let stepIndex: number = 0; stepIndex < STAIR_STEP_COUNT; stepIndex++) {
-    const stepLeft: number = STAIR_LEFT + stepIndex * STAIR_RUN;
-    const treadY: number = STAIR_FLOOR_Y - (stepIndex + 1) * STAIR_RISE;
-    // Masse de la marche, jusqu'au sol, puis son nez éclairé et l'ombre de la contremarche
-    scenePainter.fillRect(
-      stepLeft,
-      treadY,
-      stairRight - stepLeft,
-      STAIR_FLOOR_Y - treadY,
-      '#3b2c26',
-    );
-    scenePainter.fillRect(stepLeft, treadY, STAIR_RUN + 1, 1, '#6e5240');
-    scenePainter.fillRect(stepLeft, treadY + 1, 1, STAIR_RISE - 1, '#2a1f1c');
-  }
-  // Limon : la planche qui ferme l'escalier sur le côté
-  scenePainter.drawLine(
-    STAIR_LEFT,
-    STAIR_FLOOR_Y - 1,
-    stairRight,
-    STAIR_FLOOR_Y - STAIR_STEP_COUNT * STAIR_RISE - 1,
-    '#4a372d',
-  );
-  // Rampe et barreaux, au-dessus des marches
-  scenePainter.drawLine(
-    STAIR_LEFT + 1,
-    STAIR_FLOOR_Y - 9,
-    stairRight + 1,
-    STAIR_FLOOR_Y - STAIR_STEP_COUNT * STAIR_RISE - 7,
-    '#2a1f1c',
-  );
-  for (let stepIndex: number = 0; stepIndex < STAIR_STEP_COUNT; stepIndex += 2) {
-    const balusterX: number = STAIR_LEFT + 1 + stepIndex * STAIR_RUN;
-    const treadY: number = STAIR_FLOOR_Y - (stepIndex + 1) * STAIR_RISE;
-    scenePainter.fillRect(balusterX, treadY - 6, 1, 6, '#2a1f1c');
-  }
+/** Cheminée du salon : manteau de pierre, foyer noir, petites flammes qui vacillent avec la lumière. */
+function paintFireplace(scenePainter: PixelPainter, lightPainter: PixelPainter): void {
+  // Manteau et jambages en pierre claire
+  scenePainter.fillRect(34, 66, 13, 2, '#8d86a3');
+  scenePainter.fillRect(34, 66, 13, 1, '#b8b0c9');
+  scenePainter.fillRect(35, 68, 2, 12, '#6b6577');
+  scenePainter.fillRect(44, 68, 2, 12, '#6b6577');
+  scenePainter.fillRect(35, 68, 1, 12, '#8d86a3');
+  // Foyer noirci et bûches
+  scenePainter.fillRect(37, 68, 7, 12, '#0e0a0a');
+  scenePainter.fillRect(38, 78, 5, 1, '#5a4334');
+  scenePainter.fillRect(39, 77, 3, 1, '#4a372d');
+  // Objets sur le manteau : une petite horloge et une photo
+  scenePainter.fillRect(36, 63, 2, 3, '#3b2c26');
+  scenePainter.fillPixel(36, 64, '#d8cfb8');
+  scenePainter.fillRect(42, 64, 3, 2, '#2a1f1c');
+  // Le feu, sur le calque des lumières : il vacille
+  lightPainter.fillRect(39, 75, 3, 2, '#e8a33d');
+  lightPainter.fillPixel(40, 74, '#f5c26b');
+  lightPainter.fillPixel(39, 76, '#c0392b');
+  lightPainter.paintGlow(40, 76, 8, '#e8a33d', 0.18);
 }
 
 function paintPaimonSigil(painter: PixelPainter, color: string): void {
@@ -192,9 +166,9 @@ export function paintHerediteScene(
   scenePainter.fillRect(HOUSE_LEFT, 57, HOUSE_RIGHT - HOUSE_LEFT, 1, FRAME_HIGHLIGHT);
   scenePainter.fillRect(63, HOUSE_TOP, 3, HOUSE_BOTTOM - HOUSE_TOP, FRAME_COLOR);
 
-  // Salon : escalier, canapé, portrait de la grand-mère
+  // Salon : cheminée, canapé, portrait de la grand-mère
   paintWallpaper(scenePainter, LIVING_ROOM, '#5e4222', '#6a4a26', 4);
-  paintStaircase(scenePainter);
+  paintFireplace(scenePainter, lightPainter);
   scenePainter.fillRect(48, 74, 12, 5, '#5a2f2f');
   scenePainter.fillRect(48, 72, 12, 2, '#6e3a3a');
   scenePainter.fillRect(48, 72, 1, 7, '#4a2626');
