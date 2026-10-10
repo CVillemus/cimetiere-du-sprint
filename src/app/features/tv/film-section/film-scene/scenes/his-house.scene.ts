@@ -2,8 +2,25 @@ import { PixelPainter } from '../../../../../shared/pixel-art/pixel-painter';
 
 const FLOATING_DEBRIS_COUNT: number = 10;
 
-/** His House : le papier peint qui pourrit, l'eau noire qui monte, deux yeux dans le trou du mur. */
-export function paintHisHouseScene(scenePainter: PixelPainter, lightPainter: PixelPainter): void {
+/**
+ * Le monstre tapi dans le trou du mur : un visage creusé, à peine plus clair que le noir,
+ * et deux yeux pâles qui fixent la pièce.
+ */
+function paintWallMonster(apparitionPainter: PixelPainter): void {
+  apparitionPainter.fillEllipse(81, 44, 6, 7, '#1c1915');
+  apparitionPainter.fillRect(77, 49, 9, 1, '#14110e');
+  apparitionPainter.fillRect(77, 42, 2, 1, '#e9e2cf');
+  apparitionPainter.fillRect(84, 42, 2, 1, '#e9e2cf');
+  apparitionPainter.fillPixel(78, 42, '#ffffff');
+  apparitionPainter.fillPixel(85, 42, '#ffffff');
+}
+
+/** His House : le papier peint qui pourrit, l'eau noire qui monte… et quelque chose dans le trou du mur. */
+export function paintHisHouseScene(
+  scenePainter: PixelPainter,
+  lightPainter: PixelPainter,
+  apparitionPainter: PixelPainter,
+): void {
   // Mur humide et papier peint
   scenePainter.fillRect(0, 0, 128, 8, '#1a1a14');
   scenePainter.fillVerticalGradient(0, 8, 128, 66, ['#3a3a2c', '#3f3f30', '#444434', '#3a3a2c']);
@@ -81,11 +98,9 @@ export function paintHisHouseScene(scenePainter: PixelPainter, lightPainter: Pix
   scenePainter.drawLine(72, 40, 90, 40, '#3b2c26');
   scenePainter.drawLine(71, 46, 91, 46, '#3b2c26');
 
-  // Les yeux
-  lightPainter.fillRect(77, 42, 2, 1, '#e9e2cf');
-  lightPainter.fillRect(84, 42, 2, 1, '#e9e2cf');
-  lightPainter.fillPixel(78, 42, '#ffffff');
-  lightPainter.fillPixel(85, 42, '#ffffff');
+  // Le monstre du mur : sur le calque d'apparition, il sort du noir de temps en temps,
+  // en fondu lent. Il ne vacille pas avec l'ampoule : il n'est pas éclairé par elle.
+  paintWallMonster(apparitionPainter);
 
   // Ampoule nue
   scenePainter.drawLine(40, 0, 40, 20, '#2a2a22');

@@ -37,10 +37,16 @@
 /*
  * Calque d'apparition : invisible la plupart du temps. Toutes les 20 s environ,
  * il se dessine en fondu très lent, reste un instant, puis s'efface. Jamais de flash.
+ * Le cycle ne démarre qu'à l'arrivée sur le décor (classe posée par le composant).
+ * Le fondu commence à 62 % du cycle (13 s) : un délai de -6 s le fait donc commencer
+ * 7 s après l'arrivée, puis revenir toutes les 21 s.
  */
 .film-scene__canvas--apparition {
   opacity: 0;
-  animation: film-scene-apparition 21s ease-in-out infinite 6s;
+}
+
+:host(.film-scene--visible) .film-scene__canvas--apparition {
+  animation: film-scene-apparition 21s ease-in-out infinite -6s;
 }
 
 @keyframes film-scene-apparition {
@@ -59,7 +65,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .film-scene__canvas--apparition {
+  :host(.film-scene--visible) .film-scene__canvas--apparition {
     animation: none;
   }
 }

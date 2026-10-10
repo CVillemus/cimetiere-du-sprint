@@ -24,6 +24,8 @@ import { FILM_SCENE_PAINTERS } from './scenes/film-scene-painters';
 
 /** Environ 12 images par seconde : assez pour une animation pixel art, sans faire chauffer la TV. */
 const ANIMATION_FRAME_INTERVAL_IN_MILLISECONDS: number = 83;
+/** Posée sur l'hôte quand le décor est à l'écran : elle (re)lance le cycle de l'apparition. */
+const VISIBLE_SCENE_CLASS: string = 'film-scene--visible';
 
 /**
  * Décor pixel art d'un film, dessiné sur quatre canvas superposés :
@@ -82,7 +84,13 @@ export class FilmScene {
     inject(DestroyRef).onDestroy(() => this.stopAnimation?.());
   }
 
-  /** Joue l'animation du décor tant qu'il est visible ; la met en pause dès qu'il sort de l'écran. */
+  /**
+   * Suit la visibilité du décor :
+   * - la classe `film-scene--visible` démarre le cycle CSS de l'apparition à l'arrivée sur le décor
+   *   (sans elle, le cycle tournerait depuis le chargement de la page et l'apparition pourrait
+   *   être déjà là en arrivant) ;
+   * - le calque animé ne tourne que pendant que le décor est à l'écran.
+   */
   private startAnimation(animateFilmScene: FilmSceneAnimator | undefined): void {
     this.stopAnimation?.();
     this.stopAnimation = null;
@@ -93,12 +101,9 @@ export class FilmScene {
       return;
     }
     animationPainter.clear();
-    if (animateFilmScene === undefined) {
-      return;
-    }
-    // Animations réduites : une seule image, la scène au repos.
+    // Animations réduites : une seule image, la scène au repos, et pas d'apparition.
     if (prefersReducedMotion() || typeof IntersectionObserver === 'undefined') {
-      animateFilmScene(animationPainter, 0);
+      animateFilmScene?.(animationPainter, 0);
       return;
     }
 
@@ -110,7 +115,7 @@ export class FilmScene {
       }
     };
     const playAnimation = (): void => {
-      if (frameIntervalId !== null) {
+      if (frameIntervalId !== null || animateFilmScene === undefined) {
         return;
       }
       const startTime: number = performance.now();
@@ -123,8 +128,14 @@ export class FilmScene {
     };
 
     const visibilityObserver: IntersectionObserver = new IntersectionObserver(
-      ([visibilityEntry]: IntersectionObserverEntry[]) =>
-        visibilityEntry.isIntersecting ? playAnimation() : pauseAnimation(),
+      ([visibilityEntry]: IntersectionObserverEntry[]) => {
+        this.hostElement.classList.toggle(VISIBLE_SCENE_CLASS, visibilityEntry.isIntersecting);
+        if (visibilityEntry.isIntersecting) {
+          playAnimation();
+        } else {
+          pauseAnimation();
+        }
+      },
       { threshold: 0.3 },
     );
     visibilityObserver.observe(this.hostElement);
