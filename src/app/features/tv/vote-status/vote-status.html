@@ -1,33 +1,17 @@
-<aside class="vote-status" aria-live="polite">
+<aside class="vote-status" aria-live="polite" aria-label="Annonces de vote">
+  @for (announcement of announcements(); track announcement) {
+    <p class="vote-status__announcement">
+      <span class="vote-status__check" aria-hidden="true">✓</span> {{ announcement.text }}
+    </p>
+  }
+
   @if (filmVoteSummary().isRevealed) {
-    <p class="vote-status__headline">
-      Cartes retournées · moyenne {{ formattedAverageScore() }} / 5
+    <p class="vote-status__line">Cartes retournées · moyenne {{ formattedAverageScore() }} / 5</p>
+  } @else if (filmVoteSummary().hasEveryoneVoted) {
+    <p class="vote-status__line vote-status__line--ready">
+      Tout le monde a voté · l'onglet Vote est ouvert
     </p>
-  } @else {
-    <p class="vote-status__headline">
-      {{ filmVoteSummary().votedCount }} / {{ filmVoteSummary().participantCount }} âmes ont voté
-    </p>
-    @if (filmVoteSummary().participantCount > 0) {
-      <ul class="vote-status__participants">
-        @for (
-          participantVoteStatus of filmVoteSummary().participantVoteStatuses;
-          track participantVoteStatus.participant.id
-        ) {
-          <li
-            class="vote-status__participant"
-            [class.vote-status__participant--voted]="participantVoteStatus.hasVoted"
-          >
-            {{ participantVoteStatus.participant.pseudo }}
-          </li>
-        }
-      </ul>
-    }
-    @if (filmVoteSummary().hasEveryoneVoted) {
-      <p class="vote-status__hint vote-status__hint--ready">
-        Tout le monde a voté : l'onglet Vote est ouvert
-      </p>
-    } @else if (filmVoteSummary().votedCount > 0) {
-      <p class="vote-status__hint">R pour forcer le vote sans les retardataires</p>
-    }
+  } @else if (stragglersMessage(); as stragglersMessage) {
+    <p class="vote-status__line">{{ stragglersMessage }}</p>
   }
 </aside>

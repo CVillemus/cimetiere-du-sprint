@@ -41,10 +41,11 @@
   color: var(--color-candle);
 }
 
+/* En haut à droite, sous l'en-tête de la bande-annonce : rien en bas, où sont les onglets et le streaming. */
 .film-section__vote-status {
   position: absolute;
-  right: 1.5vw;
-  bottom: 1.5vw;
+  top: 7.5vw;
+  right: 2vw;
 }
 
 /* Onglet Vote verrouillé : tant que tout le monde n'a pas voté. */

@@ -71,7 +71,8 @@ export class FilmSection {
   /** L'encart de progression gênerait la vidéo et ferait doublon avec la slide Vote. */
   protected readonly isVoteStatusVisible: Signal<boolean> = computed((): boolean => {
     const activeSlideKind: FilmSlideKind | null = this.activeSlideKind();
-    return activeSlideKind !== 'trailer' && activeSlideKind !== 'vote';
+    // Visible aussi pendant la bande-annonce ; seule la slide Vote a son propre affichage.
+    return activeSlideKind !== 'vote';
   });
 
   protected readonly isVoteSlideUnlocked: Signal<boolean> = computed((): boolean => {
