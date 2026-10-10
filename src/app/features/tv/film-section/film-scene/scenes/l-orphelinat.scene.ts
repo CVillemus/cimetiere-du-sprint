@@ -197,7 +197,7 @@ const PORCH_STEPS: readonly PorchStep[] = [
 ];
 
 /** Portique central : colonnes, fronton triangulaire avec son œil-de-bœuf, porte cintrée ouverte. */
-function paintPortico(scenePainter: PixelPainter, lightPainter: PixelPainter): void {
+function paintPortico(scenePainter: PixelPainter): void {
   scenePainter.fillRect(50, 46, 29, 4, DRESSED_STONE_COLOR);
   scenePainter.fillRect(50, 49, 29, 1, DRESSED_STONE_SHADOW);
   scenePainter.fillPolygon(
@@ -234,11 +234,12 @@ function paintPortico(scenePainter: PixelPainter, lightPainter: PixelPainter): v
   scenePainter.fillRect(59, 55, 11, 1, '#0a0810');
   scenePainter.fillRect(68, 57, 3, 23, '#3b2c26');
   scenePainter.fillRect(68, 57, 1, 23, '#4a372d');
-  // Une lueur chaude au fond du couloir, qui découpe la silhouette de l'enfant
-  lightPainter.setOpacity(0.35);
-  lightPainter.fillRect(60, 60, 7, 20, '#5a3a1a');
-  lightPainter.setOpacity(1);
-  lightPainter.paintGlow(63, 70, 9, '#e8a33d', 0.1);
+  // Une lueur chaude au fond du couloir, fixe et DERRIÈRE l'enfant (dessinée avant lui) :
+  // sur le calque des lumières, elle vacillait par-dessus son visage.
+  scenePainter.setOpacity(0.35);
+  scenePainter.fillRect(60, 60, 7, 20, '#5a3a1a');
+  scenePainter.setOpacity(1);
+  scenePainter.paintGlow(63, 70, 9, '#e8a33d', 0.1);
 
   // Perron de trois marches
   PORCH_STEPS.forEach(([stepLeft, stepTop, stepWidth, stepColor]: PorchStep) => {
@@ -382,7 +383,7 @@ export function paintLOrphelinatScene(
   lightPainter.fillRect(LIT_WINDOW_CENTER_X - 3, UPPER_WINDOW_TOP + 3, 2, 3, '#f5c26b');
   lightPainter.paintGlow(LIT_WINDOW_CENTER_X, UPPER_WINDOW_TOP + 7, 14, '#e8a33d', 0.12);
 
-  paintPortico(scenePainter, lightPainter);
+  paintPortico(scenePainter);
   paintSackMaskChild(scenePainter);
   paintOvergrownGarden(scenePainter);
   scenePainter.paintFog(88, 0.1);

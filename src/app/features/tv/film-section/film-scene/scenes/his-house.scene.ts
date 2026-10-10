@@ -108,12 +108,15 @@ export function paintHisHouseScene(
   lightPainter.fillCircle(40, 24, 2, '#f5c26b');
   lightPainter.paintGlow(40, 24, 24, '#e8a33d', 0.12);
 
-  // Vieux canapé les pieds dans l'eau
-  scenePainter.fillRect(8, 58, 26, 8, '#3d4a3a');
-  scenePainter.fillRect(8, 52, 26, 6, '#4a5a48');
-  scenePainter.fillRect(6, 54, 4, 12, '#3d4a3a');
-  scenePainter.fillRect(32, 54, 4, 12, '#3d4a3a');
+  // Vieux canapé posé sous l'ampoule, les pieds dans l'eau (dans la zone visible de la TV)
+  scenePainter.fillRect(28, 72, 26, 8, '#3d4a3a');
+  scenePainter.fillRect(28, 66, 26, 6, '#4a5a48');
+  scenePainter.fillRect(28, 66, 26, 1, '#5a6a56');
+  scenePainter.fillRect(26, 68, 4, 13, '#3d4a3a');
+  scenePainter.fillRect(52, 68, 4, 13, '#3d4a3a');
+  scenePainter.fillRect(30, 73, 10, 1, '#4a5a48');
+  scenePainter.fillRect(42, 73, 10, 1, '#4a5a48');
   scenePainter.setOpacity(0.85);
-  scenePainter.fillRect(0, 80, 48, 4, '#121a2c');
+  scenePainter.fillRect(0, 80, 64, 4, '#121a2c');
   scenePainter.setOpacity(1);
 }

@@ -43,6 +43,55 @@ function paintWallpaper(
   scenePainter.fillRect(left, top, width, 1, '#1a1210');
 }
 
+/**
+ * Escalier du salon, vu en coupe : six marches qui montent vers la droite jusqu'au plancher de l'étage,
+ * la masse pleine sous les marches, et une rampe à barreaux.
+ */
+const STAIR_STEP_COUNT: number = 6;
+const STAIR_LEFT: number = 33;
+const STAIR_FLOOR_Y: number = 80;
+const STAIR_RUN: number = 2;
+const STAIR_RISE: number = 3;
+
+function paintStaircase(scenePainter: PixelPainter): void {
+  const stairRight: number = STAIR_LEFT + STAIR_STEP_COUNT * STAIR_RUN;
+  for (let stepIndex: number = 0; stepIndex < STAIR_STEP_COUNT; stepIndex++) {
+    const stepLeft: number = STAIR_LEFT + stepIndex * STAIR_RUN;
+    const treadY: number = STAIR_FLOOR_Y - (stepIndex + 1) * STAIR_RISE;
+    // Masse de la marche, jusqu'au sol, puis son nez éclairé et l'ombre de la contremarche
+    scenePainter.fillRect(
+      stepLeft,
+      treadY,
+      stairRight - stepLeft,
+      STAIR_FLOOR_Y - treadY,
+      '#3b2c26',
+    );
+    scenePainter.fillRect(stepLeft, treadY, STAIR_RUN + 1, 1, '#6e5240');
+    scenePainter.fillRect(stepLeft, treadY + 1, 1, STAIR_RISE - 1, '#2a1f1c');
+  }
+  // Limon : la planche qui ferme l'escalier sur le côté
+  scenePainter.drawLine(
+    STAIR_LEFT,
+    STAIR_FLOOR_Y - 1,
+    stairRight,
+    STAIR_FLOOR_Y - STAIR_STEP_COUNT * STAIR_RISE - 1,
+    '#4a372d',
+  );
+  // Rampe et barreaux, au-dessus des marches
+  scenePainter.drawLine(
+    STAIR_LEFT + 1,
+    STAIR_FLOOR_Y - 9,
+    stairRight + 1,
+    STAIR_FLOOR_Y - STAIR_STEP_COUNT * STAIR_RISE - 7,
+    '#2a1f1c',
+  );
+  for (let stepIndex: number = 0; stepIndex < STAIR_STEP_COUNT; stepIndex += 2) {
+    const balusterX: number = STAIR_LEFT + 1 + stepIndex * STAIR_RUN;
+    const treadY: number = STAIR_FLOOR_Y - (stepIndex + 1) * STAIR_RISE;
+    scenePainter.fillRect(balusterX, treadY - 6, 1, 6, '#2a1f1c');
+  }
+}
+
 function paintPaimonSigil(painter: PixelPainter, color: string): void {
   const [centerX, centerY]: PixelPoint = PAIMON_SIGIL_CENTER;
   for (let angle: number = 0; angle < Math.PI * 2; angle += 0.2) {
@@ -145,11 +194,7 @@ export function paintHerediteScene(
 
   // Salon : escalier, canapé, portrait de la grand-mère
   paintWallpaper(scenePainter, LIVING_ROOM, '#5e4222', '#6a4a26', 4);
-  for (let stepIndex: number = 0; stepIndex < 6; stepIndex++) {
-    scenePainter.fillRect(33 + stepIndex * 2, 78 - stepIndex * 3, 4, 3, '#4a372d');
-    scenePainter.fillRect(33 + stepIndex * 2, 78 - stepIndex * 3, 4, 1, '#6e5240');
-  }
-  scenePainter.drawLine(36, 72, 46, 60, '#2a1f1c');
+  paintStaircase(scenePainter);
   scenePainter.fillRect(48, 74, 12, 5, '#5a2f2f');
   scenePainter.fillRect(48, 72, 12, 2, '#6e3a3a');
   scenePainter.fillRect(48, 72, 1, 7, '#4a2626');
