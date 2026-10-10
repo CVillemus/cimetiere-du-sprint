@@ -68,10 +68,17 @@ export class FilmSection {
       this.isCurrentSection() ? FILM_SLIDE_ORDER[this.activeSlideIndex()] : null,
   );
 
-  /** L'encart de progression gênerait la vidéo et ferait doublon avec la slide Vote. */
+  /**
+   * L'encart de progression n'apparaît qu'après le premier vote (pas de « 0 / 0 âmes ont voté »).
+   * Il gênerait la vidéo et ferait doublon avec la slide Vote : on le cache sur ces deux slides.
+   */
   protected readonly isVoteStatusVisible: Signal<boolean> = computed((): boolean => {
     const activeSlideKind: FilmSlideKind | null = this.activeSlideKind();
-    return activeSlideKind !== 'trailer' && activeSlideKind !== 'vote';
+    const filmVoteSummary: FilmVoteSummary = this.tvVotingSessionStore.filmVoteSummary(
+      this.film().id,
+    );
+    const hasVotingStarted: boolean = filmVoteSummary.votedCount > 0 || filmVoteSummary.isRevealed;
+    return hasVotingStarted && activeSlideKind !== 'trailer' && activeSlideKind !== 'vote';
   });
 
   protected readonly isVoteSlideUnlocked: Signal<boolean> = computed((): boolean => {
