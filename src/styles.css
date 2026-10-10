@@ -30,6 +30,7 @@
   --color-warning-border: #6b5a2e;
 
   --color-vote-card-selected: #2b2335;
+  --color-vote-status-background: rgba(13, 11, 20, 0.88);
 
   /* Serpent qui rôde derrière le QR code (ses robes sont dans snake-skins.ts) */
   --snake-opacity: 0.5;

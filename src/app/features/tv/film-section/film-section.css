@@ -41,15 +41,10 @@
   color: var(--color-candle);
 }
 
-/*
- * Progression du vote : posée dans le panneau texte, juste au-dessus des onglets,
- * sans cadre ni fond — elle fait partie de la page, elle ne flotte pas sur l'image.
- */
 .film-section__vote-status {
   position: absolute;
-  left: 5vw;
-  bottom: 6vw;
-  max-width: 40vw;
+  right: 1.5vw;
+  bottom: 1.5vw;
 }
 
 /* Onglet Vote verrouillé : tant que tout le monde n'a pas voté. */

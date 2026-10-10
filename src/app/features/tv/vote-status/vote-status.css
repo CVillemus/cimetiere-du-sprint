@@ -2,6 +2,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.6vw;
+  max-width: 34vw;
+  padding: 0.9vw 1.1vw;
+  border: 0.2vw solid var(--color-violet);
+  background: var(--color-vote-status-background);
   font-size: 1vw;
 }
 

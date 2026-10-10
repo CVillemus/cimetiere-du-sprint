@@ -12,7 +12,7 @@ import { FilmVoteSummary, formatAverageScore } from '../../../core/voting/film-v
 import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
 
 /**
- * Progression du vote, dans le panneau texte des slides Résumé et Presse, au-dessus des onglets :
+ * Petit encart de progression du vote, en bas à droite des slides Résumé et Presse :
  * qui a voté (sans les scores), puis la moyenne une fois les cartes retournées.
  */
 @Component({
