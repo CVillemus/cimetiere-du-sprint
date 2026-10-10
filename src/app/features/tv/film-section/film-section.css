@@ -41,11 +41,15 @@
   color: var(--color-candle);
 }
 
-/* En haut à droite, sous l'en-tête de la bande-annonce : rien en bas, où sont les onglets et le streaming. */
+/*
+ * Progression du vote : posée dans le panneau texte, juste au-dessus des onglets,
+ * sans cadre ni fond — elle fait partie de la page, elle ne flotte pas sur l'image.
+ */
 .film-section__vote-status {
   position: absolute;
-  top: 7.5vw;
-  right: 2vw;
+  left: 5vw;
+  bottom: 6vw;
+  max-width: 40vw;
 }
 
 /* Onglet Vote verrouillé : tant que tout le monde n'a pas voté. */
