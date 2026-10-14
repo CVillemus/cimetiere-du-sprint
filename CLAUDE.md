@@ -42,8 +42,7 @@ Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe d'a
 
 - Sons dans `core/sound/`, joués seulement après un premier geste (touche ou clic).
 - Sons 8-bit synthétisés en Web Audio par `SpookySynth` (aucun fichier audio), avec une réverbération de « crypte ».
-- `TvSoundDesign` : vent de crypte au changement de section, battements d'ailes en stéréo au changement d'onglet, boîte à musique à l'arrivée d'une âme, toc toc à chaque vote, glas au dernier vote, coup de théâtre à la révélation (décliné selon la moyenne : `chooseRevealMood`), orgue + glas à la Sprint Review.
-- Les événements de vote sont détectés en comparant deux photos de la session (`detectVotingSoundCues`, testé).
+- `TvSoundDesign` : vent de crypte au changement de section, battements d'ailes en stéréo au changement d'onglet, coup de théâtre en ouvrant l'onglet Vote (décliné selon la moyenne : `chooseRevealMood`), orgue + glas à la Sprint Review.
 - Le navigateur bloque le son jusqu'à la première touche ou au premier clic ; touche `M` pour couper. Volume baissé pendant la bande-annonce.
 
 ## Arborescence
