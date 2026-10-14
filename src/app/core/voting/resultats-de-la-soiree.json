@@ -1,0 +1,178 @@
+{
+  "dateDeLaSoiree": "2026-10-10",
+  "participants": [
+    { "id": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e", "pseudo": "Max la menace" },
+    { "id": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9", "pseudo": "Striaaargh" },
+    { "id": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa", "pseudo": "Sunmara" },
+    { "id": "3c43dec2-9a37-4b62-9f12-68f42c027a08", "pseudo": "XXDarkThomasXX" },
+    { "id": "8fab5383-e70c-4560-b304-458cee07054e", "pseudo": "Faith of Ophelia" },
+    { "id": "dfbab84e-23dd-40ad-8312-c41018db1650", "pseudo": "Gaby" },
+    { "id": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245", "pseudo": "Morticia" },
+    { "id": "dc66c904-c871-4cd4-b232-5d3579ea2bc4", "pseudo": "Coco l’astico" },
+    { "id": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10", "pseudo": "FraKnus" }
+  ],
+  "votes": [
+    { "participantId": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9", "filmId": "conjuring", "score": 4 },
+    { "participantId": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10", "filmId": "conjuring", "score": 3 },
+    { "participantId": "dc66c904-c871-4cd4-b232-5d3579ea2bc4", "filmId": "conjuring", "score": 4 },
+    { "participantId": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e", "filmId": "conjuring", "score": 4 },
+    { "participantId": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245", "filmId": "conjuring", "score": 5 },
+    { "participantId": "8fab5383-e70c-4560-b304-458cee07054e", "filmId": "conjuring", "score": 3 },
+    { "participantId": "dfbab84e-23dd-40ad-8312-c41018db1650", "filmId": "conjuring", "score": 3 },
+    { "participantId": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa", "filmId": "conjuring", "score": 3 },
+    { "participantId": "3c43dec2-9a37-4b62-9f12-68f42c027a08", "filmId": "conjuring", "score": 3 },
+    { "participantId": "8fab5383-e70c-4560-b304-458cee07054e", "filmId": "get-out", "score": 1 },
+    { "participantId": "3c43dec2-9a37-4b62-9f12-68f42c027a08", "filmId": "get-out", "score": 1 },
+    { "participantId": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10", "filmId": "get-out", "score": 2 },
+    { "participantId": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e", "filmId": "get-out", "score": 3 },
+    { "participantId": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa", "filmId": "get-out", "score": 1 },
+    { "participantId": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9", "filmId": "get-out", "score": 1 },
+    { "participantId": "dc66c904-c871-4cd4-b232-5d3579ea2bc4", "filmId": "get-out", "score": 1 },
+    { "participantId": "dfbab84e-23dd-40ad-8312-c41018db1650", "filmId": "get-out", "score": 1 },
+    { "participantId": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245", "filmId": "get-out", "score": 3 },
+    { "participantId": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245", "filmId": "ghostland", "score": 3 },
+    { "participantId": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9", "filmId": "ghostland", "score": 2 },
+    { "participantId": "8fab5383-e70c-4560-b304-458cee07054e", "filmId": "ghostland", "score": 1 },
+    { "participantId": "dfbab84e-23dd-40ad-8312-c41018db1650", "filmId": "ghostland", "score": 2 },
+    { "participantId": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e", "filmId": "ghostland", "score": 2 },
+    { "participantId": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa", "filmId": "ghostland", "score": 2 },
+    { "participantId": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10", "filmId": "ghostland", "score": 5 },
+    { "participantId": "dc66c904-c871-4cd4-b232-5d3579ea2bc4", "filmId": "ghostland", "score": 5 },
+    { "participantId": "3c43dec2-9a37-4b62-9f12-68f42c027a08", "filmId": "ghostland", "score": 4 },
+    { "participantId": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10", "filmId": "heredite", "score": 5 },
+    { "participantId": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e", "filmId": "heredite", "score": 5 },
+    { "participantId": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245", "filmId": "heredite", "score": 5 },
+    { "participantId": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9", "filmId": "heredite", "score": 5 },
+    { "participantId": "dc66c904-c871-4cd4-b232-5d3579ea2bc4", "filmId": "heredite", "score": 4 },
+    { "participantId": "dfbab84e-23dd-40ad-8312-c41018db1650", "filmId": "heredite", "score": 5 },
+    { "participantId": "8fab5383-e70c-4560-b304-458cee07054e", "filmId": "heredite", "score": 2 },
+    { "participantId": "3c43dec2-9a37-4b62-9f12-68f42c027a08", "filmId": "heredite", "score": 3 },
+    { "participantId": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa", "filmId": "heredite", "score": 3 },
+    { "participantId": "dfbab84e-23dd-40ad-8312-c41018db1650", "filmId": "heretic", "score": 1 },
+    { "participantId": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245", "filmId": "heretic", "score": 1 },
+    { "participantId": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e", "filmId": "heretic", "score": 5 },
+    { "participantId": "3c43dec2-9a37-4b62-9f12-68f42c027a08", "filmId": "heretic", "score": 4 },
+    { "participantId": "8fab5383-e70c-4560-b304-458cee07054e", "filmId": "heretic", "score": 4 },
+    { "participantId": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10", "filmId": "heretic", "score": 2 },
+    { "participantId": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9", "filmId": "heretic", "score": 5 },
+    { "participantId": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa", "filmId": "heretic", "score": 4 },
+    { "participantId": "dc66c904-c871-4cd4-b232-5d3579ea2bc4", "filmId": "heretic", "score": 4 },
+    { "participantId": "dc66c904-c871-4cd4-b232-5d3579ea2bc4", "filmId": "his-house", "score": 4 },
+    { "participantId": "dfbab84e-23dd-40ad-8312-c41018db1650", "filmId": "his-house", "score": 2 },
+    { "participantId": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245", "filmId": "his-house", "score": 5 },
+    { "participantId": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9", "filmId": "his-house", "score": 1 },
+    { "participantId": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e", "filmId": "his-house", "score": 3 },
+    { "participantId": "8fab5383-e70c-4560-b304-458cee07054e", "filmId": "his-house", "score": 2 },
+    { "participantId": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10", "filmId": "his-house", "score": 4 },
+    { "participantId": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa", "filmId": "his-house", "score": 2 },
+    { "participantId": "3c43dec2-9a37-4b62-9f12-68f42c027a08", "filmId": "his-house", "score": 3 },
+    {
+      "participantId": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10",
+      "filmId": "l-orphelinat",
+      "score": 3
+    },
+    {
+      "participantId": "dc66c904-c871-4cd4-b232-5d3579ea2bc4",
+      "filmId": "l-orphelinat",
+      "score": 2
+    },
+    {
+      "participantId": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9",
+      "filmId": "l-orphelinat",
+      "score": 2
+    },
+    {
+      "participantId": "dfbab84e-23dd-40ad-8312-c41018db1650",
+      "filmId": "l-orphelinat",
+      "score": 2
+    },
+    {
+      "participantId": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245",
+      "filmId": "l-orphelinat",
+      "score": 2
+    },
+    {
+      "participantId": "3c43dec2-9a37-4b62-9f12-68f42c027a08",
+      "filmId": "l-orphelinat",
+      "score": 2
+    },
+    {
+      "participantId": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e",
+      "filmId": "l-orphelinat",
+      "score": 2
+    },
+    {
+      "participantId": "8fab5383-e70c-4560-b304-458cee07054e",
+      "filmId": "l-orphelinat",
+      "score": 3
+    },
+    {
+      "participantId": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa",
+      "filmId": "l-orphelinat",
+      "score": 4
+    },
+    {
+      "participantId": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e",
+      "filmId": "late-night-with-the-devil",
+      "score": 5
+    },
+    {
+      "participantId": "dc66c904-c871-4cd4-b232-5d3579ea2bc4",
+      "filmId": "late-night-with-the-devil",
+      "score": 3
+    },
+    {
+      "participantId": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9",
+      "filmId": "late-night-with-the-devil",
+      "score": 4
+    },
+    {
+      "participantId": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10",
+      "filmId": "late-night-with-the-devil",
+      "score": 5
+    },
+    {
+      "participantId": "3c43dec2-9a37-4b62-9f12-68f42c027a08",
+      "filmId": "late-night-with-the-devil",
+      "score": 3
+    },
+    {
+      "participantId": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa",
+      "filmId": "late-night-with-the-devil",
+      "score": 4
+    },
+    {
+      "participantId": "dfbab84e-23dd-40ad-8312-c41018db1650",
+      "filmId": "late-night-with-the-devil",
+      "score": 5
+    },
+    {
+      "participantId": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245",
+      "filmId": "late-night-with-the-devil",
+      "score": 4
+    },
+    {
+      "participantId": "8fab5383-e70c-4560-b304-458cee07054e",
+      "filmId": "late-night-with-the-devil",
+      "score": 3
+    },
+    { "participantId": "dc66c904-c871-4cd4-b232-5d3579ea2bc4", "filmId": "mama", "score": 4 },
+    { "participantId": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e", "filmId": "mama", "score": 4 },
+    { "participantId": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245", "filmId": "mama", "score": 2 },
+    { "participantId": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9", "filmId": "mama", "score": 4 },
+    { "participantId": "8fab5383-e70c-4560-b304-458cee07054e", "filmId": "mama", "score": 2 },
+    { "participantId": "dfbab84e-23dd-40ad-8312-c41018db1650", "filmId": "mama", "score": 3 },
+    { "participantId": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10", "filmId": "mama", "score": 4 },
+    { "participantId": "3c43dec2-9a37-4b62-9f12-68f42c027a08", "filmId": "mama", "score": 2 },
+    { "participantId": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa", "filmId": "mama", "score": 3 },
+    { "participantId": "dc66c904-c871-4cd4-b232-5d3579ea2bc4", "filmId": "sinister", "score": 4 },
+    { "participantId": "dfbab84e-23dd-40ad-8312-c41018db1650", "filmId": "sinister", "score": 3 },
+    { "participantId": "2fcdea9d-d5c3-4e80-94ed-a0b0fadd979e", "filmId": "sinister", "score": 5 },
+    { "participantId": "8bcf999a-06c7-4bfc-84ab-ddec56b8af10", "filmId": "sinister", "score": 4 },
+    { "participantId": "0d66f42b-dc9c-4c2d-a14d-3b31fef94245", "filmId": "sinister", "score": 4 },
+    { "participantId": "75286fb5-0f3d-4ee4-a81d-356432e9f4aa", "filmId": "sinister", "score": 4 },
+    { "participantId": "b9f75d41-10a3-4ce8-bc95-cf06c51c20e9", "filmId": "sinister", "score": 3 },
+    { "participantId": "8fab5383-e70c-4560-b304-458cee07054e", "filmId": "sinister", "score": 4 },
+    { "participantId": "3c43dec2-9a37-4b62-9f12-68f42c027a08", "filmId": "sinister", "score": 2 }
+  ]
+}

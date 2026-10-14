@@ -56,14 +56,6 @@ const CHURCH_BELL_PARTIALS: readonly (readonly [
   [3, 0.04, 1],
 ];
 
-/** Notes d'une vieille boîte à musique, chacune un peu fausse (fréquence, désaccordage). */
-const MUSIC_BOX_NOTES: readonly (readonly [frequency: number, detuneInCents: number])[] = [
-  [659.25, -35],
-  [698.46, -10],
-  [493.88, -25],
-  [466.16, -40],
-];
-
 interface RevealMoodSettings {
   readonly rootFrequency: number;
   readonly chordRatios: readonly number[];
@@ -192,78 +184,6 @@ export class SpookySynth {
       volume: 0.09,
       attackInSeconds: 0.2,
     });
-  }
-
-  /** Quelqu'un vote : deux coups sourds sur un cercueil, hauteur légèrement aléatoire. */
-  playCoffinKnock(): void {
-    const pitchVariation: number = 0.95 + Math.random() * 0.1;
-    [
-      { startDelayInSeconds: 0, frequency: 175 },
-      { startDelayInSeconds: 0.16, frequency: 150 },
-    ].forEach(
-      ({ startDelayInSeconds, frequency }: { startDelayInSeconds: number; frequency: number }) => {
-        this.playNoise({
-          startDelayInSeconds,
-          durationInSeconds: 0.05,
-          volume: 0.1,
-          filterFrequency: 700,
-        });
-        this.playTone({
-          waveform: 'triangle',
-          frequency: frequency * pitchVariation,
-          endFrequency: 70 * pitchVariation,
-          startDelayInSeconds,
-          durationInSeconds: 0.18,
-          volume: 0.5,
-          attackInSeconds: 0.002,
-        });
-      },
-    );
-  }
-
-  /** Dernier vote reçu : le glas, suivi d'un souffle qui ressemble à un murmure. */
-  playFuneralBell(): void {
-    this.playChurchBell(98);
-    this.playNoise({
-      startDelayInSeconds: 0.6,
-      durationInSeconds: 2.2,
-      volume: 0.05,
-      filterType: 'bandpass',
-      filterFrequency: 1800,
-      filterQuality: 9,
-      attackInSeconds: 0.6,
-      wobbleRate: 0.7,
-    });
-  }
-
-  /** Quelqu'un rejoint le salon : quatre notes faussées d'une boîte à musique hantée. */
-  playHauntedMusicBox(): void {
-    MUSIC_BOX_NOTES.forEach(
-      ([frequency, detuneInCents]: readonly [number, number], noteIndex: number) => {
-        const startDelayInSeconds: number = noteIndex * 0.22;
-        this.playTone({
-          waveform: 'sine',
-          frequency,
-          startDelayInSeconds,
-          durationInSeconds: 0.9,
-          volume: 0.12,
-          attackInSeconds: 0.003,
-          detuneInCents,
-          vibratoRate: 6,
-          vibratoDepth: 4,
-        });
-        // Harmonique aiguë très courte : le « ting » métallique de la lamelle.
-        this.playTone({
-          waveform: 'sine',
-          frequency: frequency * 3,
-          startDelayInSeconds,
-          durationInSeconds: 0.25,
-          volume: 0.025,
-          attackInSeconds: 0.002,
-          detuneInCents,
-        });
-      },
-    );
   }
 
   /**

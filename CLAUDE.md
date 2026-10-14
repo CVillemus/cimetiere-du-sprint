@@ -2,18 +2,18 @@
 
 ## Projet
 
-Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 10 personnes choisisse un film d'horreur, façon poker planning. Chacun vote depuis son téléphone (route `/vote`, ouverte via un QR code).
+Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe d'amis choisisse un film d'horreur, façon poker planning. La soirée a eu lieu le samedi 10 octobre 2026 : **le site est désormais une archive**, sans back-end ni vote.
 
-- **TV (`/`)** : 12 sections plein écran (QR code, 10 films, Sprint Review). Chaque film a un carrousel horizontal : Résumé → Trailer → Presse.
-- **Teaser (`/teaser`)** : un seul écran à partager avant la soirée (samedi 10 octobre, 18h), avec compte à rebours.
-- **Téléphones (`/vote`)** : pseudo, puis 5 cartes (Hors de question / Bof / Ok / Cool ! / OHHHHH OUI !).
-- **Mode Scrum Master** : la TV pilote le film en cours, les votes restent secrets jusqu'à la révélation (touche `R`).
+- **Site (`/`)** : 12 sections plein écran (accueil souvenir, 10 films, Sprint Review). Chaque film a un carrousel horizontal : Résumé → Presse → Trailer → Vote (les cartes retournées ce soir-là).
+- **Résultats** : figés dans `src/app/core/voting/resultats-de-la-soiree.json` (export Supabase), lus par `PartyResultsStore`.
+- **Teaser (`/teaser`)** : la page partagée avant la soirée.
 - **Podium** : moyenne des scores, puis nombre de « OHHHHH OUI ! », puis film le plus court. Veto : au moins 3 « Hors de question » éliminent le film.
+- **Refaire une soirée** : lire `docs/RECETTE.md` et partir de l'étiquette Git `soiree-du-10-octobre-2026`, qui contient le vote en direct (Supabase, QR code, téléphones).
 
 ## Stack
 
 - Angular 22, zoneless, composants standalone, signals, nouveau control flow.
-- Supabase (PostgreSQL + realtime) pour la session, les participants et les votes.
+- Aucun back-end : les résultats de la soirée sont un fichier JSON (le vote en direct Supabase est dans l'étiquette `soiree-du-10-octobre-2026`).
 - Hébergement GitHub Pages, déployé par `.github/workflows/deploy-github-pages.yml` à chaque push sur `main`.
 
 ## Conventions obligatoires
@@ -33,14 +33,14 @@ Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 
 
 - `TvNavigationStore` (core) est la seule source de vérité : section courante, slide courante.
 - Aucun scroll natif : les pistes de sections et de slides sont translatées en CSS selon le store.
-- Clavier, molette et clics passent par `TvNavigator`. Changement de section : la coulure `PixelDripTransition` (0,8 s, « sang séché », aussi sur le téléphone). Changement d'onglet : la nuée `BatSwarmTransition` (0,65 s, dans le sens de la navigation). Les deux partagent le même verrou.
+- Clavier, molette et clics passent par `TvNavigator`. Changement de section : la coulure `PixelDripTransition` (0,8 s, « sang séché »). Changement d'onglet : la nuée `BatSwarmTransition` (0,65 s, dans le sens de la navigation). Les deux partagent le même verrou.
 - Les décors sont dessinés sur `<canvas>` (128×96) avec `PixelPainter` : décor fixe, lumières qui vacillent, calque animé image par image (`FILM_SCENE_ANIMATORS`, ~12 i/s, seulement quand le décor est visible), apparition en fondu.
 - Sur la TV, le panneau ne montre que le centre d'un décor (x ≈ 24 à 104) : y placer tout ce qui compte. Le coin bas droit est masqué par l'encart des votes.
 - Les fonds des panneaux (`PixelBackdrop`) alternent crâne, tête de mort, arbre mort, corbeau, araignée, avec une animation « idle ».
 
 ## Sound design
 
-- Uniquement sur la TV (`core/sound/`) : les téléphones restent muets.
+- Sons dans `core/sound/`, joués seulement après un premier geste (touche ou clic).
 - Sons 8-bit synthétisés en Web Audio par `SpookySynth` (aucun fichier audio), avec une réverbération de « crypte ».
 - `TvSoundDesign` : vent de crypte au changement de section, battements d'ailes en stéréo au changement d'onglet, boîte à musique à l'arrivée d'une âme, toc toc à chaque vote, glas au dernier vote, coup de théâtre à la révélation (décliné selon la moyenne : `chooseRevealMood`), orgue + glas à la Sprint Review.
 - Les événements de vote sont détectés en comparant deux photos de la session (`detectVotingSoundCues`, testé).
@@ -50,10 +50,9 @@ Le Cimetière du Sprint : une onepage projetée sur une TV pour qu'un groupe de 
 
 ```
 src/app/
-  core/       singletons (données des films, navigation TV, session de vote Supabase)
+  core/       singletons (données des films, navigation TV, résultats de la soirée)
   features/
     tv/       page projetée
-    vote/     page téléphone
   shared/     briques réutilisables (sprites pixel, badges de trigger warning…)
 ```
 

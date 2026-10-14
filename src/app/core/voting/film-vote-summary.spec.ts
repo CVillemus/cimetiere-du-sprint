@@ -1,8 +1,8 @@
 import { buildFilmVoteSummary, FilmVoteSummary } from './film-vote-summary';
 import { Participant } from './voting.model';
 
-const MORTICIA: Participant = { id: 'participant-1', userId: 'user-1', pseudo: 'Morticia' };
-const GOMEZ: Participant = { id: 'participant-2', userId: 'user-2', pseudo: 'Gomez' };
+const MORTICIA: Participant = { id: 'participant-1', pseudo: 'Morticia' };
+const GOMEZ: Participant = { id: 'participant-2', pseudo: 'Gomez' };
 
 describe('buildFilmVoteSummary', () => {
   it('should not consider everyone has voted when nobody joined', () => {

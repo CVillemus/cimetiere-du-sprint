@@ -15,7 +15,7 @@ import {
 } from '../../../core/navigation/tv-section.model';
 import { TvNavigationStore } from '../../../core/navigation/tv-navigation.store';
 import { FilmVoteSummary } from '../../../core/voting/film-vote-summary';
-import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
+import { PartyResultsStore } from '../../../core/voting/party-results.store';
 import { TvNavigator } from '../tv-navigator/tv-navigator';
 import { VoteStatus } from '../vote-status/vote-status';
 import { PressSlide } from './press-slide/press-slide';
@@ -41,7 +41,7 @@ interface FilmSlideTab {
 })
 export class FilmSection {
   private readonly tvNavigationStore: TvNavigationStore = inject(TvNavigationStore);
-  private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
+  private readonly partyResultsStore: PartyResultsStore = inject(PartyResultsStore);
   private readonly tvNavigator: TvNavigator = inject(TvNavigator);
 
   readonly film: InputSignal<Film> = input.required<Film>();
@@ -74,18 +74,9 @@ export class FilmSection {
    */
   protected readonly isVoteStatusVisible: Signal<boolean> = computed((): boolean => {
     const activeSlideKind: FilmSlideKind | null = this.activeSlideKind();
-    const filmVoteSummary: FilmVoteSummary = this.tvVotingSessionStore.filmVoteSummary(
-      this.film().id,
-    );
+    const filmVoteSummary: FilmVoteSummary = this.partyResultsStore.filmVoteSummary(this.film().id);
     const hasVotingStarted: boolean = filmVoteSummary.votedCount > 0 || filmVoteSummary.isRevealed;
     return hasVotingStarted && activeSlideKind !== 'trailer' && activeSlideKind !== 'vote';
-  });
-
-  protected readonly isVoteSlideUnlocked: Signal<boolean> = computed((): boolean => {
-    const filmVoteSummary: FilmVoteSummary = this.tvVotingSessionStore.filmVoteSummary(
-      this.film().id,
-    );
-    return filmVoteSummary.hasEveryoneVoted || filmVoteSummary.isRevealed;
   });
 
   protected readonly slideTrackTransform: Signal<string> = computed(

@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FilmId } from '../../../core/films/film.model';
 import { FilmVoteSummary, formatAverageScore } from '../../../core/voting/film-vote-summary';
-import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
+import { PartyResultsStore } from '../../../core/voting/party-results.store';
 
 /**
  * Petit encart de progression du vote, en bas à droite des slides Résumé et Presse :
@@ -22,12 +22,12 @@ import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.sto
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VoteStatus {
-  private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
+  private readonly partyResultsStore: PartyResultsStore = inject(PartyResultsStore);
 
   readonly filmId: InputSignal<FilmId> = input.required<FilmId>();
 
   protected readonly filmVoteSummary: Signal<FilmVoteSummary> = computed((): FilmVoteSummary =>
-    this.tvVotingSessionStore.filmVoteSummary(this.filmId()),
+    this.partyResultsStore.filmVoteSummary(this.filmId()),
   );
 
   protected readonly formattedAverageScore: Signal<string> = computed((): string =>

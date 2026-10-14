@@ -1,10 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { Film } from '../../../core/films/film.model';
-import { FILM_SLIDE_ORDER, VOTE_SLIDE_INDEX } from '../../../core/navigation/tv-section.model';
+import { FILM_SLIDE_ORDER } from '../../../core/navigation/tv-section.model';
 import { TvNavigationStore } from '../../../core/navigation/tv-navigation.store';
-import { FilmVoteSummary } from '../../../core/voting/film-vote-summary';
 import { TvSoundDesign } from '../../../core/sound/tv-sound-design';
-import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
 import {
   BatSwarmDirection,
   PixelDripTransitionService,
@@ -17,7 +14,6 @@ import {
 @Injectable({ providedIn: 'root' })
 export class TvNavigator {
   private readonly tvNavigationStore: TvNavigationStore = inject(TvNavigationStore);
-  private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
   private readonly pixelDripTransitionService: PixelDripTransitionService = inject(
     PixelDripTransitionService,
   );
@@ -51,11 +47,8 @@ export class TvNavigator {
     this.navigateToSection(this.tvNavigationStore.introSectionIndex);
   }
 
-  /** La slide Vote reste verrouillée tant que tout le monde n'a pas voté (sauf si déjà révélée). */
+  /** Le site est une archive : tous les onglets sont ouverts, Vote compris. */
   navigateToSlide(slideIndex: number): void {
-    if (slideIndex === VOTE_SLIDE_INDEX && !this.isVoteSlideUnlocked()) {
-      return;
-    }
     this.playSlideTransition(slideIndex);
   }
 
@@ -65,22 +58,6 @@ export class TvNavigator {
 
   navigateToPreviousSlide(): void {
     this.navigateToSlide(this.tvNavigationStore.currentSlideIndex() - 1);
-  }
-
-  /** Touche R : le Scrum Master force l'ouverture du vote, même si des retardataires n'ont pas voté. */
-  forceNavigationToVoteSlide(): void {
-    this.playSlideTransition(VOTE_SLIDE_INDEX);
-  }
-
-  isVoteSlideUnlocked(): boolean {
-    const currentFilm: Film | null = this.tvNavigationStore.currentFilm();
-    if (currentFilm === null) {
-      return false;
-    }
-    const filmVoteSummary: FilmVoteSummary = this.tvVotingSessionStore.filmVoteSummary(
-      currentFilm.id,
-    );
-    return filmVoteSummary.hasEveryoneVoted || filmVoteSummary.isRevealed;
   }
 
   private playSlideTransition(slideIndex: number): void {

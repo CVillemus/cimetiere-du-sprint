@@ -12,7 +12,7 @@ import {
 import { Film, STREAMING_CHECKED_ON } from '../../../core/films/film.model';
 import { TvSoundDesign } from '../../../core/sound/tv-sound-design';
 import { FilmRanking, VETO_THRESHOLD } from '../../../core/voting/film-ranking';
-import { TvVotingSessionStore } from '../../../core/voting/tv-voting-session.store';
+import { PartyResultsStore } from '../../../core/voting/party-results.store';
 import { FilmScene } from '../film-section/film-scene/film-scene';
 import { GothicLettrine } from './gothic-lettrine/gothic-lettrine';
 import { ReviewSpider } from './review-spider/review-spider';
@@ -39,7 +39,7 @@ const WINNER_SOUND_DELAY_IN_SECONDS: number = 0.3;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SprintReviewSection {
-  private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
+  private readonly partyResultsStore: PartyResultsStore = inject(PartyResultsStore);
   private readonly tvSoundDesign: TvSoundDesign = inject(TvSoundDesign);
 
   readonly isCurrentSection: InputSignal<boolean> = input.required<boolean>();
@@ -48,12 +48,12 @@ export class SprintReviewSection {
 
   private readonly rankedFilms: Signal<readonly RankedFilm[]> = computed(
     (): readonly RankedFilm[] =>
-      this.tvVotingSessionStore
-        .filmRankings()
-        .map((filmRanking: FilmRanking, rankingIndex: number): RankedFilm => ({
+      this.partyResultsStore.filmRankings.map(
+        (filmRanking: FilmRanking, rankingIndex: number): RankedFilm => ({
           rank: rankingIndex + 1,
           filmRanking,
-        })),
+        }),
+      ),
   );
 
   /** Le film de la soirée : le premier film voté et non vétoé. */

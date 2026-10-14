@@ -23,21 +23,6 @@
   font-weight: 500;
 }
 
-.vote-slide__message {
-  margin: 0;
-  font-size: 1.8vw;
-  color: var(--color-bone-muted);
-}
-
-.vote-slide__countdown {
-  margin: 0;
-  font-family: var(--font-pixel-label);
-  font-size: 12vw;
-  line-height: 1;
-  color: var(--color-candle);
-  animation: vote-slide-tick 1s steps(4) infinite;
-}
-
 .vote-slide__average {
   margin: 0;
   font-family: var(--font-pixel-label);
@@ -79,7 +64,11 @@
 }
 
 .vote-slide__card-pseudo {
+  max-width: 100%;
   font-size: 1.4vw;
+  text-align: center;
+  /* Les pseudos très longs (« XXDarkThomasXX ») passent à la ligne au lieu de déborder de la carte. */
+  overflow-wrap: anywhere;
 }
 
 .vote-slide__card-label {
@@ -94,14 +83,5 @@
   }
   to {
     transform: scaleX(1);
-  }
-}
-
-@keyframes vote-slide-tick {
-  0% {
-    transform: scale(1.15);
-  }
-  100% {
-    transform: scale(1);
   }
 }

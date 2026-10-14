@@ -8,7 +8,6 @@ import {
   Signal,
 } from '@angular/core';
 import { TvNavigationStore } from '../../core/navigation/tv-navigation.store';
-import { TvVotingSessionStore } from '../../core/voting/tv-voting-session.store';
 import { TvSoundDesign } from '../../core/sound/tv-sound-design';
 import { TvSection } from '../../core/navigation/tv-section.model';
 import { BatSwarmTransition } from './bat-swarm-transition/bat-swarm-transition';
@@ -56,7 +55,6 @@ export class TvPage {
   private readonly pixelDripTransitionService: PixelDripTransitionService = inject(
     PixelDripTransitionService,
   );
-  private readonly tvVotingSessionStore: TvVotingSessionStore = inject(TvVotingSessionStore);
   private readonly tvSoundDesign: TvSoundDesign = inject(TvSoundDesign);
 
   protected readonly isSoundAwake: Signal<boolean> = this.tvSoundDesign.isAwake;
@@ -72,10 +70,7 @@ export class TvPage {
     (): string => `translateY(calc(-100dvh * ${this.currentSectionIndex()}))`,
   );
 
-  constructor() {
-    afterNextRender(() => void this.tvVotingSessionStore.startHosting());
-    inject(DestroyRef).onDestroy(() => this.tvVotingSessionStore.stopHosting());
-  }
+  constructor() {}
 
   /** Le navigateur n'autorise le son qu'après un geste : la première touche ou le premier clic. */
   protected wakeUpSoundDesign(): void {
@@ -101,10 +96,6 @@ export class TvPage {
         break;
       case 'Escape':
         this.tvNavigator.navigateToIntroSection();
-        break;
-      case 'r':
-      case 'R':
-        this.tvNavigator.forceNavigationToVoteSlide();
         break;
       case 'm':
       case 'M':
