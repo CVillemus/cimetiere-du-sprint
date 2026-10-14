@@ -1,7 +1,17 @@
-<main class="tv-page" (wheel)="handleWheelNavigation($event)">
-  <div class="tv-page__track" [style.transform]="sectionTrackTransform()">
+<main
+  #scrollContainer
+  class="tv-page"
+  [class.tv-page--compact]="isCompact()"
+  (wheel)="handleWheelNavigation($event)"
+>
+  <div class="tv-page__track" [style.transform]="isCompact() ? null : sectionTrackTransform()">
     @for (section of sections; track $index; let sectionIndex = $index) {
-      <section class="tv-page__section" [inert]="sectionIndex !== currentSectionIndex()">
+      <section
+        #sectionElement
+        class="tv-page__section"
+        [attr.data-section-index]="sectionIndex"
+        [inert]="!isCompact() && sectionIndex !== currentSectionIndex()"
+      >
         @switch (section.kind) {
           @case ('intro') {
             <app-intro-section [isCurrentSection]="sectionIndex === currentSectionIndex()" />
@@ -24,7 +34,20 @@
   </div>
 </main>
 
-@if (!isSoundAwake()) {
+@if (isCompact()) {
+  <button
+    type="button"
+    class="tv-page__sound-button"
+    [attr.aria-pressed]="isSoundAwake() && !isSoundMuted()"
+    (click)="toggleSoundFromButton()"
+  >
+    @if (isSoundAwake() && !isSoundMuted()) {
+      ♪ Son activé
+    } @else {
+      ♪ Son coupé
+    }
+  </button>
+} @else if (!isSoundAwake()) {
   <p class="tv-page__sound-status">
     ♪ Son endormi : appuie sur une touche pour réveiller les morts
   </p>

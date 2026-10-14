@@ -85,3 +85,56 @@
     transform: scaleX(1);
   }
 }
+
+/* Écran compact (même requête que CompactViewport) : mise en page empilée, tailles en rem. */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  :host {
+    justify-content: flex-start;
+    gap: 1rem;
+    height: auto;
+    padding: 4.25rem 1rem 1.5rem;
+  }
+
+  .vote-slide__eyebrow {
+    font-size: 0.75rem;
+  }
+
+  .vote-slide__title {
+    font-size: 1.8rem;
+  }
+
+  .vote-slide__average {
+    font-size: 0.9rem;
+  }
+
+  .vote-slide__average strong {
+    font-size: 1.8rem;
+  }
+
+  .vote-slide__cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+    max-width: none;
+  }
+
+  .vote-slide__card {
+    gap: 0.3rem;
+    width: auto;
+    padding: 0.6rem 0.3rem;
+    border-width: 2px;
+  }
+
+  .vote-slide__card-icon {
+    --pixel-icon-size: 1.8rem;
+  }
+
+  .vote-slide__card-pseudo {
+    font-size: 0.85rem;
+  }
+
+  .vote-slide__card-label {
+    font-size: 0.55rem;
+  }
+}

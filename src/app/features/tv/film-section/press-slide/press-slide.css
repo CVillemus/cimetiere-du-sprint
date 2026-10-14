@@ -90,3 +90,44 @@
   font-size: 0.8vw;
   color: var(--color-violet-muted);
 }
+
+/* Écran compact (même requête que CompactViewport) : mise en page empilée, tailles en rem. */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  .press-rating {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .press-rating__label {
+    padding: 0.2rem 0.4rem;
+    border-width: 2px;
+  }
+
+  .press-rating__gauge {
+    gap: 2px;
+    padding: 3px;
+    border-width: 2px;
+    clip-path: none;
+  }
+
+  .press-rating__segment {
+    width: 1.1rem;
+    height: 1rem;
+  }
+
+  .press-rating__segment-fill {
+    box-shadow:
+      inset 0 3px 0 var(--color-candle-highlight),
+      inset 0 -3px 0 var(--color-candle-shadow);
+  }
+
+  .press-review {
+    margin-top: 1rem;
+  }
+
+  .press-rating__source {
+    margin-top: 0.4rem;
+    font-size: 0.65rem;
+  }
+}

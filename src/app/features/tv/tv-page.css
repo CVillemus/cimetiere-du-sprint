@@ -24,3 +24,46 @@
   font-size: max(0.8vw, 14px);
   pointer-events: none;
 }
+
+/*
+ * Écran compact (téléphone, tactile, petite fenêtre) : même requête que CompactViewport.
+ * On défile au doigt, section par section avec un aimant léger ; les sections prennent la hauteur
+ * de leur contenu (au moins un écran).
+ */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  .tv-page {
+    margin-right: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-snap-type: y proximity;
+    overscroll-behavior-y: contain;
+  }
+
+  .tv-page__section {
+    height: auto;
+    min-height: 100dvh;
+    scroll-snap-align: start;
+  }
+}
+
+/* Bouton du son, en haut à droite, au-dessus de tout : remplace la touche M sur téléphone. */
+.tv-page__sound-button {
+  position: fixed;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 5;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.8rem;
+  border: 2px solid var(--color-violet);
+  border-radius: 0;
+  background: var(--color-night);
+  color: var(--color-violet-muted);
+  font-family: var(--font-pixel-label);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.tv-page__sound-button[aria-pressed='true'] {
+  border-color: var(--color-candle);
+  color: var(--color-candle);
+}

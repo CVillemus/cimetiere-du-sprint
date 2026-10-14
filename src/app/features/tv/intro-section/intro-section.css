@@ -125,3 +125,75 @@
 .intro-section__elected {
   position: relative;
 }
+
+/* Écran compact (même requête que CompactViewport) : mise en page empilée, tailles en rem. */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  .intro-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: auto;
+    min-height: 100dvh;
+    padding: 4rem 1rem 2rem;
+  }
+
+  .intro-section__pitch {
+    gap: 0.8rem;
+  }
+
+  .intro-section__eyebrow {
+    font-size: 0.7rem;
+  }
+
+  .intro-section__title {
+    font-size: 2.6rem;
+  }
+
+  .intro-section__tagline {
+    font-size: 1.2rem;
+  }
+
+  .intro-section__rules {
+    font-size: 1rem;
+  }
+
+  .intro-section__status {
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .intro-section__participants {
+    gap: 0.4rem;
+  }
+
+  .intro-section__participant {
+    padding: 0.2rem 0.5rem;
+    border-width: 2px;
+    font-size: 0.9rem;
+  }
+
+  .intro-section__elected {
+    gap: 0.6rem;
+  }
+
+  .intro-section__elected-scene {
+    border-width: 3px;
+  }
+
+  .intro-section__elected-caption {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .intro-section__elected-eyebrow {
+    font-size: 0.7rem;
+  }
+
+  .intro-section__elected-title {
+    font-size: 1.5rem;
+  }
+
+  .intro-section__elected-score {
+    font-size: 0.8rem;
+  }
+}

@@ -110,3 +110,76 @@
   font-size: 0.7vw;
   color: var(--color-violet-muted);
 }
+
+/* Écran compact (même requête que CompactViewport) : mise en page empilée, tailles en rem. */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  :host {
+    gap: 1rem;
+    height: auto;
+    padding: 4.25rem 1rem 1.5rem;
+  }
+
+  .trailer-slide__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    --trigger-warning-font-size: 0.8rem;
+  }
+
+  .trailer-slide__title {
+    font-size: 1.4rem;
+  }
+
+  .trailer-slide__language {
+    font-size: 0.65rem;
+  }
+
+  .trailer-slide__screen {
+    flex: none;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-width: 3px;
+  }
+
+  .trailer-slide__warning {
+    gap: 0.8rem;
+    padding: 0.5rem;
+    --trigger-warning-font-size: 0.75rem;
+  }
+
+  .trailer-slide__warning-title {
+    font-size: 1.2rem;
+  }
+
+  .trailer-slide__countdown {
+    font-size: 2.5rem;
+  }
+
+  .trailer-slide__missing {
+    font-size: 1rem;
+  }
+
+  .trailer-slide__streaming {
+    justify-content: flex-start;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .trailer-slide__streaming-offer {
+    gap: 0.4rem;
+    margin-right: 0.5rem;
+  }
+
+  .trailer-slide__streaming-label {
+    font-size: 0.7rem;
+  }
+
+  .trailer-slide__platform {
+    padding: 0.15rem 0.5rem;
+    border-width: 2px;
+  }
+
+  .trailer-slide__streaming-source {
+    font-size: 0.6rem;
+  }
+}

@@ -36,3 +36,10 @@
   height: 0.75vw;
   background: var(--color-bone);
 }
+
+/* Écran compact : on défile au doigt, le rail de progression n'a plus de sens. */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  :host {
+    display: none;
+  }
+}

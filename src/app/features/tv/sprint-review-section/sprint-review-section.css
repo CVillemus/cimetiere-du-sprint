@@ -204,3 +204,98 @@
 .sprint-review__rules {
   position: relative;
 }
+
+/* Écran compact (même requête que CompactViewport) : mise en page empilée, tailles en rem. */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  :host {
+    height: auto;
+  }
+
+  .sprint-review {
+    justify-content: flex-start;
+    gap: 1.25rem;
+    height: auto;
+    min-height: 100dvh;
+    padding: 4rem 1rem 2rem;
+  }
+
+  .sprint-review__eyebrow {
+    font-size: 0.7rem;
+  }
+
+  .sprint-review__title {
+    font-size: 2.2rem;
+  }
+
+  .sprint-review__stage {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .sprint-review__winner-scene {
+    width: 100%;
+    border-width: 3px;
+  }
+
+  .sprint-review__winner {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: none;
+  }
+
+  .sprint-review__lettrine {
+    flex-shrink: 0;
+    width: 4.5rem;
+  }
+
+  .sprint-review__winner-caption {
+    gap: 0.4rem;
+  }
+
+  .sprint-review__winner-eyebrow {
+    font-size: 0.7rem;
+  }
+
+  .sprint-review__winner-title {
+    font-size: 1.8rem;
+  }
+
+  .sprint-review__winner-details {
+    font-size: 0.85rem;
+  }
+
+  .sprint-review__streaming {
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+  }
+
+  .sprint-review__streaming-label {
+    font-size: 0.65rem;
+  }
+
+  .sprint-review__platform {
+    padding: 0.1rem 0.45rem;
+    border-width: 2px;
+  }
+
+  .sprint-review__streaming-source {
+    font-size: 0.6rem;
+  }
+
+  .sprint-review__others {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    max-width: none;
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  .sprint-review__other--runner-up {
+    font-size: 1.1rem;
+  }
+}
