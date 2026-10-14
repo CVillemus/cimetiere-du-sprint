@@ -1,17 +1,7 @@
-<main
-  #scrollContainer
-  class="tv-page"
-  [class.tv-page--compact]="isCompact()"
-  (wheel)="handleWheelNavigation($event)"
->
-  <div class="tv-page__track" [style.transform]="isCompact() ? null : sectionTrackTransform()">
+<main #pageElement class="tv-page" (wheel)="handleWheelNavigation($event)">
+  <div class="tv-page__track" [style.transform]="sectionTrackTransform()">
     @for (section of sections; track $index; let sectionIndex = $index) {
-      <section
-        #sectionElement
-        class="tv-page__section"
-        [attr.data-section-index]="sectionIndex"
-        [inert]="!isCompact() && sectionIndex !== currentSectionIndex()"
-      >
+      <section class="tv-page__section" [inert]="sectionIndex !== currentSectionIndex()">
         @switch (section.kind) {
           @case ('intro') {
             <app-intro-section [isCurrentSection]="sectionIndex === currentSectionIndex()" />

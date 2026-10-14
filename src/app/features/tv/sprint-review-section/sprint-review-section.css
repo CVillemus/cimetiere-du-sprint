@@ -207,16 +207,13 @@
 
 /* Écran compact (même requête que CompactViewport) : mise en page empilée, tailles en rem. */
 @media (max-width: 760px), (hover: none) and (pointer: coarse) {
-  :host {
-    height: auto;
-  }
-
   .sprint-review {
     justify-content: flex-start;
     gap: 1.25rem;
-    height: auto;
-    min-height: 100dvh;
+    height: 100%;
     padding: 4rem 1rem 2rem;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
   }
 
   .sprint-review__eyebrow {

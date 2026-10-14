@@ -2,12 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   ElementRef,
   inject,
   Signal,
   viewChild,
-  viewChildren,
 } from '@angular/core';
 import { TvNavigationStore } from '../../core/navigation/tv-navigation.store';
 import { TvSoundDesign } from '../../core/sound/tv-sound-design';
@@ -21,27 +19,36 @@ import { SectionProgress } from './section-progress/section-progress';
 import { SprintReviewSection } from './sprint-review-section/sprint-review-section';
 import { TvNavigator } from './tv-navigator/tv-navigator';
 import { CompactViewport } from '../../shared/utils/compact-viewport';
+import { canScrollFurther, VerticalScrollDirection } from '../../shared/utils/vertical-scroll-edge';
 
 /** Un geste de trackpad envoie des dizaines d'événements : on n'en garde qu'un par transition. */
 const WHEEL_NAVIGATION_COOLDOWN_IN_MILLISECONDS: number = 1000;
 /** En dessous, c'est un effleurement de trackpad, pas une intention de navigation. */
 const MINIMUM_WHEEL_DELTA: number = 15;
 
-/**
- * La bande « au milieu de l'écran » : la section qui la traverse est la section courante.
- * Une fine bande plutôt qu'un pourcentage visible, car une section peut être plus haute que l'écran.
- */
-const CURRENT_SECTION_ROOT_MARGIN: string = '-45% 0px -45% 0px';
+/** En dessous, c'est un tapotement ou un geste hésitant, pas un balayage. */
+const MINIMUM_SWIPE_DISTANCE_IN_PIXELS: number = 50;
+/** Un balayage horizontal doit être franchement plus large que haut (et inversement). */
+const SWIPE_DOMINANCE_RATIO: number = 1.5;
+
+/** Où le doigt s'est posé, et si le contenu sous lui pouvait encore défiler à ce moment-là. */
+interface SwipeStart {
+  readonly x: number;
+  readonly y: number;
+  readonly canScrollForward: boolean;
+  readonly canScrollBackward: boolean;
+}
 
 /**
- * Page principale : 12 sections plein écran.
+ * Page principale : 12 sections plein écran, présentées comme des pages.
  *
- * - Sur grand écran (TV) : pas de scroll, la piste des sections est translatée selon la section
- *   courante du store. Clavier, molette et clics passent par le `TvNavigator`, qui joue chaque
- *   changement derrière la coulure de pixels.
- * - Sur écran compact (téléphone) : défilement natif au doigt, avec aimant. La section qui passe
- *   au milieu de l'écran devient la section courante du store, pour que tout ce qui en dépend
- *   (bande-annonce, sons, animations) suive.
+ * Pas de scroll de page : la piste des sections est translatée selon la section courante du store.
+ * Clavier, molette, clics et balayages au doigt passent par le `TvNavigator`, qui joue chaque
+ * changement derrière sa transition (coulure de pixels entre les tombes, nuée de chauves-souris
+ * entre les slides).
+ *
+ * Sur écran compact, une slide plus haute que l'écran défile d'abord à l'intérieur : le balayage
+ * vertical ne change de tombe qu'une fois arrivé en bas (ou en haut) du contenu.
  */
 @Component({
   selector: 'app-tv-page',
@@ -59,6 +66,8 @@ const CURRENT_SECTION_ROOT_MARGIN: string = '-45% 0px -45% 0px';
   host: {
     '(document:keydown)': 'handleKeyboardNavigation($event)',
     '(document:pointerdown)': 'wakeUpSoundDesign()',
+    '(document:touchstart)': 'handleSwipeStart($event)',
+    '(document:touchend)': 'handleSwipeEnd($event)',
   },
 })
 export class TvPage {
@@ -72,15 +81,14 @@ export class TvPage {
 
   protected readonly isCompact: Signal<boolean> = this.compactViewport.isCompact;
 
-  private readonly scrollContainer: Signal<ElementRef<HTMLElement>> =
-    viewChild.required<ElementRef<HTMLElement>>('scrollContainer');
-  private readonly sectionElements: Signal<readonly ElementRef<HTMLElement>[]> =
-    viewChildren<ElementRef<HTMLElement>>('sectionElement');
+  private readonly pageElement: Signal<ElementRef<HTMLElement>> =
+    viewChild.required<ElementRef<HTMLElement>>('pageElement');
 
   protected readonly isSoundAwake: Signal<boolean> = this.tvSoundDesign.isAwake;
   protected readonly isSoundMuted: Signal<boolean> = this.tvSoundDesign.isMuted;
 
   private lastWheelNavigationTimestamp: number = 0;
+  private swipeStart: SwipeStart | null = null;
 
   protected readonly sections: readonly TvSection[] = this.tvNavigationStore.sections;
   protected readonly currentSectionIndex: Signal<number> =
@@ -89,33 +97,6 @@ export class TvPage {
   protected readonly sectionTrackTransform: Signal<string> = computed(
     (): string => `translateY(calc(-100dvh * ${this.currentSectionIndex()}))`,
   );
-
-  constructor() {
-    // Écran compact : la section qui traverse le milieu de l'écran devient la section courante.
-    effect((onCleanup: (cleanupFunction: () => void) => void) => {
-      const sectionElements: readonly ElementRef<HTMLElement>[] = this.sectionElements();
-      if (!this.isCompact() || typeof IntersectionObserver === 'undefined') {
-        return;
-      }
-      const currentSectionObserver: IntersectionObserver = new IntersectionObserver(
-        (sectionEntries: IntersectionObserverEntry[]) => {
-          const crossingEntry: IntersectionObserverEntry | undefined = sectionEntries.find(
-            (sectionEntry: IntersectionObserverEntry): boolean => sectionEntry.isIntersecting,
-          );
-          if (crossingEntry !== undefined) {
-            this.tvNavigationStore.goToSection(
-              Number((crossingEntry.target as HTMLElement).dataset['sectionIndex']),
-            );
-          }
-        },
-        { root: this.scrollContainer().nativeElement, rootMargin: CURRENT_SECTION_ROOT_MARGIN },
-      );
-      sectionElements.forEach((sectionElement: ElementRef<HTMLElement>) =>
-        currentSectionObserver.observe(sectionElement.nativeElement),
-      );
-      onCleanup(() => currentSectionObserver.disconnect());
-    });
-  }
 
   /** Écran compact : le bouton du son remplace la touche M. Le premier appui réveille le son. */
   protected toggleSoundFromButton(): void {
@@ -128,15 +109,15 @@ export class TvPage {
 
   /** Le navigateur n'autorise le son qu'après un geste : la première touche ou le premier clic. */
   protected wakeUpSoundDesign(): void {
+    // Écran compact : le son reste coupé tant qu'on n'a pas touché le bouton du son.
+    if (this.isCompact()) {
+      return;
+    }
     this.tvSoundDesign.wakeUp();
   }
 
   protected handleKeyboardNavigation(keyboardEvent: KeyboardEvent): void {
     this.tvSoundDesign.wakeUp();
-    // Écran compact : on défile au doigt (ou avec les touches natives du navigateur) ; seule M reste.
-    if (this.isCompact() && keyboardEvent.key.toLowerCase() !== 'm') {
-      return;
-    }
     switch (keyboardEvent.key) {
       case 'ArrowDown':
       case 'PageDown':
@@ -167,8 +148,9 @@ export class TvPage {
 
   /** Un cran de molette = une section (ou une slide si le geste est horizontal). */
   protected handleWheelNavigation(wheelEvent: WheelEvent): void {
-    // Écran compact : la molette fait défiler la page normalement.
-    if (this.isCompact()) {
+    // Écran compact : la molette fait d'abord défiler la slide, si elle dépasse de l'écran.
+    const wheelDirection: VerticalScrollDirection = wheelEvent.deltaY > 0 ? 'forward' : 'backward';
+    if (this.isCompact() && this.canContentScrollUnder(wheelEvent.target, wheelDirection)) {
       return;
     }
     wheelEvent.preventDefault();
@@ -197,5 +179,63 @@ export class TvPage {
     } else {
       this.tvNavigator.navigateToPreviousSection();
     }
+  }
+
+  /** Écran compact : on retient le point de départ du doigt et l'état du défilement sous lui. */
+  protected handleSwipeStart(touchEvent: TouchEvent): void {
+    if (!this.isCompact() || touchEvent.touches.length !== 1) {
+      this.swipeStart = null;
+      return;
+    }
+    const touch: Touch = touchEvent.touches[0];
+    this.swipeStart = {
+      x: touch.clientX,
+      y: touch.clientY,
+      canScrollForward: this.canContentScrollUnder(touchEvent.target, 'forward'),
+      canScrollBackward: this.canContentScrollUnder(touchEvent.target, 'backward'),
+    };
+  }
+
+  /**
+   * Balayage horizontal : slide suivante ou précédente.
+   * Balayage vertical : tombe suivante ou précédente, sauf si le doigt faisait défiler la slide.
+   */
+  protected handleSwipeEnd(touchEvent: TouchEvent): void {
+    const swipeStart: SwipeStart | null = this.swipeStart;
+    this.swipeStart = null;
+    if (swipeStart === null || touchEvent.changedTouches.length !== 1) {
+      return;
+    }
+    const touch: Touch = touchEvent.changedTouches[0];
+    const horizontalDistance: number = touch.clientX - swipeStart.x;
+    const verticalDistance: number = touch.clientY - swipeStart.y;
+    const isHorizontalSwipe: boolean =
+      Math.abs(horizontalDistance) >= MINIMUM_SWIPE_DISTANCE_IN_PIXELS &&
+      Math.abs(horizontalDistance) > SWIPE_DOMINANCE_RATIO * Math.abs(verticalDistance);
+    const isVerticalSwipe: boolean =
+      Math.abs(verticalDistance) >= MINIMUM_SWIPE_DISTANCE_IN_PIXELS &&
+      Math.abs(verticalDistance) > SWIPE_DOMINANCE_RATIO * Math.abs(horizontalDistance);
+
+    // Le doigt part vers la gauche : on avance, comme on tourne une page.
+    if (isHorizontalSwipe && horizontalDistance < 0) {
+      this.tvNavigator.navigateToNextSlide();
+    } else if (isHorizontalSwipe) {
+      this.tvNavigator.navigateToPreviousSlide();
+    } else if (isVerticalSwipe && verticalDistance < 0 && !swipeStart.canScrollForward) {
+      this.tvNavigator.navigateToNextSection();
+    } else if (isVerticalSwipe && verticalDistance > 0 && !swipeStart.canScrollBackward) {
+      this.tvNavigator.navigateToPreviousSection();
+    }
+  }
+
+  private canContentScrollUnder(
+    target: EventTarget | null,
+    direction: VerticalScrollDirection,
+  ): boolean {
+    return canScrollFurther(
+      target instanceof Element ? target : null,
+      this.pageElement().nativeElement,
+      direction,
+    );
   }
 }

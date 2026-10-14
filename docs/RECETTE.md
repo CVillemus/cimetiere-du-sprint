@@ -69,6 +69,14 @@ et toute la mécanique de vote fonctionne déjà.
   CSS quand le décor devient visible, pas au chargement de la page.
 - **Lumière qui clignote sur un personnage** : tout ce qui est dessiné sur le calque des lumières vacille.
   Un personnage ou un monstre ne doit jamais y être.
+- **Version mobile (consultation sur téléphone)** : garder des *pages* comme sur la TV, pas un défilement natif,
+  sinon les transitions n'ont plus de sens (la slide suit déjà le doigt). Un balayage appelle le `TvNavigator` ;
+  une slide plus haute que l'écran défile d'abord, et le balayage ne change de page qu'une fois au bord.
+  Requête « compact » : `(max-width: 760px), (hover: none) and (pointer: coarse)` (`hover: none` évite de
+  basculer un PC portable tactile). Mettre `overscroll-behavior: none` sur `html, body`, sinon tirer vers
+  le bas recharge la page et glisser sur le côté revient dans l'historique. Son coupé tant qu'on n'a pas
+  touché le bouton du son. Vérifier que le desktop ne bouge pas en comparant la position de chaque élément
+  avec `main`, écran par écran.
 - **Le serveur de dev s'arrête parfois entre deux sessions** : le relancer avant de tester.
 
 ## La façon de travailler de Corentin

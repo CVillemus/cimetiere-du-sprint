@@ -27,22 +27,11 @@
 
 /*
  * Écran compact (téléphone, tactile, petite fenêtre) : même requête que CompactViewport.
- * On défile au doigt, section par section avec un aimant léger ; les sections prennent la hauteur
- * de leur contenu (au moins un écran).
+ * Toujours des pages plein écran ; seul le rail de progression disparaît, sa marge avec.
  */
 @media (max-width: 760px), (hover: none) and (pointer: coarse) {
   .tv-page {
     margin-right: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scroll-snap-type: y proximity;
-    overscroll-behavior-y: contain;
-  }
-
-  .tv-page__section {
-    height: auto;
-    min-height: 100dvh;
-    scroll-snap-align: start;
   }
 }
 

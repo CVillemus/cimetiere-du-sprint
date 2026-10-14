@@ -48,38 +48,32 @@
 }
 
 /*
- * Écran compact (même requête que CompactViewport) : carrousel natif au doigt, avec aimant,
- * et barre d'onglets collée en bas de l'écran tant que le film est visible.
+ * Écran compact (même requête que CompactViewport) : toujours une page par film, mais chaque slide
+ * défile à l'intérieur si elle dépasse, et la barre d'onglets occupe le bas de l'écran.
  */
 @media (max-width: 760px), (hover: none) and (pointer: coarse) {
-  /* Colonne pleine hauteur : la barre d'onglets reste en bas même quand la slide est courte. */
   :host {
     display: flex;
     flex-direction: column;
-    height: auto;
-    min-height: 100dvh;
-    overflow: visible;
   }
 
   .film-section__track {
-    flex: 1 0 auto;
+    flex: 1 1 auto;
+    min-height: 0;
     height: auto;
-    align-items: stretch;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-
-  .film-section__track::-webkit-scrollbar {
-    display: none;
   }
 
   .film-section__slide {
     display: flex;
     flex-direction: column;
     height: auto;
-    scroll-snap-align: start;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+  }
+
+  .film-section__slide::-webkit-scrollbar {
+    display: none;
   }
 
   /* Le contenu de la slide occupe toute sa hauteur, pour que son fond rejoigne la barre d'onglets. */
@@ -88,10 +82,8 @@
   }
 
   .film-section__tabs {
-    position: sticky;
-    left: 0;
-    bottom: 0;
-    z-index: 2;
+    position: static;
+    flex: none;
     justify-content: space-around;
     gap: 0;
     padding: 0.4rem 0 calc(0.4rem + env(safe-area-inset-bottom));

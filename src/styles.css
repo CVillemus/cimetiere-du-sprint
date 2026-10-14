@@ -98,3 +98,14 @@ svg {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Écran compact : les balayages changent de tombe ou de slide. Ils ne doivent ni recharger la page
+ * (tirer vers le bas), ni revenir dans l'historique du navigateur (glisser sur le côté).
+ */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  html,
+  body {
+    overscroll-behavior: none;
+  }
+}

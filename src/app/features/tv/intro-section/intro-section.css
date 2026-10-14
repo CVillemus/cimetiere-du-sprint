@@ -132,9 +132,10 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    height: auto;
-    min-height: 100dvh;
+    height: 100%;
     padding: 4rem 1rem 2rem;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
   }
 
   .intro-section__pitch {
